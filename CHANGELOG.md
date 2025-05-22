@@ -1,1 +1,1 @@
-
+- 22/05/25: Changelog iniciado. 
