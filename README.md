@@ -25,17 +25,17 @@ Los personajes evolucionan durante la partida, tanto por conseguir equipamiento 
 
 ### Pasos para Clonar
 
-```bash
 git clone https://github.com/MateoMajlin/WhiteWolves.git
 
-### Pasos para Importar y Ejecutar en el IDE (el método más común para ellos y para ti):
+### Pasos para Importar y Ejecutar en el IDE:
 
-IntelliJ IDEA:
+**IntelliJ IDEA:**
 
 "Abrir el proyecto (File > Open...) y seleccionar la carpeta raíz del proyecto clonado (o el archivo build.gradle)."
 "Esperar a que Gradle sincronice las dependencias."
 "Para ejecutar, buscar el módulo lwjgl3, y dentro de este, la clase [Lwjgl3Launcher.java]. Hacer clic derecho y seleccionar 'Run' o 'Debug'."
-Eclipse:
+
+**Eclipse:**
 
 "Importar el proyecto (File > Import... > Gradle > Existing Gradle Project) y seleccionar la carpeta raíz del proyecto clonado."
 "Esperar a que Gradle sincronice las dependencias."
