@@ -8,6 +8,9 @@
 El juego *White Wolves* consiste en batallas 2v2 en las que 4 personajes se enfrentarán con el fin de conseguir más bajas que el rival antes de que acabe el tiempo.  
 Los personajes evolucionan durante la partida, tanto por conseguir equipamiento nuevo como por obtener nuevas habilidades a medida que pasa el tiempo.
 
+## Estado del Proyecto
+- Configuración inicial terminada.
+
 ## Tecnologías Utilizadas y Plataforma Objetivo
 
 - **LibGDX:** Principal motor gráfico.
