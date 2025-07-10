@@ -6,6 +6,8 @@ import winterwolves.elementos.Imagen;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
+import java.awt.*;
+
 public class Menu implements Screen {
 
     Imagen fondo;
@@ -16,7 +18,6 @@ public class Menu implements Screen {
         fondo = new Imagen(Recursos.FONDO);
         b = Render.batch;
         fondo.escalar(640,480);
-        fondo.setTransparencia(0.5f);
     }
 
     @Override
