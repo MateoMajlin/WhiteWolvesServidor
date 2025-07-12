@@ -3,6 +3,7 @@ package winterwolves.pantallas;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import winterwolves.elementos.Imagen;
+import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
@@ -19,7 +20,7 @@ public class PantallaCarga implements Screen {
         fondo = new Imagen(Recursos.LOGO);
         b = Render.batch;
         fondo.setTransparencia(a);
-        fondo.escalar(640,480);
+        fondo.escalar(Config.WIDTH,Config.HEIGTH);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import winterwolves.pantallas.Menu;
 import winterwolves.pantallas.PantallaCarga;
 import winterwolves.utilidades.Render;
 
@@ -19,7 +20,7 @@ public class Principal extends Game {
     public void create() {
         Render.app = this;
         Render.batch = new SpriteBatch();
-        this.setScreen(new PantallaCarga());
+        this.setScreen(new Menu());
     }
 
     @Override
