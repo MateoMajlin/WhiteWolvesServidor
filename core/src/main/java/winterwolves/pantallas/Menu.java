@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.Color;
 import winterwolves.elementos.Imagen;
 import winterwolves.elementos.Texto;
+import winterwolves.io.Entradas;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
@@ -19,14 +20,23 @@ public class Menu implements Screen {
     SpriteBatch b;
 
     Texto titulo;
-    Texto o1,o2,o3,o4;
+    Texto opciones[] = new Texto[4];
+    String textosOpc[] = {"Nueva Partida","Opciones","Creditos","Salir"};
+
+    Entradas entradas = new Entradas(this);
+
+    int opc = 1;
+    public float tiempo = 0;
+
 
     @Override
     public void show() {
         fondo = new Imagen(Recursos.FONDO);
         fondo.escalar(Config.WIDTH,Config.HEIGTH);
         b = Render.batch;
-        cargarTexto();
+        cargarOpciones();
+
+        Gdx.input.setInputProcessor(entradas);
 
     }
 
@@ -35,11 +45,45 @@ public class Menu implements Screen {
         b.begin();
             fondo.dibujar();
             titulo.dibujar();
-            o1.dibujar();
-            o2.dibujar();
-            o3.dibujar();
-            o4.dibujar();
+        for (int i = 0; i < opciones.length; i++) {
+            opciones[i].dibujar();
+        }
         b.end();
+
+        tiempo+=delta;
+
+        if(entradas.isAbajo()) {
+            if(tiempo>0.1f){
+                tiempo = 0;
+                opc++;
+                if(opc>4){
+                    opc = 1;
+                }
+            }
+        }
+        if(entradas.isArriba()) {
+            if(tiempo>0.1f){
+                tiempo = 0;
+                opc--;
+                if(opc<1){
+                    opc = 4;
+                }
+            }
+        }
+
+        for (int i = 0; i < opciones.length; i++) {
+            if(i==(opc-1)){
+                opciones[i].setColor(Color.GREEN);
+            } else {
+                opciones[i].setColor(Color.WHITE);
+            }
+        }
+
+        if(entradas.isEnter()){
+            if(opc == 1){
+                Render.app.setScreen(new TerrenoPractica());
+            }
+        }
     }
 
     @Override
@@ -67,25 +111,18 @@ public class Menu implements Screen {
 
     }
 
-    private void cargarTexto() {
+    private void cargarOpciones() {
+
+        int avance = 80;
+
         titulo = new Texto(Recursos.FUENTEMENU,150,Color.BLACK,true);
         titulo.setTexto("WHITE WOLVES");
         titulo.setPosition((Config.WIDTH/2)-(titulo.getAncho()/2),(Config.HEIGTH/2)+(titulo.getAlto()/2)+200);
 
-        o1 = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
-        o1.setTexto("Nueva Partida");
-        o1.centrar();
-
-        o2 = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
-        o2.setTexto("Opciones");
-        o2.setPosition((Config.WIDTH/2)-(o2.getAncho()/2),(Config.HEIGTH/2)+(o2.getAlto()/2)-80);
-
-        o3 = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
-        o3.setTexto("Creditos");
-        o3.setPosition((Config.WIDTH/2)-(o3.getAncho()/2),(Config.HEIGTH/2)+(o3.getAlto()/2)-160);
-
-        o4 = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
-        o4.setTexto("Salir");
-        o4.setPosition((Config.WIDTH/2)-(o4.getAncho()/2),(Config.HEIGTH/2)+(o4.getAlto()/2)-240);
+        for (int i = 0; i < opciones.length; i++) {
+            opciones[i] = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
+            opciones[i].setTexto(textosOpc[i]);
+            opciones[i].setPosition((Config.WIDTH/2)-(opciones[i].getAncho()/2),(Config.HEIGTH/2)+(opciones[i].getAlto()-(avance*i)));
+        }
     }
 }
