@@ -1,54 +1,75 @@
 package winterwolves.pantallas;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import winterwolves.elementos.Imagen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import winterwolves.personajes.Jugador;
 import winterwolves.utilidades.Config;
-import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
 public class TerrenoPractica implements Screen {
 
-    Imagen fondo;
-    SpriteBatch b;
+    private TiledMap mapa;
+    private OrthogonalTiledMapRenderer renderer;
+    private OrthographicCamera camara;
+
+    private Jugador jugador;
 
     @Override
     public void show() {
-        fondo = new Imagen(Recursos.FONDO_PRACTICAS);
-        fondo.escalar(Config.WIDTH,Config.HEIGTH);
-        b = Render.batch;
+        TmxMapLoader loader = new TmxMapLoader();
+        mapa = loader.load("mapas/mapaNieve.tmx");
+
+        renderer = new OrthogonalTiledMapRenderer(mapa);
+
+        camara = new OrthographicCamera();
+        camara.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
+        camara.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
+        camara.update();
+
+        jugador = new Jugador(new Sprite(new Texture("guerrero.png")), (TiledMapTileLayer) mapa.getLayers().get(1));
+        jugador.setPosition(450, 450); // Posición en píxeles
     }
 
     @Override
     public void render(float delta) {
-        Render.limpiarPantalla(1,1,1);
-        b.begin();
-        fondo.dibujar();
-        b.end();
+        Render.limpiarPantalla(1, 1, 1);
+
+        camara.update();
+        renderer.setView(camara);
+        renderer.render();
+
+        Render.batch.setProjectionMatrix(camara.combined);
+        Render.batch.begin();
+        jugador.draw(Render.batch);
+        Render.batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-
+        camara.viewportWidth = width;
+        camara.viewportHeight = height;
+        camara.update();
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
-
+        mapa.dispose();
+        renderer.dispose();
+        jugador.getTexture().dispose();
     }
 }
