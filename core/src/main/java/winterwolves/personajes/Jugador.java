@@ -11,6 +11,8 @@ public class Jugador extends Sprite {
 
     private Vector2 movimiento = new Vector2();
     private float speed = 60 * 2;
+    private float speedBase = speed;
+    public float correrMulti = 1.7f;
     private EntradasJugador entradas;
 
     private GestorColisionesJugador colisiones;
@@ -28,19 +30,26 @@ public class Jugador extends Sprite {
     @Override
     public void draw(Batch batch) {
         update(Gdx.graphics.getDeltaTime());
-        batch.draw(animaciones.getFrame(movimiento, Gdx.graphics.getDeltaTime()),
-            getX(), getY(), getWidth(), getHeight());
+        batch.draw(animaciones.getFrame(movimiento, Gdx.graphics.getDeltaTime()), getX(), getY(), getWidth(), getHeight());
     }
 
     public void update(float delta) {
         movimiento.set(0, 0);
 
-        if (entradas.isArriba()) movimiento.y = speed;
-        if (entradas.isAbajo()) movimiento.y = -speed;
-        if (entradas.isIzquierda()) movimiento.x = -speed;
-        if (entradas.isDerecha()) movimiento.x = speed;
+        if (entradas.isCorrer()) {
+            speed = speedBase * correrMulti;
+        } else {
+            speed = speedBase;
+        }
 
-        if (movimiento.len() > 0) movimiento.nor().scl(speed);
+        if (entradas.isArriba()) movimiento.y = 1;
+        if (entradas.isAbajo()) movimiento.y = -1;
+        if (entradas.isIzquierda()) movimiento.x = -1;
+        if (entradas.isDerecha()) movimiento.x = 1;
+
+        if (movimiento.len() > 0) {
+            movimiento.nor().scl(speed);
+        }
 
         moverConColisiones(delta);
     }

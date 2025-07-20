@@ -1,11 +1,12 @@
 package winterwolves.io;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class EntradasJugador implements InputProcessor {
 
-    private boolean arriba, abajo, izquierda, derecha;
+    private boolean arriba, abajo, izquierda, derecha,control;
 
     public boolean isArriba() {
         return arriba;
@@ -21,6 +22,9 @@ public class EntradasJugador implements InputProcessor {
 
     public boolean isDerecha() {
         return derecha;
+    }
+    public boolean isControl() {
+        return control;
     }
 
     @Override
@@ -61,6 +65,10 @@ public class EntradasJugador implements InputProcessor {
         return true;
     }
 
+    public boolean isCorrer() {
+        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT); // o el que uses
+    }
+
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
@@ -68,4 +76,5 @@ public class EntradasJugador implements InputProcessor {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
+
 }

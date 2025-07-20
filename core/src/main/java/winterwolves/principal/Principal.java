@@ -13,7 +13,7 @@ import winterwolves.pantallas.PantallaCarga;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+
 public class Principal extends Game {
     private SpriteBatch batch;
     private Texture image;
@@ -23,7 +23,7 @@ public class Principal extends Game {
         Render.app = this;
         Render.batch = new SpriteBatch();
         setearMusica();
-        this.setScreen(new PantallaCarga());
+        this.setScreen(new Menu());
     }
 
     @Override
@@ -38,7 +38,6 @@ public class Principal extends Game {
     @Override
     public void dispose() {
         Render.batch.dispose();
-        // image.dispose();
     }
 
     private void setearMusica() {

@@ -3,6 +3,7 @@ package winterwolves.io;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import winterwolves.pantallas.Menu;
+import winterwolves.pantallas.PantallaTutorial;
 
 public class Entradas implements InputProcessor {
 
@@ -10,9 +11,14 @@ public class Entradas implements InputProcessor {
     private boolean enter = false;
 
     Menu menu;
+    PantallaTutorial pantallaTutorial;
 
     public Entradas(Menu menu){
         this.menu = menu;
+    }
+
+    public Entradas(PantallaTutorial pantallaTutorial){
+        this.pantallaTutorial = pantallaTutorial;
     }
 
     public boolean isEnter() {
@@ -29,8 +35,6 @@ public class Entradas implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-
-        menu.tiempo = 0.1f;
 
         if(keycode == Input.Keys.DOWN){
             abajo = true;
