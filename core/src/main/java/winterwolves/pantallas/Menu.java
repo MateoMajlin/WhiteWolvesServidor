@@ -81,7 +81,9 @@ public class Menu implements Screen {
 
         if(entradas.isEnter()){
             if(opc == 1){
+                Recursos.musica.stop();
                 Render.app.setScreen(new TerrenoPractica());
+                Recursos.musica.dispose();
             }
         }
     }

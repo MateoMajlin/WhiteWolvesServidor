@@ -3,12 +3,14 @@ package winterwolves.principal;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import winterwolves.pantallas.Menu;
 import winterwolves.pantallas.PantallaCarga;
+import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -20,6 +22,7 @@ public class Principal extends Game {
     public void create() {
         Render.app = this;
         Render.batch = new SpriteBatch();
+        setearMusica();
         this.setScreen(new PantallaCarga());
     }
 
@@ -36,5 +39,11 @@ public class Principal extends Game {
     public void dispose() {
         Render.batch.dispose();
         // image.dispose();
+    }
+
+    private void setearMusica() {
+        Recursos.musica.play();
+        Recursos.musica.setLooping(true);
+        Recursos.musica.setVolume(0.3f);
     }
 }

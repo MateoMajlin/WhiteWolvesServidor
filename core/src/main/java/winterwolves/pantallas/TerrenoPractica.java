@@ -2,6 +2,7 @@ package winterwolves.pantallas;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import winterwolves.io.EntradasJugador;
 import winterwolves.personajes.Jugador;
 import winterwolves.utilidades.Config;
+import winterwolves.utilidades.GestorColisionesJugador;
+import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
 public class TerrenoPractica implements Screen {
@@ -19,6 +22,7 @@ public class TerrenoPractica implements Screen {
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camara;
+    Music musica = Recursos.musicaBatalla;
 
     int[] capasFondo = {0,1};
     int[] capasDelanteras = {2};
@@ -27,6 +31,9 @@ public class TerrenoPractica implements Screen {
 
     @Override
     public void show() {
+
+        setearMusica();
+
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
 
@@ -38,9 +45,13 @@ public class TerrenoPractica implements Screen {
         camara.update();
 
         EntradasJugador entradas = new EntradasJugador();
-        jugador = new Jugador(new Sprite(new Texture("guerrero.png")), (TiledMapTileLayer) mapa.getLayers().get(1),entradas);
+
+        TiledMapTileLayer capaColisiones = (TiledMapTileLayer) mapa.getLayers().get(1);
+        GestorColisionesJugador gestorColisionesJugador = new GestorColisionesJugador(capaColisiones);
+
+        jugador = new Jugador(new Sprite(new Texture("guerrero.png")), gestorColisionesJugador, entradas);
         jugador.setPosition(450, 450);
-        jugador.setSize(30f,30f);
+        jugador.setSize(30f, 30f);
 
         Gdx.input.setInputProcessor(entradas);
     }
@@ -83,5 +94,11 @@ public class TerrenoPractica implements Screen {
         mapa.dispose();
         renderer.dispose();
         jugador.getTexture().dispose();
+    }
+
+    private void setearMusica() {
+        musica.play();
+        musica.setLooping(true);
+        musica.setVolume(0.2f);
     }
 }
