@@ -17,6 +17,7 @@ import winterwolves.utilidades.Box2DColisiones;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
+import winterwolves.personajes.HudJugador;
 
 public class TerrenoPractica implements Screen {
 
@@ -32,6 +33,8 @@ public class TerrenoPractica implements Screen {
     private Box2DDebugRenderer debugRenderer; //no se como usarlo pero no pero nada poniendolo
 
     private Jugador jugador;
+    private HudJugador hud;
+    private OrthographicCamera camaraHud;
     private Caja caja;
 
     private final float PPM = 100f; // esto sirve para escalar los pixeles con los metros que es la unidad de medida que usa box2D
@@ -58,6 +61,14 @@ public class TerrenoPractica implements Screen {
         EntradasJugador entradas = new EntradasJugador();
 
         jugador = new Jugador(world, entradas, 450 / PPM, 450 / PPM, PPM);
+
+        camaraHud = new OrthographicCamera();
+        camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
+        camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
+        camaraHud.update();
+
+        hud = new HudJugador(jugador, camaraHud);
+
         caja = new Caja(world, 500 / PPM, 500 / PPM, PPM);
 
         Gdx.input.setInputProcessor(entradas);
@@ -82,6 +93,8 @@ public class TerrenoPractica implements Screen {
         Render.batch.end();
 
         renderer.render(capasDelanteras);
+
+        hud.render(Render.batch);
 
         debugRenderer.render(world, camara.combined.scl(1 / PPM));
         camara.combined.scl(PPM); //esto reescala la camara
@@ -116,5 +129,9 @@ public class TerrenoPractica implements Screen {
         musica.play();
         musica.setLooping(true);
         musica.setVolume(0.2f);
+    }
+
+    public Jugador getJugador(){
+        return jugador;
     }
 }

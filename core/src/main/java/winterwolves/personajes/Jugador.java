@@ -19,6 +19,7 @@ public class Jugador extends Sprite {
 
     private Body body;
     private EntradasJugador entradas;
+    private int vida = 100;
     private float speedBase = 2.5f;
     private float speed = speedBase;
     private float multiplicadorCorrer = 1.7f;
@@ -31,6 +32,7 @@ public class Jugador extends Sprite {
         super();
         this.entradas = entradas;
         this.ppm = ppm;
+        this.vida = vida;
 
         animaciones = new AnimacionJugador();
 
@@ -84,5 +86,9 @@ public class Jugador extends Sprite {
 
     public void dispose() {
         animaciones.dispose();
+    }
+
+    public int getVida() {
+        return vida;
     }
 }
