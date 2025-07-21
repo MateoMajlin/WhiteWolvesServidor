@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.*;
 
 public class GolpeEspada {
 
@@ -13,12 +14,19 @@ public class GolpeEspada {
     private boolean activo;
     private Texture hoja;
 
-    public GolpeEspada() {
+    private World world;
+    private Body body;
+    private float ppm;
+
+    public GolpeEspada(World world, float ppm) {
+        this.world = world;
+        this.ppm = ppm;
+
         hoja = new Texture(Gdx.files.internal("espadaAnimacion.png"));
 
         TextureRegion[][] tmp = TextureRegion.split(hoja,
-            hoja.getWidth() / 8,   // 8 columnas (según la imagen)
-            hoja.getHeight()       // 1 fila
+            hoja.getWidth() / 8,
+            hoja.getHeight()
         );
 
         TextureRegion[] frames = new TextureRegion[8];
@@ -26,24 +34,51 @@ public class GolpeEspada {
             frames[i] = tmp[0][i];
         }
 
-        animacion = new Animation<TextureRegion>(0.05f, frames); // 0.05 seg por frame
+        animacion = new Animation<>(0.05f, frames);
         animacion.setPlayMode(Animation.PlayMode.NORMAL);
+
         stateTime = 0;
         activo = false;
     }
 
-    public void activar() {
+    public void activar(float x, float y) {
         if (!activo) {
             activo = true;
             stateTime = 0;
+
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            bodyDef.position.set(x / ppm, y / ppm);
+            body = world.createBody(bodyDef);
+
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(16 / ppm, 16 / ppm);
+
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
+            body.createFixture(fixtureDef).setUserData(this);
+
+            shape.dispose();
+
+            body.setUserData(this);
         }
     }
 
-    public void update(float delta) {
+    public void update(float delta, float x, float y) {
         if (activo) {
             stateTime += delta;
+
+            if (body != null) {
+                body.setTransform(x / ppm, y / ppm, 0);
+            }
+
             if (animacion.isAnimationFinished(stateTime)) {
                 activo = false;
+                if (body != null) {
+                    world.destroyBody(body);
+                    body = null;
+                }
             }
         }
     }
@@ -51,10 +86,7 @@ public class GolpeEspada {
     public void draw(Batch batch, float x, float y, float width, float height, float angle) {
         if (activo) {
             TextureRegion frame = animacion.getKeyFrame(stateTime);
-
-            batch.draw(
-                frame, x, y, width / 2, height / 2, width, height, 1, 1, angle
-            );
+            batch.draw(frame, x, y, width / 2, height / 2, width, height, 1, 1, angle);
         }
     }
 

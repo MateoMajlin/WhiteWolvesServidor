@@ -52,6 +52,7 @@ public class TerrenoPractica implements Screen {
         camara.update();
 
         world = new World(new com.badlogic.gdx.math.Vector2(0, 0), true);
+        world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM);
         debugRenderer = new Box2DDebugRenderer();
 
@@ -75,7 +76,11 @@ public class TerrenoPractica implements Screen {
     public void render(float delta) {
         Render.limpiarPantalla(1, 1, 1);
 
-        world.step(delta, 6, 2); // esto hay que usarlo qsy
+        world.step(delta, 6, 2);
+
+        if (caja.isMarcadaParaDestruir()) {
+            caja.eliminarDelMundo();
+        }
 
         camara.position.set(jugador.getX() + jugador.getWidth() / 2, jugador.getY() + jugador.getHeight() / 2, 0);
         camara.viewportHeight = 550;
@@ -95,9 +100,9 @@ public class TerrenoPractica implements Screen {
 
         hud.render(Render.batch);
 
-        debugRenderer.render(world, camara.combined.scl(1 / PPM));
-        camara.combined.scl(PPM); //esto reescala la camara
+        debugRenderer.render(world, camara.combined.cpy().scl(1 / PPM));
     }
+
 
     @Override
     public void resize(int width, int height) {

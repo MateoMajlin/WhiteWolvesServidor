@@ -10,7 +10,8 @@ public class Caja extends Sprite {
 
     private Body body;
     private float ppm;
-    private boolean activo = true;
+    private boolean activa = true;
+    private boolean marcadaParaDestruir = false;
 
     public Caja(World world, float x, float y, float ppm) {
         super(new Texture("caja.png"));
@@ -25,7 +26,7 @@ public class Caja extends Sprite {
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((getWidth() / 4) / ppm, (getHeight() / 4) / ppm);
+        shape.setAsBox((32 / 4f) / ppm, (32 / 4f) / ppm);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -33,27 +34,40 @@ public class Caja extends Sprite {
         fixtureDef.density = 1f;
         fixtureDef.restitution = 0f;
 
-        Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(this);
+        body.createFixture(fixtureDef).setUserData(this);
+        body.setUserData(this);
 
         shape.dispose();
     }
 
     @Override
     public void draw(Batch batch) {
-        if (!activo) return;
+        if (!activa || body == null) return;
 
         Vector2 pos = body.getPosition();
         setPosition(pos.x * ppm - getWidth() / 2, pos.y * ppm - getHeight() / 2);
         super.draw(batch);
     }
 
+
     public void destruir() {
-        activo = false;
-        body.getWorld().destroyBody(body);
+        marcadaParaDestruir = true;
     }
 
-    public boolean isActivo() {
-        return activo;
+    public boolean isMarcadaParaDestruir() {
+        return marcadaParaDestruir;
+    }
+
+    public void eliminarDelMundo() {
+        if (body != null) {
+            body.getWorld().destroyBody(body);
+            body = null;
+        }
+        activa = false;
+    }
+
+
+    public Body getBody() {
+        return body;
     }
 }

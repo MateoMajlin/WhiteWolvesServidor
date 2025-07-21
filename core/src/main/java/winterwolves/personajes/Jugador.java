@@ -5,15 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-
+import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.io.EntradasJugador;
-
 
 public class Jugador extends Sprite {
 
@@ -36,7 +29,7 @@ public class Jugador extends Sprite {
         this.entradas = entradas;
         this.ppm = ppm;
         this.vida = vida;
-        this.golpe = new GolpeEspada();
+        this.golpe = new GolpeEspada(world, ppm);
 
         animaciones = new AnimacionJugador();
 
@@ -68,19 +61,17 @@ public class Jugador extends Sprite {
         TextureRegion frame = animaciones.getFrame(movimiento, Gdx.graphics.getDeltaTime());
         batch.draw(frame, getX(), getY(), getWidth(), getHeight());
 
-        golpe.update(Gdx.graphics.getDeltaTime());
-
-        if (entradas.isAtacar() && !golpe.isActivo()) {
-            golpe.activar();
-        }
-
         float desplazamiento = getWidth() * 0.6f;
         float espadaX = getX() + direccionMirando.x * desplazamiento;
         float espadaY = getY() + direccionMirando.y * desplazamiento;
 
+        if (entradas.isAtacar() && !golpe.isActivo()) {
+            golpe.activar(espadaX, espadaY);
+        }
+
+        golpe.update(Gdx.graphics.getDeltaTime(), espadaX, espadaY);
         golpe.draw(batch, espadaX, espadaY, getWidth(), getHeight(), direccionMirando.angleDeg());
     }
-
 
     private void mover() {
         movimiento.set(0, 0);
@@ -97,13 +88,12 @@ public class Jugador extends Sprite {
         if (entradas.isDerecha()) movimiento.x = 1;
 
         if (movimiento.len() > 0) {
-            direccionMirando.set(movimiento).nor(); // Guarda la última dirección
+            direccionMirando.set(movimiento).nor();
         }
 
         movimiento.nor().scl(speed);
         body.setLinearVelocity(movimiento.x, movimiento.y);
     }
-
 
     public void dispose() {
         animaciones.dispose();
