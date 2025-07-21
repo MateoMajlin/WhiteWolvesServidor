@@ -13,10 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
 import winterwolves.personajes.Jugador;
 import winterwolves.props.Caja;
-import winterwolves.utilidades.Box2DColisiones;
-import winterwolves.utilidades.Config;
-import winterwolves.utilidades.Recursos;
-import winterwolves.utilidades.Render;
+import winterwolves.utilidades.*;
 import winterwolves.personajes.HudJugador;
 
 public class TerrenoPractica implements Screen {
@@ -81,6 +78,8 @@ public class TerrenoPractica implements Screen {
         world.step(delta, 6, 2); // esto hay que usarlo qsy
 
         camara.position.set(jugador.getX() + jugador.getWidth() / 2, jugador.getY() + jugador.getHeight() / 2, 0);
+        camara.viewportHeight = 550;
+        camara.viewportWidth = 550;
         camara.update();
 
         renderer.setView(camara);

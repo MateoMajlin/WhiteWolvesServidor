@@ -27,12 +27,16 @@ public class Jugador extends Sprite {
 
     private AnimacionJugador animaciones;
     private Vector2 movimiento = new Vector2();
+    private Vector2 direccionMirando = new Vector2(0, -1);
+
+    private GolpeEspada golpe;
 
     public Jugador(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super();
         this.entradas = entradas;
         this.ppm = ppm;
         this.vida = vida;
+        this.golpe = new GolpeEspada();
 
         animaciones = new AnimacionJugador();
 
@@ -63,10 +67,23 @@ public class Jugador extends Sprite {
 
         TextureRegion frame = animaciones.getFrame(movimiento, Gdx.graphics.getDeltaTime());
         batch.draw(frame, getX(), getY(), getWidth(), getHeight());
+
+        golpe.update(Gdx.graphics.getDeltaTime());
+
+        if (entradas.isAtacar() && !golpe.isActivo()) {
+            golpe.activar();
+        }
+
+        float desplazamiento = getWidth() * 0.6f;
+        float espadaX = getX() + direccionMirando.x * desplazamiento;
+        float espadaY = getY() + direccionMirando.y * desplazamiento;
+
+        golpe.draw(batch, espadaX, espadaY, getWidth(), getHeight(), direccionMirando.angleDeg());
     }
 
+
     private void mover() {
-        movimiento.set(0,0);
+        movimiento.set(0, 0);
 
         if (entradas.isCorrer()) {
             speed = speedBase * multiplicadorCorrer;
@@ -79,13 +96,18 @@ public class Jugador extends Sprite {
         if (entradas.isIzquierda()) movimiento.x = -1;
         if (entradas.isDerecha()) movimiento.x = 1;
 
-        movimiento.nor().scl(speed);
+        if (movimiento.len() > 0) {
+            direccionMirando.set(movimiento).nor(); // Guarda la última dirección
+        }
 
+        movimiento.nor().scl(speed);
         body.setLinearVelocity(movimiento.x, movimiento.y);
     }
 
+
     public void dispose() {
         animaciones.dispose();
+        golpe.dispose();
     }
 
     public int getVida() {
