@@ -66,7 +66,7 @@ public class EntradasJugador implements InputProcessor {
     }
 
     public boolean isCorrer() {
-        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT); // o el que uses
+        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
     }
 
     @Override public boolean keyTyped(char character) { return false; }
