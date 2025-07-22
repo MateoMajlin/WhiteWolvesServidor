@@ -16,7 +16,7 @@ public class PantallaTutorial implements Screen {
     Imagen fondo,mashoop;
     SpriteBatch b;
 
-    String textosOpc[] = {"Controles","Inventario","Cofres","Objetivo"};
+    String textosOpc[] = {"Controles","Inventario","Cofres","Salir"};
     Texto opciones[] = new Texto[textosOpc.length];
 
     Entradas entradas = new Entradas(this);
@@ -93,8 +93,8 @@ public class PantallaTutorial implements Screen {
     }
 
     private void ejecutarOpcion() {
-        Recursos.musica.stop();
-        Recursos.musica.dispose();
+//        Recursos.musica.stop();
+//        Recursos.musica.dispose();
         switch (opc) {
             case 1:
                 Render.app.setScreen(new Menu());

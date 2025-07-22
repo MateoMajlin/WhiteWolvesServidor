@@ -11,6 +11,9 @@ Los personajes evolucionan durante la partida, tanto por conseguir equipamiento 
 ## Estado del Proyecto
 - Primer prototipo inicial jugable disponible.
 
+## Video Demostrativo del Estado del Proyecto
+**🎥 [Video Demostrativo](https://drive.google.com/drive/u/0/folders/1aOZ72o8ATTjYeJRpDBf5xjaSv_qImf3U)**
+
 ### Caracterisiticas Implementadas
 
 - Pantalla de inicio donde seleccionar iniciar partida, opciones o creditos.

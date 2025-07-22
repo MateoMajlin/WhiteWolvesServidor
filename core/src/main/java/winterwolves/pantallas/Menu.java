@@ -81,10 +81,10 @@ public class Menu implements Screen {
     }
 
     private void ejecutarOpcion() {
-        Recursos.musica.stop();
-        Recursos.musica.dispose();
         switch (opc) {
             case 1:
+                Recursos.musica.stop();
+                Recursos.musica.dispose();
                 Render.app.setScreen(new TerrenoPractica());
                 break;
             case 4:

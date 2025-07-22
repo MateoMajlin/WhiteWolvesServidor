@@ -6,7 +6,7 @@ import com.badlogic.gdx.audio.Music;
 public class Recursos {
 
     public static final String LOGO = "logoCarga.png";
-    public static final String FONDO = "pearto.png";
+    public static final String FONDO = "fondo.png";
     public static final String FUENTEMENU = "fuentes/fuenteMenu.ttf";
     public static final String FONDOTUTO = "fondoTutorial.png";
     public static final String MASHOOP = "mashoop.png";
