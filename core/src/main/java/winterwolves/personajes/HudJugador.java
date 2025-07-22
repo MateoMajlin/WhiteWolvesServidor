@@ -15,6 +15,7 @@ public class HudJugador {
     private Jugador jugador;
     private ShapeRenderer shapeRenderer;
     private Texto textoVida;
+    private Texto salir;
     private OrthographicCamera camera;
 
     public HudJugador(Jugador jugador, OrthographicCamera camera) {
@@ -24,6 +25,7 @@ public class HudJugador {
         shapeRenderer = new ShapeRenderer();
 
         textoVida = new Texto(Recursos.FUENTEMENU, 18, Color.WHITE, true);
+        salir = new Texto(Recursos.FUENTEMENU, 25, Color.WHITE, true);
     }
 
     public void render(SpriteBatch batch) {
@@ -49,6 +51,10 @@ public class HudJugador {
         textoVida.setTexto("Vida: " + (int) vidaActual);
         textoVida.setPosition(25, camera.viewportHeight - 25);
         textoVida.dibujar();
+        salir.setTexto("Presione ESC para volver al menu");
+        salir.setColor(Color.BLACK);
+        salir.setPosition(25, camera.viewportHeight - 50);
+        salir.dibujar();
         batch.end();
     }
 

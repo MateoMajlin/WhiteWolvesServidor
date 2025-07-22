@@ -3,6 +3,7 @@ package winterwolves.pantallas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -10,6 +11,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
+import com.badlogic.gdx.utils.Array;
+import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
 import winterwolves.personajes.Jugador;
 import winterwolves.props.Caja;
@@ -32,17 +35,30 @@ public class TerrenoPractica implements Screen {
     private Jugador jugador;
     private HudJugador hud;
     private OrthographicCamera camaraHud;
-    private Caja caja;
+    private Array<Caja> cajas;
 
     private final float PPM = 100f; // esto sirve para escalar los pixeles con los metros que es la unidad de medida que usa box2D
 
+    int contCajasDestruidas = 0;
+    int totalCajas;
+    Texto ganaste;
+
     @Override
     public void show() {
-
         setearMusica();
 
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
+
+        int mapWidth = mapa.getProperties().get("width", Integer.class)
+            * mapa.getProperties().get("tilewidth", Integer.class);
+
+        int mapHeight = mapa.getProperties().get("height", Integer.class)
+            * mapa.getProperties().get("tileheight", Integer.class);
+
+        float centroMapaX = mapWidth / 2f;
+        float centroMapaY = mapHeight / 2f;
+
 
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
@@ -57,7 +73,6 @@ public class TerrenoPractica implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         EntradasJugador entradas = new EntradasJugador();
-
         jugador = new Jugador(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         camaraHud = new OrthographicCamera();
@@ -67,10 +82,22 @@ public class TerrenoPractica implements Screen {
 
         hud = new HudJugador(jugador, camaraHud);
 
-        caja = new Caja(world, 500 / PPM, 500 / PPM, PPM);
+        cajas = new Array<>();
+        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM));
+        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM));
+        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM));
+        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM));
+
+        totalCajas = cajas.size;
 
         Gdx.input.setInputProcessor(entradas);
+
+        ganaste = new Texto(Recursos.FUENTEMENU,150, Color.BLACK,true);
+        ganaste.setTexto("Ganaste");
+        ganaste.setPosition(centroMapaX - ganaste.getAncho()/2f,
+            centroMapaY + ganaste.getAlto()/2f);
     }
+
 
     @Override
     public void render(float delta) {
@@ -78,9 +105,15 @@ public class TerrenoPractica implements Screen {
 
         world.step(delta, 6, 2);
 
-        if (caja.isMarcadaParaDestruir()) {
-            caja.eliminarDelMundo();
+        for (int i = cajas.size - 1; i >= 0; i--) {
+            Caja c = cajas.get(i);
+            if (c.isMarcadaParaDestruir()) {
+                contCajasDestruidas++;
+                c.eliminarDelMundo();
+                cajas.removeIndex(i);
+            }
         }
+
 
         camara.position.set(jugador.getX() + jugador.getWidth() / 2, jugador.getY() + jugador.getHeight() / 2, 0);
         camara.viewportHeight = 550;
@@ -93,14 +126,31 @@ public class TerrenoPractica implements Screen {
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         jugador.draw(Render.batch);
-        caja.draw(Render.batch);
+
+        for (Caja c : cajas) {
+            c.draw(Render.batch);
+        }
+
+        if (contCajasDestruidas == totalCajas) {
+            ganaste.dibujar();
+        }
+
         Render.batch.end();
 
         renderer.render(capasDelanteras);
-
         hud.render(Render.batch);
 
         debugRenderer.render(world, camara.combined.cpy().scl(1 / PPM));
+
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+            Render.app.setScreen(new Menu());
+            musica.stop();
+            Recursos.musica.play();
+            Recursos.musica.setVolume(0.3f);
+            Recursos.musica.setLooping(true);
+            dispose();
+        }
+
     }
 
 
@@ -127,6 +177,9 @@ public class TerrenoPractica implements Screen {
         jugador.dispose();
         world.dispose();
         debugRenderer.dispose();
+        for (Caja c : cajas) {
+            c.dispose();
+        }
     }
 
     private void setearMusica() {
@@ -135,7 +188,5 @@ public class TerrenoPractica implements Screen {
         musica.setVolume(0.2f);
     }
 
-    public Jugador getJugador(){
-        return jugador;
-    }
+    public Jugador getJugador(){ return jugador; }
 }

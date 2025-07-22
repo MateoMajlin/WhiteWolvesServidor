@@ -14,7 +14,7 @@ public class Caja extends Sprite {
     private boolean marcadaParaDestruir = false;
 
     public Caja(World world, float x, float y, float ppm) {
-        super(new Texture("caja.png"));
+        super(new Texture("caja.png")); // ⚠ Cada caja crea su propia textura
         this.ppm = ppm;
 
         setSize(32, 32);
@@ -49,7 +49,6 @@ public class Caja extends Sprite {
         super.draw(batch);
     }
 
-
     public void destruir() {
         marcadaParaDestruir = true;
     }
@@ -66,8 +65,14 @@ public class Caja extends Sprite {
         activa = false;
     }
 
-
     public Body getBody() {
         return body;
+    }
+
+    // ✅ IMPORTANTE: Liberar la textura cuando no se use más
+    public void dispose() {
+        if (getTexture() != null) {
+            getTexture().dispose();
+        }
     }
 }

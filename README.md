@@ -9,13 +9,23 @@ El juego *White Wolves* consiste en batallas 2v2 en las que 4 personajes se enfr
 Los personajes evolucionan durante la partida, tanto por conseguir equipamiento nuevo como por obtener nuevas habilidades a medida que pasa el tiempo.
 
 ## Estado del Proyecto
-- Configuración inicial terminada.
+- Primer prototipo inicial jugable disponible.
+
+### Caracterisiticas Implementadas
+
+- Pantalla de inicio donde seleccionar iniciar partida, opciones o creditos.
+- Entorno jugable con colisiones con el mapa.
+- Personaje jugable con animacion y sistema para atacar.
+- Cajas que el personaje puede destruir golpeandolas.
+- Uso de Box2D para gestion de colisiones.
+- Uso de mapa Tiled para cargar graficos de fondo, paredes y props estaticos.
 
 ## Tecnologías Utilizadas y Plataforma Objetivo
 
 - **LibGDX:** Principal motor gráfico.
 - **IntelliJ:** Plataforma principal de desarrollo.
 - **Java:** Lenguaje de Programacion
+- **Box 2D:** Biblioteca de Fisica para gestion de colisiones.
 - Escritorio (PC/Laptop)
 
 ## Cómo Compilar y Ejecutar el Juego
