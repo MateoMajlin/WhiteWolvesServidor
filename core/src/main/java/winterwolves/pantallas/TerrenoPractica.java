@@ -14,17 +14,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
-import winterwolves.personajes.Jugador;
+import winterwolves.personajes.Guerrero;
+import winterwolves.personajes.HudGuerrero;
 import winterwolves.props.Caja;
 import winterwolves.utilidades.*;
-import winterwolves.personajes.HudJugador;
 
 public class TerrenoPractica implements Screen {
 
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camara;       // cámara para sprites (pixeles)
-    private OrthographicCamera camaraBox2D;  // cámara para Box2D (metros)
+    private OrthographicCamera camara;
+    private OrthographicCamera camaraBox2D;
     private Music musica = Recursos.musicaBatalla;
 
     int[] capasFondo = {0, 1};
@@ -33,8 +33,8 @@ public class TerrenoPractica implements Screen {
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
-    private Jugador jugador;
-    private HudJugador hud;
+    private Guerrero guerrero;
+    private HudGuerrero hud;
     private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
 
@@ -82,14 +82,14 @@ public class TerrenoPractica implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         EntradasJugador entradas = new EntradasJugador();
-        jugador = new Jugador(world, entradas, 450 / PPM, 450 / PPM, PPM);
+        guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         camaraHud = new OrthographicCamera();
         camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
 
-        hud = new HudJugador(jugador, camaraHud);
+        hud = new HudGuerrero(guerrero, camaraHud);
 
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM));
@@ -122,8 +122,8 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Cámara de sprites sigue al jugador
-        camara.position.set(jugador.getX() + jugador.getWidth() / 2, jugador.getY() + jugador.getHeight() / 2, 0);
+        // Cámara de sprites sigue al guerrero
+        camara.position.set(guerrero.getX() + guerrero.getWidth() / 2, guerrero.getY() + guerrero.getHeight() / 2, 0);
         camara.viewportHeight = 550;
         camara.viewportWidth = 550;
         camara.update();
@@ -137,7 +137,7 @@ public class TerrenoPractica implements Screen {
 
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
-        jugador.draw(Render.batch);
+        guerrero.draw(Render.batch);
 
         for (Caja c : cajas) {
             c.draw(Render.batch);
@@ -184,7 +184,7 @@ public class TerrenoPractica implements Screen {
     public void dispose() {
         mapa.dispose();
         renderer.dispose();
-        jugador.dispose();
+        guerrero.dispose();
         world.dispose();
         debugRenderer.dispose();
         for (Caja c : cajas) {
@@ -198,7 +198,7 @@ public class TerrenoPractica implements Screen {
         musica.setVolume(0.2f);
     }
 
-    public Jugador getJugador() {
-        return jugador;
+    public Guerrero getGuerrero() {
+        return guerrero;
     }
 }

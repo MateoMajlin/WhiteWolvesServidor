@@ -46,11 +46,7 @@ public class GolpeEspada {
 
         hoja = new Texture(Gdx.files.internal("espadaAnimacion.png"));
 
-        TextureRegion[][] tmp = TextureRegion.split(hoja,
-            hoja.getWidth() / 8,
-            hoja.getHeight()
-        );
-
+        TextureRegion[][] tmp = TextureRegion.split(hoja, hoja.getWidth()/8, hoja.getHeight());
         TextureRegion[] frames = new TextureRegion[8];
         for (int i = 0; i < 8; i++) frames[i] = tmp[0][i];
 
@@ -59,7 +55,7 @@ public class GolpeEspada {
         stateTime = 0;
         activo = false;
 
-        // Configuraciones por defecto (pueden ajustarse manualmente)
+        // Configuraciones por defecto
         hitboxes.put(Direccion.RIGHT, new HitboxConfig(30, 40, 30, 15, 0));
         hitboxes.put(Direccion.LEFT, new HitboxConfig(30, 40, 0, 15, 0));
         hitboxes.put(Direccion.UP, new HitboxConfig(50, 25, 15, 30, 0));
@@ -79,12 +75,12 @@ public class GolpeEspada {
 
             BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.DynamicBody;
-            bodyDef.position.set(x / ppm, y / ppm);
+            bodyDef.position.set(x/ppm, y/ppm);
             body = world.createBody(bodyDef);
 
             PolygonShape shape = new PolygonShape();
-            Vector2 offset = new Vector2(cfg.offsetX / ppm, cfg.offsetY / ppm);
-            shape.setAsBox(cfg.ancho / 2 / ppm, cfg.alto / 2 / ppm, offset, (float)Math.toRadians(cfg.angleDeg));
+            Vector2 offset = new Vector2(cfg.offsetX/ppm, cfg.offsetY/ppm);
+            shape.setAsBox(cfg.ancho/2/ppm, cfg.alto/2/ppm, offset, (float)Math.toRadians(cfg.angleDeg));
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
@@ -99,7 +95,7 @@ public class GolpeEspada {
     public void update(float delta, float x, float y) {
         if (activo) {
             stateTime += delta;
-            if (body != null) body.setTransform(x / ppm, y / ppm, 0);
+            if (body != null) body.setTransform(x/ppm, y/ppm, 0);
             if (animacion.isAnimationFinished(stateTime)) {
                 activo = false;
                 if (body != null) {

@@ -8,16 +8,16 @@ import winterwolves.elementos.Texto;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 
-public class HudJugador {
+public class HudGuerrero {
 
-    private Jugador jugador;
+    private Guerrero guerrero;
     private ShapeRenderer shapeRenderer;
     private Texto textoVida;
     private Texto salir;
     private OrthographicCamera camera;
 
-    public HudJugador(Jugador jugador, OrthographicCamera camera) {
-        this.jugador = jugador;
+    public HudGuerrero(Guerrero guerrero, OrthographicCamera camera) {
+        this.guerrero = guerrero;
         this.camera = camera;
 
         shapeRenderer = new ShapeRenderer();
@@ -35,7 +35,7 @@ public class HudJugador {
 
         // --- Barra de vida ---
         float vidaMax = 100f;
-        float vidaActual = jugador.getVida();
+        float vidaActual = guerrero.getVida();
         float porcentajeVida = vidaActual / vidaMax;
         float anchoVida = anchoBarra * porcentajeVida;
         float xVida = camera.viewportWidth - margen - anchoBarra;
@@ -48,9 +48,9 @@ public class HudJugador {
         shapeRenderer.rect(xVida, yVida, anchoVida, altoBarra);
         shapeRenderer.end();
 
-
-        float tiempoTranscurridoAtaque = jugador.getTiempoDesdeUltimoGolpe();
-        float porcentajeCooldownAtaque = Math.min(tiempoTranscurridoAtaque / jugador.COOLDOWN_GOLPE, 1f);
+        // --- Barra de cooldown de ataque ---
+        float tiempoTranscurridoAtaque = guerrero.getTiempoDesdeUltimoGolpe();
+        float porcentajeCooldownAtaque = Math.min(tiempoTranscurridoAtaque / guerrero.COOLDOWN_GOLPE, 1f);
         float anchoCooldownAtaque = anchoBarra * porcentajeCooldownAtaque;
         float yCooldownAtaque = yVida - 15;
 
@@ -61,9 +61,9 @@ public class HudJugador {
         shapeRenderer.rect(xVida, yCooldownAtaque, anchoCooldownAtaque, 10);
         shapeRenderer.end();
 
-
-        float tiempoTranscurridoDash = jugador.getTiempoDesdeUltimoDash();
-        float porcentajeCooldownDash = Math.min(tiempoTranscurridoDash / jugador.COOLDOWN_DASH, 1f);
+        // --- Barra de cooldown de dash ---
+        float tiempoTranscurridoDash = guerrero.getTiempoDesdeUltimoDash();
+        float porcentajeCooldownDash = Math.min(tiempoTranscurridoDash / guerrero.COOLDOWN_DASH, 1f);
         float anchoCooldownDash = anchoBarra * porcentajeCooldownDash;
         float yCooldownDash = yCooldownAtaque - 15;
 
@@ -74,6 +74,7 @@ public class HudJugador {
         shapeRenderer.rect(xVida, yCooldownDash, anchoCooldownDash, 10);
         shapeRenderer.end();
 
+        // --- Texto ---
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         textoVida.setTexto("Vida: " + (int) vidaActual);
