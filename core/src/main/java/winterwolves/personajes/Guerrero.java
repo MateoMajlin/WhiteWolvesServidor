@@ -6,7 +6,7 @@ import winterwolves.io.EntradasJugador;
 
 public class Guerrero extends Personaje {
 
-    private GolpeEspada golpe;
+    protected GolpeEspada golpe;
 
     public final float COOLDOWN_GOLPE = 1f;
     private float tiempoDesdeUltimoGolpe = 0f;
@@ -29,9 +29,16 @@ public class Guerrero extends Personaje {
 
         GolpeEspada.Direccion dir = vectorADireccion(direccionMirando);
 
+        // Activar ataque
         if (entradas.isAtacar() && !golpe.isActivo() && tiempoDesdeUltimoGolpe >= COOLDOWN_GOLPE) {
             golpe.activar(espadaX, espadaY, dir);
             tiempoDesdeUltimoGolpe = 0f;
+            setPuedeMoverse(false); // bloquear movimiento al atacar
+        }
+
+        // Si el golpe ya terminó, desbloquear movimiento
+        if (!golpe.isActivo()) {
+            setPuedeMoverse(true);
         }
 
         golpe.update(delta, espadaX, espadaY);

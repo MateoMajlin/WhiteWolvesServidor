@@ -56,14 +56,14 @@ public class GolpeEspada {
         activo = false;
 
         // Configuraciones por defecto
-        hitboxes.put(Direccion.RIGHT, new HitboxConfig(30, 40, 30, 15, 0));
-        hitboxes.put(Direccion.LEFT, new HitboxConfig(30, 40, 0, 15, 0));
-        hitboxes.put(Direccion.UP, new HitboxConfig(50, 25, 15, 30, 0));
-        hitboxes.put(Direccion.DOWN, new HitboxConfig(50, 25, 15, 0, 0));
-        hitboxes.put(Direccion.UP_RIGHT, new HitboxConfig(25, 50, 26, 26, 45));
-        hitboxes.put(Direccion.UP_LEFT, new HitboxConfig(25, 50, 0, 26, -45));
-        hitboxes.put(Direccion.DOWN_RIGHT, new HitboxConfig(25, 50, 26, 5, -45));
-        hitboxes.put(Direccion.DOWN_LEFT, new HitboxConfig(25, 50, -5, 5, 45));
+        hitboxes.put(Direccion.RIGHT, new HitboxConfig(20, 35, 20, 15, 0));
+        hitboxes.put(Direccion.LEFT, new HitboxConfig(20, 35, 10, 15, 0));
+        hitboxes.put(Direccion.UP, new HitboxConfig(35, 20, 15, 20, 0));
+        hitboxes.put(Direccion.DOWN, new HitboxConfig(35, 20, 15, 10, 0));
+        hitboxes.put(Direccion.UP_RIGHT, new HitboxConfig(20, 35, 20, 20, 45));
+        hitboxes.put(Direccion.UP_LEFT, new HitboxConfig(20, 35, 10, 20, -45));
+        hitboxes.put(Direccion.DOWN_RIGHT, new HitboxConfig(20, 35, 20, 10, -45));
+        hitboxes.put(Direccion.DOWN_LEFT, new HitboxConfig(20, 35, 10, 10, 45));
     }
 
     public void activar(float x, float y, Direccion dir) {

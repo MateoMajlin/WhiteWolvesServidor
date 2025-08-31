@@ -30,6 +30,9 @@ public class Personaje extends Sprite {
     protected float tiempoDash = 0f;
     protected float velocidadDash = 10f;
 
+    // Control de movimiento
+    protected boolean puedeMoverse = true;
+
     public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super();
         this.entradas = entradas;
@@ -37,22 +40,24 @@ public class Personaje extends Sprite {
 
         animaciones = new AnimacionJugador();
 
-        setSize(30, 30);
-
         // Crear cuerpo del personaje
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
         body = world.createBody(bodyDef);
 
+        setSize(30, 30);
+
+        float margen = 0.7f; // 70% del sprite
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(getWidth() / 2 / ppm, getHeight() / 2 / ppm);
+        shape.setAsBox(getWidth()/2f * margen / ppm, getHeight()/2f * margen / ppm);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
         fixtureDef.friction = 0.2f;
         fixtureDef.restitution = 0f;
+
         body.createFixture(fixtureDef);
         shape.dispose();
     }
@@ -72,6 +77,11 @@ public class Personaje extends Sprite {
     }
 
     protected void mover() {
+        if (!puedeMoverse) {
+            body.setLinearVelocity(0, 0);
+            return;
+        }
+
         float delta = Gdx.graphics.getDeltaTime();
 
         if (dashActivo) {
@@ -126,6 +136,8 @@ public class Personaje extends Sprite {
 
     public float getTiempoDesdeUltimoDash() { return tiempoDesdeUltimoDash; }
     public int getVida() { return vida; }
+
+    public void setPuedeMoverse(boolean valor) { this.puedeMoverse = valor; }
 
     public void dispose() { animaciones.dispose(); }
 }
