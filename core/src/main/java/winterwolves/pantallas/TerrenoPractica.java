@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
@@ -23,21 +23,22 @@ public class TerrenoPractica implements Screen {
 
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camara;
+    private OrthographicCamera camara;       // cámara para sprites (pixeles)
+    private OrthographicCamera camaraBox2D;  // cámara para Box2D (metros)
     private Music musica = Recursos.musicaBatalla;
 
     int[] capasFondo = {0, 1};
     int[] capasDelanteras = {3};
 
     private World world;
-    private Box2DDebugRenderer debugRenderer; //no se como usarlo pero no pero nada poniendolo
+    private Box2DDebugRenderer debugRenderer;
 
     private Jugador jugador;
     private HudJugador hud;
     private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
 
-    private final float PPM = 100f; // esto sirve para escalar los pixeles con los metros que es la unidad de medida que usa box2D
+    private final float PPM = 100f;
 
     int contCajasDestruidas = 0;
     int totalCajas;
@@ -59,17 +60,25 @@ public class TerrenoPractica implements Screen {
         float centroMapaX = mapWidth / 2f;
         float centroMapaY = mapHeight / 2f;
 
-
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
+        // Cámara para sprites (pixeles)
         camara = new OrthographicCamera();
         camara.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camara.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camara.update();
 
-        world = new World(new com.badlogic.gdx.math.Vector2(0, 0), true);
+        // Cámara para Box2D (metros)
+        camaraBox2D = new OrthographicCamera();
+        camaraBox2D.setToOrtho(false, Config.WIDTH / PPM, Config.HEIGTH / PPM);
+        camaraBox2D.position.set((Config.WIDTH / 2f) / PPM, (Config.HEIGTH / 2f) / PPM, 0);
+        camaraBox2D.update();
+
+        // Mundo Box2D
+        world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM);
+
         debugRenderer = new Box2DDebugRenderer();
 
         EntradasJugador entradas = new EntradasJugador();
@@ -92,12 +101,11 @@ public class TerrenoPractica implements Screen {
 
         Gdx.input.setInputProcessor(entradas);
 
-        ganaste = new Texto(Recursos.FUENTEMENU,150, Color.BLACK,true);
+        ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
         ganaste.setTexto("Ganaste");
-        ganaste.setPosition(centroMapaX - ganaste.getAncho()/2f,
-            centroMapaY + ganaste.getAlto()/2f);
+        ganaste.setPosition(centroMapaX - ganaste.getAncho() / 2f,
+            centroMapaY + ganaste.getAlto() / 2f);
     }
-
 
     @Override
     public void render(float delta) {
@@ -114,11 +122,15 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-
+        // Cámara de sprites sigue al jugador
         camara.position.set(jugador.getX() + jugador.getWidth() / 2, jugador.getY() + jugador.getHeight() / 2, 0);
         camara.viewportHeight = 550;
         camara.viewportWidth = 550;
         camara.update();
+
+        // Cámara Box2D sigue la misma posición (en metros)
+        camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
+        camaraBox2D.update();
 
         renderer.setView(camara);
         renderer.render(capasFondo);
@@ -140,7 +152,8 @@ public class TerrenoPractica implements Screen {
         renderer.render(capasDelanteras);
         hud.render(Render.batch);
 
-        debugRenderer.render(world, camara.combined.cpy().scl(1 / PPM));
+        // 🔥 Dibujar las hitbox Box2D
+        debugRenderer.render(world, camaraBox2D.combined);
 
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
             Render.app.setScreen(new Menu());
@@ -150,25 +163,22 @@ public class TerrenoPractica implements Screen {
             Recursos.musica.setLooping(true);
             dispose();
         }
-
     }
-
 
     @Override
     public void resize(int width, int height) {
         camara.viewportWidth = width;
         camara.viewportHeight = height;
         camara.update();
+
+        camaraBox2D.viewportWidth = width / PPM;
+        camaraBox2D.viewportHeight = height / PPM;
+        camaraBox2D.update();
     }
 
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 
     @Override
     public void dispose() {
@@ -188,5 +198,7 @@ public class TerrenoPractica implements Screen {
         musica.setVolume(0.2f);
     }
 
-    public Jugador getJugador(){ return jugador; }
+    public Jugador getJugador() {
+        return jugador;
+    }
 }

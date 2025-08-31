@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import winterwolves.pantallas.Menu;
 import winterwolves.pantallas.PantallaCarga;
+import winterwolves.pantallas.TerrenoPractica;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
@@ -23,7 +24,7 @@ public class Principal extends Game {
         Render.app = this;
         Render.batch = new SpriteBatch();
         setearMusica();
-        this.setScreen(new Menu());
+        this.setScreen(new TerrenoPractica());
     }
 
     @Override

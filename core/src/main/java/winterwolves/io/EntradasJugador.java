@@ -6,7 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 
 public class EntradasJugador implements InputProcessor {
 
-    private boolean arriba, abajo, izquierda, derecha,control;
+    private boolean arriba, abajo, izquierda, derecha, control;
 
     public boolean isArriba() {
         return arriba;
@@ -23,7 +23,13 @@ public class EntradasJugador implements InputProcessor {
     public boolean isDerecha() {
         return derecha;
     }
+
     public boolean isControl() {
+        return control;
+    }
+
+    // --- Dash ---
+    public boolean isDash() {
         return control;
     }
 
@@ -41,6 +47,9 @@ public class EntradasJugador implements InputProcessor {
                 break;
             case Input.Keys.RIGHT:
                 derecha = true;
+                break;
+            case Input.Keys.CONTROL_LEFT:
+                control = true;
                 break;
         }
         return true;
@@ -61,6 +70,9 @@ public class EntradasJugador implements InputProcessor {
             case Input.Keys.RIGHT:
                 derecha = false;
                 break;
+            case Input.Keys.CONTROL_LEFT:
+                control = false;
+                break;
         }
         return true;
     }
@@ -73,7 +85,6 @@ public class EntradasJugador implements InputProcessor {
         return Gdx.input.isKeyPressed(Input.Keys.SPACE);
     }
 
-
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
@@ -81,5 +92,4 @@ public class EntradasJugador implements InputProcessor {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
-
 }
