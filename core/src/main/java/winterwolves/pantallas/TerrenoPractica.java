@@ -88,6 +88,7 @@ public class TerrenoPractica implements Screen {
         // Entradas y jugador
         EntradasJugador entradas = new EntradasJugador();
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
+        guerrero.setVida(50); // ahora el guerrero tiene 50 de vida
 
         // HUD
         camaraHud = new OrthographicCamera();

@@ -68,11 +68,12 @@ public class Personaje extends Sprite {
         tiempoDesdeUltimoDash += delta;
 
         mover();
+        procesarHabilidades();
 
         Vector2 pos = body.getPosition();
         setPosition(pos.x * ppm - getWidth() / 2, pos.y * ppm - getHeight() / 2);
 
-        TextureRegion frame = animaciones.getFrame(movimiento, delta);
+        TextureRegion frame = animaciones.getFrame(movimiento, direccionMirando, speed, speedBase, delta);
         batch.draw(frame, getX(), getY(), getWidth(), getHeight());
     }
 
@@ -96,7 +97,7 @@ public class Personaje extends Sprite {
             return;
         }
 
-        // --- Activar dash ---
+        // Activar dash
         if (entradas.isDash() && tiempoDesdeUltimoDash >= COOLDOWN_DASH) {
             dashActivo = true;
             tiempoDesdeUltimoDash = 0f;
@@ -118,26 +119,26 @@ public class Personaje extends Sprite {
 
         movimiento.nor().scl(speed);
         body.setLinearVelocity(movimiento.x, movimiento.y);
+
     }
 
-    protected GolpeEspada.Direccion vectorADireccion(Vector2 dir) {
-        float x = dir.x;
-        float y = dir.y;
-
-        if (x >= 0.5f && y >= 0.5f) return GolpeEspada.Direccion.UP_RIGHT;
-        if (x <= -0.5f && y >= 0.5f) return GolpeEspada.Direccion.UP_LEFT;
-        if (x >= 0.5f && y <= -0.5f) return GolpeEspada.Direccion.DOWN_RIGHT;
-        if (x <= -0.5f && y <= -0.5f) return GolpeEspada.Direccion.DOWN_LEFT;
-        if (x > 0.5f) return GolpeEspada.Direccion.RIGHT;
-        if (x < -0.5f) return GolpeEspada.Direccion.LEFT;
-        if (y > 0.5f) return GolpeEspada.Direccion.UP;
-        return GolpeEspada.Direccion.DOWN;
+    protected void procesarHabilidades() {
+        if (entradas.isGolpeBasico()) usarHabilidadBasica();
+        if (entradas.isHabilidad1()) usarHabilidadEspecial();
+        if (entradas.isHabilidad2()) usarUltimate();
     }
+
+    // === Métodos a sobrescribir en hijos ===
+    public void usarHabilidadBasica() {}
+    public void usarHabilidadEspecial() {}
+    public void usarUltimate() {}
 
     public float getTiempoDesdeUltimoDash() { return tiempoDesdeUltimoDash; }
     public int getVida() { return vida; }
-
     public void setPuedeMoverse(boolean valor) { this.puedeMoverse = valor; }
-
+    public void setVida(int nuevaVida) {
+        vida = Math.min(nuevaVida, 100); // para no exceder el máximo
+        if (vida < 0) vida = 0;
+    }
     public void dispose() { animaciones.dispose(); }
 }

@@ -1,4 +1,4 @@
-package winterwolves.personajes;
+package winterwolves.personajes.habilidadesGuerrero;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -7,26 +7,21 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class GolpeEspada {
-
-    public enum Direccion {
-        UP, DOWN, LEFT, RIGHT,
-        UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
-    }
+public class GolpeEspada extends GolpeArma {
 
     private Animation<TextureRegion> animacion;
     private float stateTime;
-    private boolean activo;
+    protected boolean activo;
     private Texture hoja;
 
     private World world;
     private Body body;
     private float ppm;
 
-    // Configuración por dirección
     private static class HitboxConfig {
         float ancho, alto, offsetX, offsetY, angleDeg;
         HitboxConfig(float ancho, float alto, float offsetX, float offsetY, float angleDeg) {
@@ -45,7 +40,6 @@ public class GolpeEspada {
         this.ppm = ppm;
 
         hoja = new Texture(Gdx.files.internal("espadaAnimacion.png"));
-
         TextureRegion[][] tmp = TextureRegion.split(hoja, hoja.getWidth()/8, hoja.getHeight());
         TextureRegion[] frames = new TextureRegion[8];
         for (int i = 0; i < 8; i++) frames[i] = tmp[0][i];
@@ -55,7 +49,7 @@ public class GolpeEspada {
         stateTime = 0;
         activo = false;
 
-        // Configuraciones por defecto
+        // Configuración por dirección
         hitboxes.put(Direccion.RIGHT, new HitboxConfig(20, 35, 20, 15, 0));
         hitboxes.put(Direccion.LEFT, new HitboxConfig(20, 35, 10, 15, 0));
         hitboxes.put(Direccion.UP, new HitboxConfig(35, 20, 15, 20, 0));
@@ -66,10 +60,12 @@ public class GolpeEspada {
         hitboxes.put(Direccion.DOWN_LEFT, new HitboxConfig(20, 35, 10, 10, 45));
     }
 
+    @Override
     public void activar(float x, float y, Direccion dir) {
         if (!activo) {
             activo = true;
             stateTime = 0;
+            tiempoDesdeUltimoGolpe = 0f;
 
             HitboxConfig cfg = hitboxes.get(dir);
 
@@ -92,7 +88,9 @@ public class GolpeEspada {
         }
     }
 
+    @Override
     public void update(float delta, float x, float y) {
+        tiempoDesdeUltimoGolpe += delta;
         if (activo) {
             stateTime += delta;
             if (body != null) body.setTransform(x/ppm, y/ppm, 0);
@@ -106,6 +104,7 @@ public class GolpeEspada {
         }
     }
 
+    @Override
     public void draw(Batch batch, float x, float y, float width, float height, float angle) {
         if (activo) {
             TextureRegion frame = animacion.getKeyFrame(stateTime);
@@ -113,10 +112,13 @@ public class GolpeEspada {
         }
     }
 
-    public boolean isActivo() { return activo; }
-    public void dispose() { hoja.dispose(); }
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
 
-    public void setHitbox(Direccion dir, float ancho, float alto, float offsetX, float offsetY, float angleDeg) {
-        hitboxes.put(dir, new HitboxConfig(ancho, alto, offsetX, offsetY, angleDeg));
+    @Override
+    public void dispose() {
+        hoja.dispose();
     }
 }

@@ -24,10 +24,6 @@ public class EntradasJugador implements InputProcessor {
         return derecha;
     }
 
-    public boolean isControl() {
-        return control;
-    }
-
     // --- Dash ---
     public boolean isDash() {
         return control;
@@ -81,8 +77,16 @@ public class EntradasJugador implements InputProcessor {
         return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
     }
 
-    public boolean isAtacar() {
-        return Gdx.input.isKeyPressed(Input.Keys.SPACE);
+    public boolean isGolpeBasico() {
+        return Gdx.input.isKeyPressed(Input.Keys.H);
+    }
+
+    public boolean isHabilidad1() {
+        return Gdx.input.isKeyPressed(Input.Keys.J);
+    }
+
+    public boolean isHabilidad2() {
+        return Gdx.input.isKeyPressed(Input.Keys.K);
     }
 
     @Override public boolean keyTyped(char character) { return false; }
