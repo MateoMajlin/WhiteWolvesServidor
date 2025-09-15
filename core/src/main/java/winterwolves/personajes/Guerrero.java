@@ -3,18 +3,18 @@ package winterwolves.personajes;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
-import winterwolves.personajes.habilidadesGuerrero.GolpeEspada;
+import winterwolves.personajes.habilidadesGuerrero.Espada;
 import winterwolves.personajes.habilidadesGuerrero.HabilidadCuracion;
-import winterwolves.personajes.habilidadesGuerrero.GolpeArma;
+import winterwolves.personajes.habilidadesGuerrero.Arma;
 
 public class Guerrero extends Personaje {
 
-    protected GolpeArma armaBasica;
+    protected Arma armaBasica;
     private HabilidadCuracion habilidad1;
 
     public Guerrero(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super(world, entradas, x, y, ppm);
-        this.armaBasica = new GolpeEspada(world, ppm);
+        this.armaBasica = new Espada(world, ppm);
 
         this.habilidad1 = new HabilidadCuracion(2f, 10f, 30);
     }
@@ -23,29 +23,33 @@ public class Guerrero extends Personaje {
     public void draw(Batch batch) {
         float delta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
 
+        // Actualizar habilidad
         habilidad1.actualizar(delta);
-
         setPuedeMoverse(!habilidad1.isActiva());
 
+        // Dibujar personaje base
         super.draw(batch);
 
+        // Calcular posición del arma
         float desplazamiento = getWidth() * 0.6f;
         float armaX = getX() + direccionMirando.x * desplazamiento;
         float armaY = getY() + direccionMirando.y * desplazamiento;
 
-        GolpeArma.Direccion dir = GolpeArma.vectorADireccion(direccionMirando);
+        Arma.Direccion dir = Arma.vectorADireccion(direccionMirando);
 
+        // Manejo de ataque básico
         ataqueBasico(armaX, armaY, dir);
+
+        // Actualizar/dibujar animación de arma
         actualizarYdibujarGolpe(batch, delta, armaX, armaY);
 
-        // --- Dibujar animación de curación ---
+        // Dibujar animación de curación
         habilidad1.dibujar(batch, getX(), getY(), getWidth(), getHeight());
     }
 
     // === Ataque básico ===
-    protected void ataqueBasico(float x, float y, GolpeArma.Direccion dir) {
-        if (entradas.isGolpeBasico() && !armaBasica.isActivo() &&
-            armaBasica.getTiempoDesdeUltimoGolpe() >= armaBasica.getCooldown()) {
+    protected void ataqueBasico(float x, float y, Arma.Direccion dir) {
+        if (entradas.isGolpeBasico() && armaBasica.puedeAtacar() && !armaBasica.isActivo()) {
             armaBasica.activar(x, y, dir);
             setPuedeMoverse(false);
         }
@@ -70,7 +74,7 @@ public class Guerrero extends Personaje {
         }
     }
 
-    public GolpeArma getArma() {
+    public Arma getArma() {
         return armaBasica;
     }
 

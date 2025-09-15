@@ -128,7 +128,6 @@ public class Personaje extends Sprite {
         if (entradas.isHabilidad2()) usarUltimate();
     }
 
-    // === Métodos a sobrescribir en hijos ===
     public void usarHabilidadBasica() {}
     public void usarHabilidadEspecial() {}
     public void usarUltimate() {}

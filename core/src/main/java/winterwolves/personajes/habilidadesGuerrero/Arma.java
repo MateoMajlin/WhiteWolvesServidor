@@ -11,18 +11,26 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GolpeEspada extends GolpeArma {
+public class Arma {
 
-    private Animation<TextureRegion> animacion;
-    private float stateTime;
+    protected float tiempoDesdeUltimoGolpe = 0f;
+    protected float cooldown = 1f;
+
+    protected Animation<TextureRegion> animacion;
+    protected float stateTime;
     protected boolean activo;
-    private Texture hoja;
+    protected Texture hoja;
 
-    private World world;
-    private Body body;
-    private float ppm;
+    protected World world;
+    protected Body body;
+    protected float ppm;
 
-    private static class HitboxConfig {
+    protected float daño;
+
+    protected Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
+
+    // Configuración de hitbox
+    protected static class HitboxConfig {
         float ancho, alto, offsetX, offsetY, angleDeg;
         HitboxConfig(float ancho, float alto, float offsetX, float offsetY, float angleDeg) {
             this.ancho = ancho;
@@ -33,41 +41,22 @@ public class GolpeEspada extends GolpeArma {
         }
     }
 
-    private Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
-
-    public GolpeEspada(World world, float ppm) {
+    public Arma(World world, float ppm) {
         this.world = world;
         this.ppm = ppm;
-
-        hoja = new Texture(Gdx.files.internal("espadaAnimacion.png"));
-        TextureRegion[][] tmp = TextureRegion.split(hoja, hoja.getWidth()/8, hoja.getHeight());
-        TextureRegion[] frames = new TextureRegion[8];
-        for (int i = 0; i < 8; i++) frames[i] = tmp[0][i];
-
-        animacion = new Animation<>(0.05f, frames);
-        animacion.setPlayMode(Animation.PlayMode.NORMAL);
-        stateTime = 0;
-        activo = false;
-
-        // Configuración por dirección
-        hitboxes.put(Direccion.RIGHT, new HitboxConfig(20, 35, 20, 15, 0));
-        hitboxes.put(Direccion.LEFT, new HitboxConfig(20, 35, 10, 15, 0));
-        hitboxes.put(Direccion.UP, new HitboxConfig(35, 20, 15, 20, 0));
-        hitboxes.put(Direccion.DOWN, new HitboxConfig(35, 20, 15, 10, 0));
-        hitboxes.put(Direccion.UP_RIGHT, new HitboxConfig(20, 35, 20, 20, 45));
-        hitboxes.put(Direccion.UP_LEFT, new HitboxConfig(20, 35, 10, 20, -45));
-        hitboxes.put(Direccion.DOWN_RIGHT, new HitboxConfig(20, 35, 20, 10, -45));
-        hitboxes.put(Direccion.DOWN_LEFT, new HitboxConfig(20, 35, 10, 10, 45));
+        this.stateTime = 0;
+        this.activo = false;
     }
 
-    @Override
+    // --- Lógica de uso ---
     public void activar(float x, float y, Direccion dir) {
-        if (!activo) {
+        if (!activo && puedeAtacar()) {
             activo = true;
             stateTime = 0;
             tiempoDesdeUltimoGolpe = 0f;
 
             HitboxConfig cfg = hitboxes.get(dir);
+            if (cfg == null) return;
 
             BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -88,7 +77,6 @@ public class GolpeEspada extends GolpeArma {
         }
     }
 
-    @Override
     public void update(float delta, float x, float y) {
         tiempoDesdeUltimoGolpe += delta;
         if (activo) {
@@ -104,21 +92,54 @@ public class GolpeEspada extends GolpeArma {
         }
     }
 
-    @Override
     public void draw(Batch batch, float x, float y, float width, float height, float angle) {
-        if (activo) {
+        if (activo && animacion != null) {
             TextureRegion frame = animacion.getKeyFrame(stateTime);
             batch.draw(frame, x, y, width/2, height/2, width, height, 1, 1, angle);
         }
     }
 
-    @Override
+    public void dispose() {
+        if (hoja != null) hoja.dispose();
+    }
+
+    // --- Métodos HUD ---
+    public boolean puedeAtacar() {
+        return tiempoDesdeUltimoGolpe >= cooldown;
+    }
+
+    public float getCooldownProgreso() {
+        return Math.min(tiempoDesdeUltimoGolpe / cooldown, 1f);
+    }
+
     public boolean isActivo() {
         return activo;
     }
 
-    @Override
-    public void dispose() {
-        hoja.dispose();
+    // --- Direcciones ---
+    public enum Direccion {
+        UP, DOWN, LEFT, RIGHT,
+        UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
+    }
+
+    public static Direccion vectorADireccion(Vector2 dir) {
+        float angle = (float) Math.toDegrees(Math.atan2(dir.y, dir.x));
+
+        if (angle >= -22.5 && angle < 22.5) return Direccion.RIGHT;
+        if (angle >= 22.5 && angle < 67.5) return Direccion.UP_RIGHT;
+        if (angle >= 67.5 && angle < 112.5) return Direccion.UP;
+        if (angle >= 112.5 && angle < 157.5) return Direccion.UP_LEFT;
+        if (angle >= -67.5 && angle < -22.5) return Direccion.DOWN_RIGHT;
+        if (angle >= -112.5 && angle < -67.5) return Direccion.DOWN;
+        if (angle >= -157.5 && angle < -112.5) return Direccion.DOWN_LEFT;
+        return Direccion.LEFT;
+    }
+
+    public float getDaño() {
+        return daño;
+    }
+
+    public void setDaño(float daño) {
+        this.daño = daño;
     }
 }

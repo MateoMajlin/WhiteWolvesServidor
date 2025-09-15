@@ -23,7 +23,7 @@ public class Principal extends Game {
     public void create() {
         Render.app = this;
         Render.batch = new SpriteBatch();
-        setearMusica();
+        // setearMusica();
         this.setScreen(new TerrenoPractica());
     }
 

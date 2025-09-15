@@ -46,7 +46,7 @@ public class TerrenoPractica implements Screen {
 
     @Override
     public void show() {
-        setearMusica();
+        // setearMusica();
 
         // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
@@ -99,10 +99,10 @@ public class TerrenoPractica implements Screen {
 
         // Cajas
         cajas = new Array<>();
-        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM));
-        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM));
-        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM));
-        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM));
+        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
+        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM,100));
+        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM,125));
+        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM,60));
         totalCajas = cajas.size;
 
         Gdx.input.setInputProcessor(entradas);

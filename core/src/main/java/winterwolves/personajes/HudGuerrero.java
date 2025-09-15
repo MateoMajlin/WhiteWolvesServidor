@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import winterwolves.elementos.Texto;
-import winterwolves.personajes.habilidadesGuerrero.GolpeArma;
+import winterwolves.personajes.habilidadesGuerrero.Arma;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 
@@ -60,9 +60,8 @@ public class HudGuerrero {
     }
 
     private float dibujarBarraCooldownAtaque(float x, float y) {
-        GolpeArma arma = guerrero.getArma();
-        float tiempo = arma.getTiempoDesdeUltimoGolpe();
-        float porcentaje = Math.min(tiempo / arma.getCooldown(), 1f);
+        Arma arma = guerrero.getArma();
+        float porcentaje = arma.getCooldownProgreso();
         float ancho = ANCHO_BARRA * porcentaje;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

@@ -13,9 +13,14 @@ public class Caja extends Sprite {
     private boolean activa = true;
     private boolean marcadaParaDestruir = false;
 
-    public Caja(World world, float x, float y, float ppm) {
-        super(new Texture("caja.png")); // ⚠ Cada caja crea su propia textura
+    private float vida; // vida actual
+    private float vidaMax; // vida máxima
+
+    public Caja(World world, float x, float y, float ppm, float vida) {
+        super(new Texture("caja.png"));
         this.ppm = ppm;
+        this.vida = vida;
+        this.vidaMax = vida;
 
         setSize(32, 32);
 
@@ -49,6 +54,26 @@ public class Caja extends Sprite {
         super.draw(batch);
     }
 
+    // === Vida ===
+    public void recibirDaño(float cantidad) {
+        if (!activa) return;
+
+        vida -= cantidad;
+        if (vida <= 0) {
+            vida = 0;
+            destruir();
+        }
+    }
+
+    public float getVida() {
+        return vida;
+    }
+
+    public float getVidaMax() {
+        return vidaMax;
+    }
+
+    // === Destrucción ===
     public void destruir() {
         marcadaParaDestruir = true;
     }
@@ -69,7 +94,6 @@ public class Caja extends Sprite {
         return body;
     }
 
-    // ✅ IMPORTANTE: Liberar la textura cuando no se use más
     public void dispose() {
         if (getTexture() != null) {
             getTexture().dispose();
