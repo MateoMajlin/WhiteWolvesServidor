@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,10 +25,10 @@ public class Arma {
     protected float ppm;
 
     protected float daño;
+    protected float multiplicadorDaño = 1f; // NUEVO: multiplicador temporal
 
     protected Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
 
-    // Configuración de hitbox
     protected static class HitboxConfig {
         float ancho, alto, offsetX, offsetY, angleDeg;
         HitboxConfig(float ancho, float alto, float offsetX, float offsetY, float angleDeg) {
@@ -48,7 +47,6 @@ public class Arma {
         this.activo = false;
     }
 
-    // --- Lógica de uso ---
     public void activar(float x, float y, Direccion dir) {
         if (!activo && puedeAtacar()) {
             activo = true;
@@ -88,6 +86,7 @@ public class Arma {
                     world.destroyBody(body);
                     body = null;
                 }
+                multiplicadorDaño = 1f; // Resetear daño al terminar golpe
             }
         }
     }
@@ -103,7 +102,6 @@ public class Arma {
         if (hoja != null) hoja.dispose();
     }
 
-    // --- Métodos HUD ---
     public boolean puedeAtacar() {
         return tiempoDesdeUltimoGolpe >= cooldown;
     }
@@ -116,7 +114,14 @@ public class Arma {
         return activo;
     }
 
-    // --- Direcciones ---
+    public float getDañoReal() {
+        return daño * multiplicadorDaño;
+    }
+
+    public void setMultiplicadorDaño(float valor) {
+        multiplicadorDaño = valor;
+    }
+
     public enum Direccion {
         UP, DOWN, LEFT, RIGHT,
         UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
@@ -133,13 +138,5 @@ public class Arma {
         if (angle >= -112.5 && angle < -67.5) return Direccion.DOWN;
         if (angle >= -157.5 && angle < -112.5) return Direccion.DOWN_LEFT;
         return Direccion.LEFT;
-    }
-
-    public float getDaño() {
-        return daño;
-    }
-
-    public void setDaño(float daño) {
-        this.daño = daño;
     }
 }

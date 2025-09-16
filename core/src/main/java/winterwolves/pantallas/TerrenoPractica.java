@@ -46,8 +46,6 @@ public class TerrenoPractica implements Screen {
 
     @Override
     public void show() {
-        // setearMusica();
-
         // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
@@ -152,8 +150,11 @@ public class TerrenoPractica implements Screen {
         Render.batch.begin();
         guerrero.draw(Render.batch);
         for (Caja c : cajas) {
+            c.actualizar(delta);
             c.draw(Render.batch);
+            c.drawVidaTexto(Render.batch);
         }
+
         if (contCajasDestruidas == totalCajas) {
             ganaste.dibujar();
         }

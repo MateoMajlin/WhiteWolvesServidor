@@ -15,11 +15,11 @@ public class CollisionListener implements ContactListener {
         if (a instanceof Arma && b instanceof Caja) {
             Caja caja = (Caja) b;
             Arma arma = (Arma) a;
-            caja.recibirDaño(arma.getDaño());
+            caja.recibirDaño(arma.getDañoReal());
         } else if (a instanceof Caja && b instanceof Arma) {
             Caja caja = (Caja) a;
             Arma arma = (Arma) b;
-            caja.recibirDaño(arma.getDaño());
+            caja.recibirDaño(arma.getDañoReal());
         }
     }
 

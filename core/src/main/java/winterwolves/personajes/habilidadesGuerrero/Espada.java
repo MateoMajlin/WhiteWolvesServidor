@@ -11,7 +11,7 @@ public class Espada extends Arma {
         super(world, ppm);
 
         this.daño = 25f;
-        // Sprite y animación
+
         hoja = new Texture(Gdx.files.internal("espadaAnimacion.png"));
         TextureRegion[][] tmp = TextureRegion.split(hoja, hoja.getWidth()/8, hoja.getHeight());
         TextureRegion[] frames = new TextureRegion[8];
@@ -22,7 +22,6 @@ public class Espada extends Arma {
 
         cooldown = 0.6f; // Espada rápida
 
-        // Hitboxes
         hitboxes.put(Direccion.RIGHT, new HitboxConfig(20, 35, 20, 15, 0));
         hitboxes.put(Direccion.LEFT, new HitboxConfig(20, 35, 10, 15, 0));
         hitboxes.put(Direccion.UP, new HitboxConfig(35, 20, 15, 20, 0));

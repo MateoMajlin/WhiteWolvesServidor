@@ -27,7 +27,6 @@ public class Guerrero extends Personaje {
         habilidad1.actualizar(delta);
         setPuedeMoverse(!habilidad1.isActiva());
 
-        // Dibujar personaje base
         super.draw(batch);
 
         // Calcular posición del arma
