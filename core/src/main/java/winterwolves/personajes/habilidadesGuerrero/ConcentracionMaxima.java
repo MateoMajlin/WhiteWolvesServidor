@@ -1,22 +1,23 @@
 package winterwolves.personajes.habilidadesGuerrero;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 public class ConcentracionMaxima {
 
-    private boolean activa = false;
-    private float duracion; // duración del efecto
+    private boolean activa = false;       // true cuando el bonus está activo
+    private boolean cargando = false;     // true durante los 2s de carga
+    private float duracion;               // duración del bonus
     private float tiempoActual = 0f;
-
-    private final float cooldown;
+    private final float tiempoCarga = 2f; // 2 segundos de carga
     private float tiempoDesdeUltimoUso;
 
-    private float bonusVelocidad; // incremento de velocidad
-    private float bonusAtaque;    // incremento de daño del arma
+    private final float cooldown;
+    private final float bonusVelocidad;
+    private final float bonusAtaque;
 
     private Animation<TextureRegion> animacion;
     private float tiempoAnimacion = 0f;
@@ -26,16 +27,13 @@ public class ConcentracionMaxima {
         this.cooldown = cooldown;
         this.bonusVelocidad = bonusVelocidad;
         this.bonusAtaque = bonusAtaque;
-
-        // Iniciamos como "usable"
-        this.tiempoDesdeUltimoUso = cooldown;
+        this.tiempoDesdeUltimoUso = cooldown; // inicia como usable
 
         cargarAnimacion();
     }
 
     private void cargarAnimacion() {
-        // Si querés, podés usar un sprite para mostrar el efecto
-        Texture textura = new Texture(Gdx.files.internal("concentracion.png"));
+        Texture textura = new Texture(Gdx.files.internal("curacion.png"));
         int anchoFrame = 64;
         int altoFrame = 64;
         TextureRegion[][] tmp = TextureRegion.split(textura, anchoFrame, altoFrame);
@@ -46,10 +44,17 @@ public class ConcentracionMaxima {
     public void actualizar(float delta) {
         tiempoDesdeUltimoUso += delta;
 
-        if (activa) {
+        if (cargando) {
+            tiempoActual += delta;
+            if (tiempoActual >= tiempoCarga) {
+                cargando = false;
+                activa = true;
+                tiempoActual = 0f;
+                tiempoAnimacion = 0f;
+            }
+        } else if (activa) {
             tiempoActual += delta;
             tiempoAnimacion += delta;
-
             if (tiempoActual >= duracion) {
                 activa = false;
                 tiempoAnimacion = 0f;
@@ -58,12 +63,12 @@ public class ConcentracionMaxima {
     }
 
     public boolean puedeUsarse() {
-        return !activa && tiempoDesdeUltimoUso >= cooldown;
+        return !activa && !cargando && tiempoDesdeUltimoUso >= cooldown;
     }
 
     public boolean usar() {
         if (puedeUsarse()) {
-            activa = true;
+            cargando = true;
             tiempoActual = 0f;
             tiempoDesdeUltimoUso = 0f;
             tiempoAnimacion = 0f;
@@ -72,15 +77,20 @@ public class ConcentracionMaxima {
         return false;
     }
 
-    public void dibujar(Batch batch, float x, float y, float width, float height) {
-        if (activa && animacion != null) {
-            TextureRegion frame = animacion.getKeyFrame(tiempoAnimacion, true);
-            batch.draw(frame, x, y, width, height);
-        }
-    }
-
     public boolean isActiva() {
         return activa;
+    }
+
+    public boolean isCargando() {
+        return cargando;
+    }
+
+    public float getBonusVelocidad() {
+        return activa ? bonusVelocidad : 0f;
+    }
+
+    public float getBonusAtaque() {
+        return activa ? bonusAtaque : 0f;
     }
 
     public float getTiempoDesdeUltimoUso() {
@@ -91,12 +101,11 @@ public class ConcentracionMaxima {
         return cooldown;
     }
 
-    public float getBonusVelocidad() {
-        return activa ? bonusVelocidad : 0f;
-    }
-
-    public float getBonusAtaque() {
-        return activa ? bonusAtaque : 0f;
+    public void dibujar(Batch batch, float x, float y, float width, float height) {
+        if ((cargando || activa) && animacion != null) {
+            TextureRegion frame = animacion.getKeyFrame(tiempoAnimacion, true);
+            batch.draw(frame, x, y, width, height);
+        }
     }
 
     public void dispose() {

@@ -46,11 +46,9 @@ public class TerrenoPractica implements Screen {
 
     @Override
     public void show() {
-        // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
 
-        // Obtener tamaño del mapa en pixeles
         int mapWidth = mapa.getProperties().get("width", Integer.class)
             * mapa.getProperties().get("tilewidth", Integer.class);
         int mapHeight = mapa.getProperties().get("height", Integer.class)
@@ -59,43 +57,37 @@ public class TerrenoPractica implements Screen {
         float centroMapaX = mapWidth / 2f;
         float centroMapaY = mapHeight / 2f;
 
-        // Renderer del mapa (sin escala)
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
-        // Cámara de sprites (pixeles)
         camara = new OrthographicCamera();
         camara.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camara.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camara.update();
 
-        // Cámara Box2D (metros)
+
         camaraBox2D = new OrthographicCamera();
         camaraBox2D.setToOrtho(false, Config.WIDTH / PPM, Config.HEIGTH / PPM);
         camaraBox2D.position.set((Config.WIDTH / 2f) / PPM, (Config.HEIGTH / 2f) / PPM, 0);
         camaraBox2D.update();
 
-        // Mundo Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
 
-        // Crear cuerpos Box2D de la capa de colisiones
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
 
         debugRenderer = new Box2DDebugRenderer();
 
-        // Entradas y jugador
+
         EntradasJugador entradas = new EntradasJugador();
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
-        guerrero.setVida(50); // ahora el guerrero tiene 50 de vida
+        guerrero.setVida(50);
 
-        // HUD
         camaraHud = new OrthographicCamera();
         camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
         hud = new HudGuerrero(guerrero, camaraHud);
 
-        // Cajas
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
         cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM,100));
@@ -105,7 +97,6 @@ public class TerrenoPractica implements Screen {
 
         Gdx.input.setInputProcessor(entradas);
 
-        // Texto de victoria
         ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
         ganaste.setTexto("Ganaste");
         ganaste.setPosition(centroMapaX - ganaste.getAncho() / 2f,
@@ -116,10 +107,8 @@ public class TerrenoPractica implements Screen {
     public void render(float delta) {
         Render.limpiarPantalla(1, 1, 1);
 
-        // Actualizar mundo Box2D
         world.step(delta, 6, 2);
 
-        // Revisar cajas destruidas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -129,7 +118,6 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Cámara de sprites sigue al guerrero
         camara.position.set(
             guerrero.getX() + guerrero.getWidth() / 2,
             guerrero.getY() + guerrero.getHeight() / 2,
@@ -137,15 +125,12 @@ public class TerrenoPractica implements Screen {
         );
         camara.update();
 
-        // Cámara Box2D sigue al mismo punto
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
-        // Renderizar mapa y capas
         renderer.setView(camara);
         renderer.render(capasFondo);
 
-        // Dibujar sprites
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         guerrero.draw(Render.batch);

@@ -86,7 +86,6 @@ public class HabilidadCuracion {
         return cooldown;
     }
 
-    // Liberar recursos de la animación
     public void dispose() {
         if (animacion != null && animacion.getKeyFrames().length > 0) {
             animacion.getKeyFrames()[0].getTexture().dispose();

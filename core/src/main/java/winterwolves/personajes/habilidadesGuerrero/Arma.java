@@ -25,7 +25,7 @@ public class Arma {
     protected float ppm;
 
     protected float daño;
-    protected float multiplicadorDaño = 1f; // NUEVO: multiplicador temporal
+    protected float multiplicadorDaño = 1f;
 
     protected Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
 
@@ -86,7 +86,7 @@ public class Arma {
                     world.destroyBody(body);
                     body = null;
                 }
-                multiplicadorDaño = 1f; // Resetear daño al terminar golpe
+                multiplicadorDaño = 1f;
             }
         }
     }

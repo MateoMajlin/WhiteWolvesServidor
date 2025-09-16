@@ -81,9 +81,8 @@ public class Caja extends Sprite {
         if (!activa) return;
 
         vida -= cantidad;
-        mostrarVida = true;        // mostrar HUD al recibir daño
-        tiempoMostrarVida = 0f;    // reiniciar contador
-
+        mostrarVida = true;
+        tiempoMostrarVida = 0f;
         if (vida <= 0) {
             vida = 0;
             destruir();
@@ -106,13 +105,11 @@ public class Caja extends Sprite {
 
         float x = getX() + getWidth() / 2f - layout.width / 2f;
 
-        // Subida constante según delta
         float y = getY() + getHeight() + VELOCIDAD_SUBIDA * tiempoMostrarVida;
 
         // Alfa lineal
         float alfa = 1f - (tiempoMostrarVida / DURACION_MOSTRAR_VIDA);
 
-        // Color según porcentaje de vida
         float porcentaje = vida / vidaMax;
         if (porcentaje > 0.6f) font.setColor(0, 1, 0, alfa);
         else if (porcentaje > 0.3f) font.setColor(1, 1, 0, alfa);

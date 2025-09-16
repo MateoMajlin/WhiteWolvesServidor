@@ -12,17 +12,6 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class Box2DColisiones {
 
-    /**
-     * Crea los cuerpos estáticos de Box2D a partir de una capa de colisiones en Tiled,
-     * con un margen opcional para ajustar hitboxes.
-     *
-     * @param map       Mapa Tiled
-     * @param world     Mundo Box2D
-     * @param layerName Nombre de la capa de colisiones
-     * @param PPM       Pixels por metro (escala Box2D)
-     * @param marginX   Margen en píxeles a agregar al ancho
-     * @param marginY   Margen en píxeles a agregar al alto
-     */
     public static void crearCuerposColisiones(TiledMap map, World world, String layerName, float PPM, float marginX, float marginY) {
         MapLayer layer = map.getLayers().get(layerName);
         if (layer == null) return;

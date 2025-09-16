@@ -21,6 +21,7 @@ public class HudGuerrero {
     private static final float ALTO_BARRA_VIDA = 20;
     private static final float ALTO_BARRA_COOLDOWN = 10;
     private static final float MARGEN = 20;
+    private static final float ESPACIO_BARRAS = 15;
 
     public HudGuerrero(Guerrero guerrero, OrthographicCamera camera) {
         this.guerrero = guerrero;
@@ -35,14 +36,17 @@ public class HudGuerrero {
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         float xBarra = camera.viewportWidth - MARGEN - ANCHO_BARRA;
-        float yBarraVida = camera.viewportHeight - 40;
+        float yBarra = camera.viewportHeight - 40;
 
-        dibujarBarraVida(xBarra, yBarraVida);
-        float yCooldownAtaque = dibujarBarraCooldownAtaque(xBarra, yBarraVida - 15);
-        float yCooldownDash = dibujarBarraCooldownDash(xBarra, yCooldownAtaque - 15);
-        dibujarBarraCooldownHabilidad1(xBarra, yCooldownDash - 15);
+        dibujarBarraVida(xBarra, yBarra);
 
-        dibujarTextos(batch, xBarra, yBarraVida);
+        float yActual = yBarra - ALTO_BARRA_VIDA - ESPACIO_BARRAS;
+        yActual = dibujarBarraCooldownAtaque(xBarra, yActual);
+        yActual = dibujarBarraCooldownDash(xBarra, yActual - ESPACIO_BARRAS);
+        yActual = dibujarBarraCooldownHabilidad1(xBarra, yActual - ESPACIO_BARRAS);
+        dibujarBarraCooldownHabilidad2(xBarra, yActual - ESPACIO_BARRAS);
+
+        dibujarTextos(batch, xBarra, yBarra);
     }
 
     private void dibujarBarraVida(float x, float y) {
@@ -89,7 +93,7 @@ public class HudGuerrero {
         return y;
     }
 
-    private void dibujarBarraCooldownHabilidad1(float x, float y) {
+    private float dibujarBarraCooldownHabilidad1(float x, float y) {
         float tiempo = guerrero.getTiempoHabilidad1();
         float porcentaje = Math.min(tiempo / guerrero.getCooldownHabilidad1(), 1f);
         float ancho = ANCHO_BARRA * porcentaje;
@@ -100,6 +104,23 @@ public class HudGuerrero {
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(x, y, ancho, ALTO_BARRA_COOLDOWN);
         shapeRenderer.end();
+
+        return y;
+    }
+
+    private float dibujarBarraCooldownHabilidad2(float x, float y) {
+        float tiempo = guerrero.getTiempoHabilidad2();
+        float porcentaje = Math.min(tiempo / guerrero.getCooldownHabilidad2(), 1f);
+        float ancho = ANCHO_BARRA * porcentaje;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.rect(x, y, ANCHO_BARRA, ALTO_BARRA_COOLDOWN);
+        shapeRenderer.setColor(Color.YELLOW);
+        shapeRenderer.rect(x, y, ancho, ALTO_BARRA_COOLDOWN);
+        shapeRenderer.end();
+
+        return y;
     }
 
     private void dibujarTextos(SpriteBatch batch, float xVida, float yVida) {
