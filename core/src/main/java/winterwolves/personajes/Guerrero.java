@@ -8,11 +8,10 @@ import winterwolves.personajes.habilidadesGuerrero.*;
 public class Guerrero extends Personaje {
 
     protected Arma armaBasica;
-    private HabilidadCuracion habilidad1;
+    public HabilidadCuracion habilidad1;
     public ConcentracionMaxima habilidad2;
 
     private float velocidadBase = 200f;
-    private int dañoBase = 10;
 
     public Guerrero(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super(world, entradas, x, y, ppm);
@@ -29,55 +28,26 @@ public class Guerrero extends Personaje {
         habilidad2.actualizar(delta);
 
         if (entradas.isHabilidad2() && habilidad2.puedeUsarse()) {
-           usarConcentracionMaxima();
+            usarConcentracionMaxima();
         }
 
-        if (habilidad2.isCargando()) {
-            setPuedeMoverse(false);
-        } else if (habilidad2.isActiva()) {
-            setPuedeMoverse(!habilidad1.isActiva());
-        } else {
-            setPuedeMoverse(!habilidad1.isActiva());
-        }
+        setPuedeMoverse(!habilidad2.isCargando() && !habilidad1.isActiva());
 
         super.draw(batch);
 
-        // Posición del arma
         float desplazamiento = getWidth() * 0.6f;
         float armaX = getX() + direccionMirando.x * desplazamiento;
         float armaY = getY() + direccionMirando.y * desplazamiento;
-        Arma.Direccion dir = Arma.vectorADireccion(direccionMirando);
 
-        ataqueBasico(armaX, armaY, dir);
+        if (entradas.isGolpeBasico()) {
+            armaBasica.atacar(armaX, armaY, direccionMirando, this);
+        }
+        armaBasica.actualizar(delta, armaX, armaY, this);
+        armaBasica.draw(batch, armaX, armaY, getWidth(), getHeight(), direccionMirando.angleDeg());
 
-        actualizarYdibujarGolpe(batch, delta, armaX, armaY);
 
         habilidad1.dibujar(batch, getX(), getY(), getWidth(), getHeight());
         habilidad2.dibujar(batch, getX(), getY(), getWidth(), getHeight());
-    }
-
-    protected void ataqueBasico(float x, float y, Arma.Direccion dir) {
-        if (entradas.isGolpeBasico() && armaBasica.puedeAtacar() && !armaBasica.isActivo()) {
-            armaBasica.activar(x, y, dir);
-
-            if (habilidad2.isActiva()) {
-                float multiplicador = 1f + habilidad2.getBonusAtaque() / 100f;
-                armaBasica.setMultiplicadorDaño(multiplicador);
-            } else {
-                armaBasica.setMultiplicadorDaño(1f);
-            }
-
-            setPuedeMoverse(false);
-        }
-
-        if (!armaBasica.isActivo() && !habilidad2.isCargando()) {
-            setPuedeMoverse(true);
-        }
-    }
-
-    protected void actualizarYdibujarGolpe(Batch batch, float delta, float x, float y) {
-        armaBasica.update(delta, x, y);
-        armaBasica.draw(batch, x, y, getWidth(), getHeight(), direccionMirando.angleDeg());
     }
 
     @Override
@@ -95,11 +65,9 @@ public class Guerrero extends Personaje {
         return velocidadBase + habilidad2.getBonusVelocidad();
     }
 
-    public boolean usarConcentracionMaxima() {
-        return habilidad2.usar();
-    }
-
+    public boolean usarConcentracionMaxima() { return habilidad2.usar(); }
     public Arma getArma() { return armaBasica; }
+
     public float getTiempoHabilidad1() { return habilidad1.getTiempoDesdeUltimoUso(); }
     public float getCooldownHabilidad1() { return habilidad1.getCooldown(); }
     public float getTiempoHabilidad2() { return habilidad2.getTiempoDesdeUltimoUso(); }
