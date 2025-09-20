@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
 import winterwolves.personajes.Guerrero;
-import winterwolves.personajes.HudGuerrero;
+import winterwolves.personajes.Hud;
 import winterwolves.props.Caja;
 import winterwolves.utilidades.*;
 
@@ -34,7 +34,7 @@ public class TerrenoPractica implements Screen {
     private Box2DDebugRenderer debugRenderer;
 
     private Guerrero guerrero;
-    private HudGuerrero hud;
+    private Hud hud;
     private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
 
@@ -86,7 +86,7 @@ public class TerrenoPractica implements Screen {
         camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
-        hud = new HudGuerrero(guerrero, camaraHud);
+        hud = new Hud(guerrero, camaraHud);
 
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
