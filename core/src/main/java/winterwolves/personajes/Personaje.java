@@ -13,7 +13,7 @@ public class Personaje extends Sprite {
     protected Body body;
     protected EntradasJugador entradas;
     protected int vida = 100;
-    protected float speedBase = 2.5f;
+    public float speedBase = 2.5f;
     protected float speed = speedBase;
     protected float multiplicadorCorrer = 1.7f;
     protected float ppm;
