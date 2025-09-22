@@ -38,6 +38,8 @@ public class Guerrero extends Personaje implements Hudeable {
 
         setPuedeMoverse(!habilidad2.isCargando() && !habilidad1.isActiva() && !armaBasica.isActivo());
 
+        speed = getVelocidadActual();
+
         super.draw(batch);
 
         float desplazamiento = getWidth() * 0.6f;
@@ -62,8 +64,8 @@ public class Guerrero extends Personaje implements Hudeable {
     public float getTiempoHabilidad2() { return habilidad2.getTiempoDesdeUltimoUso(); }
     public float getCooldownHabilidad2() { return habilidad2.getCooldown(); }
 
-    public float getTiempoDesdeUltimoDash() { return tiempoDesdeUltimoDash; }
-    public float getCooldownDash() { return COOLDOWN_DASH; }
+    public float getTiempoDesdeUltimoDash() { return dash.getTiempoDesdeUltimo(); }
+    public float getCooldownDash() { return dash.getCooldown(); }
 
     public float getVelocidadActual() {
         if (habilidad2.isCargando()) return 0f;

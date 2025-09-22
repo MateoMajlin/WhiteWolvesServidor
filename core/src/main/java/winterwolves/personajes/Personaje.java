@@ -22,12 +22,7 @@ public class Personaje extends Sprite {
     protected Vector2 movimiento = new Vector2();
     protected Vector2 direccionMirando = new Vector2(0, -1);
 
-    public final float COOLDOWN_DASH = 5f;
-    protected float tiempoDesdeUltimoDash = 0f;
-    protected boolean dashActivo = false;
-    protected float duracionDash = 0.2f;
-    protected float tiempoDash = 0f;
-    protected float velocidadDash = 10f;
+    protected Dash dash = new Dash(5f, 0.2f, 10f);
 
     protected boolean puedeMoverse = true;
 
@@ -62,7 +57,6 @@ public class Personaje extends Sprite {
     @Override
     public void draw(Batch batch) {
         float delta = Gdx.graphics.getDeltaTime();
-        tiempoDesdeUltimoDash += delta;
 
         mover();
         procesarHabilidades();
@@ -82,35 +76,13 @@ public class Personaje extends Sprite {
 
         float delta = Gdx.graphics.getDeltaTime();
 
+        dash.update(delta, body, direccionMirando);
 
-        if (this instanceof Guerrero) {
-            Guerrero g = (Guerrero) this;
-            speed += g.habilidad2.getBonusVelocidad();
-            if (g.getArma().isActivo()) {
-                body.setLinearVelocity(0, 0);
-                return;
-            }
-        }
-
-        if (dashActivo) {
-            tiempoDash += delta;
-            body.setLinearVelocity(direccionMirando.x * velocidadDash, direccionMirando.y * velocidadDash);
-
-            if (tiempoDash >= duracionDash) {
-                dashActivo = false;
-                tiempoDash = 0f;
-                body.setLinearVelocity(0, 0);
-            }
+        if (entradas.isDash() && dash.intentarActivar(direccionMirando)) {
             return;
         }
 
-        // Activar dash
-        if (entradas.isDash() && tiempoDesdeUltimoDash >= COOLDOWN_DASH) {
-            dashActivo = true;
-            tiempoDesdeUltimoDash = 0f;
-            tiempoDash = 0f;
-            return;
-        }
+        if (dash.isActivo()) return;
 
         movimiento.set(0, 0);
 
@@ -118,7 +90,7 @@ public class Personaje extends Sprite {
 
         if (this instanceof Guerrero) {
             Guerrero g = (Guerrero) this;
-            speed += g.habilidad2.getBonusVelocidad(); // devuelve 0 si no está activa
+            speed += g.habilidad2.getBonusVelocidad();
         }
 
         if (entradas.isArriba()) movimiento.y = 1;
@@ -145,7 +117,7 @@ public class Personaje extends Sprite {
     public void usarHabilidadEspecial() {}
     public void usarUltimate() {}
 
-    public float getTiempoDesdeUltimoDash() { return tiempoDesdeUltimoDash; }
+    public float getTiempoDesdeUltimoDash() { return dash.getTiempoDesdeUltimo(); }
     public int getVida() { return vida; }
     public void setPuedeMoverse(boolean valor) { this.puedeMoverse = valor; }
     public void setVida(int nuevaVida) {
