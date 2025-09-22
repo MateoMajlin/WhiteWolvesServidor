@@ -14,6 +14,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
+import winterwolves.items.AmuletoCuracion;
+import winterwolves.items.AnilloConcentracion;
+import winterwolves.items.Inventario;
 import winterwolves.personajes.Guerrero;
 import winterwolves.personajes.Hud;
 import winterwolves.props.Caja;
@@ -79,7 +82,18 @@ public class TerrenoPractica implements Screen {
 
 
         EntradasJugador entradas = new EntradasJugador();
+
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
+
+        AmuletoCuracion amuleto = new AmuletoCuracion(2f, 10f, 30);
+        AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
+
+        guerrero.getInventario().agregarItem(amuleto);
+        guerrero.getInventario().agregarItem(anillo);
+
+        guerrero.equiparItem1(amuleto);
+        guerrero.equiparItem2(anillo);
+
         guerrero.setVida(50);
 
         camaraHud = new OrthographicCamera();

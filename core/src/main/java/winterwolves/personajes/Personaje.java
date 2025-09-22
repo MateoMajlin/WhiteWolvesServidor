@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.io.EntradasJugador;
+import winterwolves.items.Inventario;
 
 public class Personaje extends Sprite {
 
@@ -25,10 +26,12 @@ public class Personaje extends Sprite {
     protected Dash dash = new Dash(5f, 0.2f, 10f);
 
     protected boolean puedeMoverse = true;
+    protected Inventario inventario;
 
     public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super();
         this.entradas = entradas;
+        this.inventario = new Inventario();
         this.ppm = ppm;
 
         animaciones = new AnimacionJugador();
@@ -124,5 +127,9 @@ public class Personaje extends Sprite {
         vida = Math.min(nuevaVida, 100); // para no exceder el máximo
         if (vida < 0) vida = 0;
     }
+    public Inventario getInventario() {
+        return inventario;
+    }
+
     public void dispose() { animaciones.dispose(); }
 }

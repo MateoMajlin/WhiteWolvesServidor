@@ -27,13 +27,10 @@ public abstract class Habilidad {
         this.personaje = p;
     }
 
-    // Cada habilidad implementa cómo se activa
     protected abstract void iniciarEfecto();
 
-    // Cada habilidad implementa cómo termina
     protected abstract void finalizarEfecto();
 
-    // Actualización por frame
     public void actualizar(float delta) {
         tiempoDesdeUltimoUso += delta;
 
@@ -57,7 +54,6 @@ public abstract class Habilidad {
         }
     }
 
-    // Por defecto, las habilidades no tienen fase de carga
     protected float getTiempoCarga() {
         return 0f;
     }

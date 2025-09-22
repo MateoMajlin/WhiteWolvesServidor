@@ -29,7 +29,7 @@ public class HabilidadCuracion extends Habilidad {
     protected void iniciarEfecto() {
         if (personaje != null) {
             int nuevaVida = personaje.getVida() + curacion;
-            personaje.setVida(nuevaVida); // setVida ya limita a 100
+            personaje.setVida(nuevaVida);
         }
     }
 

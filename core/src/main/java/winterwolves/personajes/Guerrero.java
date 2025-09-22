@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
+import winterwolves.items.ItemEquipable;
 import winterwolves.personajes.habilidadesGuerrero.*;
 import winterwolves.personajes.habilidades.Habilidad;
 
@@ -46,7 +47,6 @@ public class Guerrero extends Personaje implements Hudeable {
         float armaX = getX() + direccionMirando.x * desplazamiento;
         float armaY = getY() + direccionMirando.y * desplazamiento;
 
-        // Golpe básico
         if (entradas.isGolpeBasico()) {
             armaBasica.atacar(armaX, armaY, direccionMirando, this);
         }
@@ -56,6 +56,36 @@ public class Guerrero extends Personaje implements Hudeable {
 
         habilidad1.dibujar(batch, getX(), getY(), getWidth(), getHeight());
         habilidad2.dibujar(batch, getX(), getY(), getWidth(), getHeight());
+    }
+
+    // Dentro de Guerrero
+    private ItemEquipable slotHabilidad1;
+    private ItemEquipable slotHabilidad2;
+
+    public void equiparItem1(ItemEquipable item) {
+        if (inventario.getItems().contains(item)) {
+            this.slotHabilidad1 = item;
+            this.habilidad1 = item.crearHabilidad();
+            this.habilidad1.setPersonaje(this);
+        }
+    }
+
+    public void equiparItem2(ItemEquipable item) {
+        if (inventario.getItems().contains(item)) {
+            this.slotHabilidad2 = item;
+            this.habilidad2 = item.crearHabilidad();
+            this.habilidad2.setPersonaje(this);
+        }
+    }
+
+    public void quitarItem1() {
+        this.slotHabilidad1 = null;
+        this.habilidad1 = null;
+    }
+
+    public void quitarItem2() {
+        this.slotHabilidad2 = null;
+        this.habilidad2 = null;
     }
 
     public float getTiempoHabilidad1() { return habilidad1.getTiempoDesdeUltimoUso(); }
