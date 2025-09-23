@@ -1,6 +1,8 @@
 package winterwolves.items;
 
+import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.personajes.habilidades.Habilidad;
+import winterwolves.personajes.habilidadesGuerrero.Arma;
 import winterwolves.personajes.habilidadesGuerrero.ConcentracionMaxima;
 
 public class AnilloConcentracion implements ItemEquipable {
@@ -20,5 +22,10 @@ public class AnilloConcentracion implements ItemEquipable {
     @Override
     public Habilidad crearHabilidad() {
         return new ConcentracionMaxima(duracion, cooldown, bonusVelocidad, bonusAtaque);
+    }
+
+    @Override
+    public Arma crearArma(World world, float ppm) {
+        return null;
     }
 }

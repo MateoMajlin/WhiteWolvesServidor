@@ -1,6 +1,8 @@
 package winterwolves.items;
 
+import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.personajes.habilidades.Habilidad;
+import winterwolves.personajes.habilidadesGuerrero.Arma;
 import winterwolves.personajes.habilidadesGuerrero.HabilidadCuracion;
 
 public class AmuletoCuracion implements ItemEquipable {
@@ -18,5 +20,10 @@ public class AmuletoCuracion implements ItemEquipable {
     @Override
     public Habilidad crearHabilidad() {
         return new HabilidadCuracion(duracion, cooldown, curacion);
+    }
+
+    @Override
+    public Arma crearArma(World world, float ppm) {
+        return null;
     }
 }

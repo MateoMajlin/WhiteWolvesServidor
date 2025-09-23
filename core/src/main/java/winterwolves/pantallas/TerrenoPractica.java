@@ -16,6 +16,7 @@ import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.AmuletoCuracion;
 import winterwolves.items.AnilloConcentracion;
+import winterwolves.items.EspadaItem;
 import winterwolves.items.Inventario;
 import winterwolves.personajes.Guerrero;
 import winterwolves.personajes.Hud;
@@ -67,7 +68,6 @@ public class TerrenoPractica implements Screen {
         camara.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camara.update();
 
-
         camaraBox2D = new OrthographicCamera();
         camaraBox2D.setToOrtho(false, Config.WIDTH / PPM, Config.HEIGTH / PPM);
         camaraBox2D.position.set((Config.WIDTH / 2f) / PPM, (Config.HEIGTH / 2f) / PPM, 0);
@@ -80,17 +80,23 @@ public class TerrenoPractica implements Screen {
 
         debugRenderer = new Box2DDebugRenderer();
 
-
         EntradasJugador entradas = new EntradasJugador();
 
+        // Crear Guerrero
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
+        // Items equipables
+        EspadaItem espadaItem = new EspadaItem(); // Nueva espada como item equipable
         AmuletoCuracion amuleto = new AmuletoCuracion(2f, 10f, 30);
         AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
 
+        // Agregar al inventario
+        guerrero.getInventario().agregarItem(espadaItem);
         guerrero.getInventario().agregarItem(amuleto);
         guerrero.getInventario().agregarItem(anillo);
 
+        // Equipar items
+        guerrero.equiparArma(espadaItem);
         guerrero.equiparItem1(amuleto);
         guerrero.equiparItem2(anillo);
 
@@ -177,7 +183,6 @@ public class TerrenoPractica implements Screen {
             dispose();
         }
     }
-
 
     @Override
     public void resize(int width, int height) {
