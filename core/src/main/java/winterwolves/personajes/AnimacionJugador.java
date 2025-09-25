@@ -70,6 +70,19 @@ public class AnimacionJugador {
         }
     }
 
+    public TextureRegion getIdleFrame(Vector2 direccionMirando) {
+        if (direccionMirando.x > 0.5f) {
+            return idleDerecha.getKeyFrame(0f); // frame fijo de idle
+        } else if (direccionMirando.x < -0.5f) {
+            return idleIzquierda.getKeyFrame(0f);
+        } else if (direccionMirando.y > 0.5f) {
+            return idleArriba.getKeyFrame(0f);
+        } else {
+            return idleAbajo.getKeyFrame(0f);
+        }
+    }
+
+
     public void dispose() {
         spriteSheet.dispose();
     }

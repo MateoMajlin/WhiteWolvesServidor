@@ -44,7 +44,6 @@ public class Guerrero extends Personaje implements Hudeable {
         if (entradas.isHabilidad1() && habilidad1 != null) habilidad1.usar();
         if (entradas.isHabilidad2() && habilidad2 != null) habilidad2.usar();
 
-        speed = getVelocidadActual();
         super.draw(batch);
 
         if (armaBasica != null) {
@@ -72,10 +71,6 @@ public class Guerrero extends Personaje implements Hudeable {
 
     public float getTiempoDesdeUltimoDash() { return dash.getTiempoDesdeUltimo(); }
     public float getCooldownDash() { return dash.getCooldown(); }
-
-    public float getVelocidadActual() {
-        return (habilidad2 != null && habilidad2.isCargando()) ? 0f : velocidadBase + (habilidad2 != null ? habilidad2.getBonusVelocidad() : 0f);
-    }
 
     public Arma getArma() { return armaBasica; }
 

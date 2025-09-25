@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
+import winterwolves.personajes.InventarioHud;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.AmuletoCuracion;
 import winterwolves.items.AnilloConcentracion;
@@ -38,6 +39,8 @@ public class TerrenoPractica implements Screen {
     private Box2DDebugRenderer debugRenderer;
 
     private Guerrero guerrero;
+    private InventarioHud inventarioHud;
+
     private Hud hud;
     private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
@@ -106,6 +109,8 @@ public class TerrenoPractica implements Screen {
         camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
+
+        inventarioHud = new InventarioHud(guerrero.getInventario(), camaraHud);
         hud = new Hud(guerrero, camaraHud);
 
         cajas = new Array<>();
@@ -151,6 +156,7 @@ public class TerrenoPractica implements Screen {
         renderer.setView(camara);
         renderer.render(capasFondo);
 
+
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         guerrero.draw(Render.batch);
@@ -163,12 +169,26 @@ public class TerrenoPractica implements Screen {
         if (contCajasDestruidas == totalCajas) {
             ganaste.dibujar();
         }
+
         Render.batch.end();
 
         renderer.render(capasDelanteras);
 
-        // Renderizar HUD
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.I)) {
+            inventarioHud.toggle();
+        }
+
+        if(inventarioHud.isVisible()){
+            guerrero.setPuedeMoverse(false);
+        }
+        else {
+            guerrero.setPuedeMoverse(true);
+        }
+
+        inventarioHud.actualizar();
+
         hud.render(Render.batch);
+        inventarioHud.dibujar(Render.batch);
 
         // Debug de Box2D
         debugRenderer.render(world, camaraBox2D.combined);

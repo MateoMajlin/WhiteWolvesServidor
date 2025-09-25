@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import winterwolves.elementos.Texto;
-import winterwolves.personajes.habilidadesGuerrero.Arma;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 

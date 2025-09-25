@@ -82,8 +82,6 @@ public class ConcentracionMaxima extends Habilidad {
         }
     }
 
-
-
     @Override
     protected void iniciarEfecto() {
         if (personaje != null && personaje instanceof Guerrero) {

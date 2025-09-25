@@ -1,6 +1,5 @@
 package winterwolves.personajes;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
@@ -20,18 +19,18 @@ public class Dash {
     }
 
     public void update(float delta, Body body, Vector2 direccion) {
+
         tiempoDesdeUltimo += delta;
 
         if (activo) {
             tiempoActivo += delta;
             body.setLinearVelocity(direccion.x * velocidad, direccion.y * velocidad);
-
             if (tiempoActivo >= duracion) {
                 activo = false;
                 tiempoActivo = 0f;
-                body.setLinearVelocity(0, 0);
             }
         }
+
     }
 
     public boolean intentarActivar(Vector2 direccion) {
@@ -46,8 +45,5 @@ public class Dash {
 
     public boolean isActivo() { return activo; }
     public float getTiempoDesdeUltimo() { return tiempoDesdeUltimo; }
-
-    public float getCooldown() {
-        return cooldown;
-    }
+    public float getCooldown() { return cooldown; }
 }

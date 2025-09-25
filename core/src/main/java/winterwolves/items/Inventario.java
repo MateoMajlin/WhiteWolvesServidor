@@ -5,21 +5,21 @@ import java.util.List;
 
 public class Inventario {
 
-    private final List<ItemEquipable> items = new ArrayList<>();
+    private final List<Item> items = new ArrayList<>();
 
-    public void agregarItem(ItemEquipable item) {
+    public void agregarItem(Item item) {
         items.add(item);
     }
 
-    public void quitarItem(ItemEquipable item) {
+    public void quitarItem(Item item) {
         items.remove(item);
     }
 
-    public List<ItemEquipable> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public ItemEquipable getItem(int index) {
+    public Item getItem(int index) {
         if (index >= 0 && index < items.size()) {
             return items.get(index);
         }

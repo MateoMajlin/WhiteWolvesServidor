@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.Inventario;
-import winterwolves.items.ItemEquipable;
+import winterwolves.items.Item;
 
 public class Personaje extends Sprite {
 
@@ -30,9 +30,9 @@ public class Personaje extends Sprite {
     protected Inventario inventario;
 
     // Slots de items
-    protected ItemEquipable slotArma;
-    protected ItemEquipable slotHabilidad1;
-    protected ItemEquipable slotHabilidad2;
+    protected Item slotArma;
+    protected Item slotHabilidad1;
+    protected Item slotHabilidad2;
 
     public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super();
@@ -73,7 +73,14 @@ public class Personaje extends Sprite {
         Vector2 pos = body.getPosition();
         setPosition(pos.x * ppm - getWidth() / 2, pos.y * ppm - getHeight() / 2);
 
-        TextureRegion frame = animaciones.getFrame(movimiento, direccionMirando, speed, speedBase, delta);
+        TextureRegion frame;
+
+        if (!puedeMoverse) {
+            frame = animaciones.getIdleFrame(direccionMirando);
+        } else {
+            frame = animaciones.getFrame(movimiento, direccionMirando, speed, speedBase, delta);
+        }
+
         batch.draw(frame, getX(), getY(), getWidth(), getHeight());
     }
 
@@ -109,6 +116,7 @@ public class Personaje extends Sprite {
         body.setLinearVelocity(movimiento.x, movimiento.y);
     }
 
+
     protected void procesarHabilidades() {
         if (entradas.isGolpeBasico()) usarHabilidadBasica();
         if (entradas.isHabilidad1()) usarHabilidadEspecial();
@@ -129,19 +137,19 @@ public class Personaje extends Sprite {
     public Inventario getInventario() { return inventario; }
     public boolean getPuedeMoverse() { return puedeMoverse; }
 
-    public void equiparArma(ItemEquipable item) {
+    public void equiparArma(Item item) {
         if (inventario.getItems().contains(item)) {
             slotArma = item;
         }
     }
 
-    public void equiparItem1(ItemEquipable item) {
+    public void equiparItem1(Item item) {
         if (inventario.getItems().contains(item)) {
             slotHabilidad1 = item;
         }
     }
 
-    public void equiparItem2(ItemEquipable item) {
+    public void equiparItem2(Item item) {
         if (inventario.getItems().contains(item)) {
             slotHabilidad2 = item;
         }
@@ -152,4 +160,5 @@ public class Personaje extends Sprite {
     public void quitarItem2() { slotHabilidad2 = null; }
 
     public void dispose() { animaciones.dispose(); }
+
 }
