@@ -86,7 +86,7 @@ public class TerrenoPractica implements Screen {
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         // Items equipables
-        EspadaItem espadaItem = new EspadaItem(); // Nueva espada como item equipable
+        EspadaItem espadaItem = new EspadaItem();
         AmuletoCuracion amuleto = new AmuletoCuracion(2f, 10f, 30);
         AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
 

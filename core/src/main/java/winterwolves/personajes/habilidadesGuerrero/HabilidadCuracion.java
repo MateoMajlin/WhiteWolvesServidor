@@ -28,6 +28,7 @@ public class HabilidadCuracion extends Habilidad {
     @Override
     protected void iniciarEfecto() {
         if (personaje != null) {
+            personaje.setPuedeMoverse(false);
             int nuevaVida = personaje.getVida() + curacion;
             personaje.setVida(nuevaVida);
         }
@@ -36,5 +37,6 @@ public class HabilidadCuracion extends Habilidad {
 
     @Override
     protected void finalizarEfecto() {
+        personaje.setPuedeMoverse(true);
     }
 }

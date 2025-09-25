@@ -73,7 +73,7 @@ public class Arma {
                     body = null;
                 }
                 multiplicadorDaño = 1f;
-                propietario.setPuedeMoverse(!propietario.habilidad2.isCargando() && !propietario.habilidad1.isActiva());
+                propietario.setPuedeMoverse(true);
             }
         }
     }

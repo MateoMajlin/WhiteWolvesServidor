@@ -33,12 +33,62 @@ public class ConcentracionMaxima extends Habilidad {
     }
 
     @Override
+    public boolean usar() {
+        if (puedeUsarse()) {
+            tiempoActual = 0f;
+            tiempoDesdeUltimoUso = 0f;
+            tiempoAnimacion = 0f;
+
+            if (getTiempoCarga() > 0) {
+                cargando = true;
+                if (personaje != null) {
+                    personaje.setPuedeMoverse(false);
+                }
+            } else {
+                activa = true;
+                iniciarEfecto();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void actualizar(float delta) {
+        tiempoDesdeUltimoUso += delta;
+
+        if (cargando) {
+            tiempoActual += delta; //es como que pasa el tiempo, sin desfasarse de acuerdo a los fps
+            if (tiempoActual >= getTiempoCarga()) {
+                cargando = false;
+                activa = true;
+                tiempoActual = 0f;
+                tiempoAnimacion = 0f;
+
+                if (personaje != null) {
+                    personaje.setPuedeMoverse(true);
+                }
+
+                iniciarEfecto();
+            }
+        } else if (activa) {
+            tiempoActual += delta;
+            tiempoAnimacion += delta;
+            if (tiempoActual >= duracion) {
+                activa = false;
+                tiempoAnimacion = 0f;
+                finalizarEfecto();
+            }
+        }
+    }
+
+
+
+    @Override
     protected void iniciarEfecto() {
         if (personaje != null && personaje instanceof Guerrero) {
             Guerrero g = (Guerrero) personaje;
-            // Por ejemplo, aumentar velocidad o ataque directamente
-            g.speedBase += bonusVelocidad; // si querés
-            // Para ataque, habría que definir cómo aplica bonusAtaque
+            g.speedBase += bonusVelocidad;
         }
     }
 
@@ -46,7 +96,7 @@ public class ConcentracionMaxima extends Habilidad {
     protected void finalizarEfecto() {
         if (personaje != null && personaje instanceof Guerrero) {
             Guerrero g = (Guerrero) personaje;
-            g.speedBase -= bonusVelocidad; // revertir velocidad
+            g.speedBase -= bonusVelocidad;
         }
     }
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.Inventario;
+import winterwolves.items.ItemEquipable;
 
 public class Personaje extends Sprite {
 
@@ -27,6 +28,11 @@ public class Personaje extends Sprite {
 
     protected boolean puedeMoverse = true;
     protected Inventario inventario;
+
+    // Slots de items
+    protected ItemEquipable slotArma;
+    protected ItemEquipable slotHabilidad1;
+    protected ItemEquipable slotHabilidad2;
 
     public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
         super();
@@ -91,11 +97,6 @@ public class Personaje extends Sprite {
 
         speed = entradas.isCorrer() ? speedBase * multiplicadorCorrer : speedBase;
 
-        if (this instanceof Guerrero) {
-            Guerrero g = (Guerrero) this;
-            speed += g.habilidad2.getBonusVelocidad();
-        }
-
         if (entradas.isArriba()) movimiento.y = 1;
         if (entradas.isAbajo()) movimiento.y = -1;
         if (entradas.isIzquierda()) movimiento.x = -1;
@@ -106,8 +107,6 @@ public class Personaje extends Sprite {
         }
         movimiento.nor().scl(speed);
         body.setLinearVelocity(movimiento.x, movimiento.y);
-
-
     }
 
     protected void procesarHabilidades() {
@@ -124,12 +123,33 @@ public class Personaje extends Sprite {
     public int getVida() { return vida; }
     public void setPuedeMoverse(boolean valor) { this.puedeMoverse = valor; }
     public void setVida(int nuevaVida) {
-        vida = Math.min(nuevaVida, 100); // para no exceder el máximo
+        vida = Math.min(nuevaVida, 100);
         if (vida < 0) vida = 0;
     }
-    public Inventario getInventario() {
-        return inventario;
+    public Inventario getInventario() { return inventario; }
+    public boolean getPuedeMoverse() { return puedeMoverse; }
+
+    public void equiparArma(ItemEquipable item) {
+        if (inventario.getItems().contains(item)) {
+            slotArma = item;
+        }
     }
+
+    public void equiparItem1(ItemEquipable item) {
+        if (inventario.getItems().contains(item)) {
+            slotHabilidad1 = item;
+        }
+    }
+
+    public void equiparItem2(ItemEquipable item) {
+        if (inventario.getItems().contains(item)) {
+            slotHabilidad2 = item;
+        }
+    }
+
+    public void quitarArma() { slotArma = null; }
+    public void quitarItem1() { slotHabilidad1 = null; }
+    public void quitarItem2() { slotHabilidad2 = null; }
 
     public void dispose() { animaciones.dispose(); }
 }
