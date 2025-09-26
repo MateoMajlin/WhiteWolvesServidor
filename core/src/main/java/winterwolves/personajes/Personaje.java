@@ -14,11 +14,13 @@ public class Personaje extends Sprite {
 
     protected Body body;
     protected EntradasJugador entradas;
-    protected int vida = 100;
     public float speedBase = 2.5f;
     protected float speed = speedBase;
     protected float multiplicadorCorrer = 1.7f;
     protected float ppm;
+
+    protected int vida = 100;
+    public float ataque,ataqueMagico,defensa;
 
     protected AnimacionJugador animaciones;
     protected Vector2 movimiento = new Vector2();
@@ -29,7 +31,6 @@ public class Personaje extends Sprite {
     protected boolean puedeMoverse = true;
     protected Inventario inventario;
 
-    // Slots de items
     protected Item slotArma;
     protected Item slotHabilidad1;
     protected Item slotHabilidad2;
@@ -161,4 +162,19 @@ public class Personaje extends Sprite {
 
     public void dispose() { animaciones.dispose(); }
 
+    public String getClase() {
+        return "";
+    }
+
+    public float getAtaque() {
+        return ataque;
+    }
+
+    public float getAtaqueMagico() {
+        return ataqueMagico;
+    }
+
+    public float getDefensa() {
+        return defensa;
+    }
 }

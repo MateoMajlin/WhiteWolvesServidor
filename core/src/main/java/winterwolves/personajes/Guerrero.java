@@ -12,7 +12,10 @@ import winterwolves.personajes.habilidadesGuerrero.HabilidadCuracion;
 
 public class Guerrero extends Personaje implements Hudeable {
 
+    String nombreClase = "Guerrero";
+
     protected Arma armaBasica;
+
     public Habilidad habilidad1;
     public Habilidad habilidad2;
 
@@ -32,6 +35,11 @@ public class Guerrero extends Personaje implements Hudeable {
 
         habilidad1.setPersonaje(this);
         habilidad2.setPersonaje(this);
+
+        this.ataque = armaBasica.getDaño();
+        this.ataqueMagico = 10;
+        this.defensa = 30;
+        this.vida = 100;
     }
 
     @Override
@@ -76,6 +84,11 @@ public class Guerrero extends Personaje implements Hudeable {
 
     @Override
     public int getVida() { return vida; }
+
+    @Override
+    public String getClase(){
+        return nombreClase;
+    }
 
     @Override
     public void dispose() {

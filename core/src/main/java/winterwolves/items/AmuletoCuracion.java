@@ -9,6 +9,8 @@ import winterwolves.personajes.habilidadesGuerrero.HabilidadCuracion;
 
 public class AmuletoCuracion extends Item {
 
+    String descripcion = "Amuleto que brinda la habilidad de"  + "\n" + "curarse a su portador";
+
     private final float duracion;
     private final float cooldown;
     private final int curacion;
@@ -28,5 +30,10 @@ public class AmuletoCuracion extends Item {
     @Override
     public Arma crearArma(World world, float ppm) {
         return null; // No provee arma
+    }
+
+    @Override
+    public String getDescripcion(){
+        return descripcion;
     }
 }

@@ -134,6 +134,7 @@ public class TerrenoPractica implements Screen {
 
         world.step(delta, 6, 2);
 
+        // Actualizar cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -143,6 +144,7 @@ public class TerrenoPractica implements Screen {
             }
         }
 
+        // Seguir al guerrero
         camara.position.set(
             guerrero.getX() + guerrero.getWidth() / 2,
             guerrero.getY() + guerrero.getHeight() / 2,
@@ -153,10 +155,11 @@ public class TerrenoPractica implements Screen {
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
+        // Fondo
         renderer.setView(camara);
         renderer.render(capasFondo);
 
-
+        // Dibujar mundo
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         guerrero.draw(Render.batch);
@@ -165,33 +168,33 @@ public class TerrenoPractica implements Screen {
             c.draw(Render.batch);
             c.drawVidaTexto(Render.batch);
         }
-
         if (contCajasDestruidas == totalCajas) {
             ganaste.dibujar();
         }
-
         Render.batch.end();
 
+        // Capas delanteras
         renderer.render(capasDelanteras);
 
+        // Toggle inventario
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.I)) {
             inventarioHud.toggle();
         }
 
-        if(inventarioHud.isVisible()){
-            guerrero.setPuedeMoverse(false);
-        }
-        else {
-            guerrero.setPuedeMoverse(true);
-        }
+        // Control de movimiento del jugador
+        guerrero.setPuedeMoverse(!inventarioHud.isVisible());
 
+        // Actualizar inventario
         inventarioHud.actualizar();
 
-        hud.render(Render.batch);
-        inventarioHud.dibujar(Render.batch);
-
-        // Debug de Box2D
-        debugRenderer.render(world, camaraBox2D.combined);
+        // Dibujar HUD o Inventario (mutuamente excluyentes)
+        if (inventarioHud.isVisible()) {
+            Render.batch.setProjectionMatrix(camaraHud.combined);
+            inventarioHud.dibujar(Render.batch,guerrero);
+        } else {
+            Render.batch.setProjectionMatrix(camaraHud.combined);
+            hud.render(Render.batch);
+        }
 
         // ESC para volver al menú
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
@@ -203,6 +206,7 @@ public class TerrenoPractica implements Screen {
             dispose();
         }
     }
+
 
     @Override
     public void resize(int width, int height) {

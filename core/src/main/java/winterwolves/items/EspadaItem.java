@@ -8,6 +8,8 @@ import winterwolves.personajes.habilidadesGuerrero.Arma;
 
 public class EspadaItem extends Item {
 
+    String descripcion = "Espada simple :D";
+
     public EspadaItem() {
         super("Espada", new TextureRegion(new Texture("texturas/espada.png")));
     }
@@ -20,5 +22,10 @@ public class EspadaItem extends Item {
     @Override
     public Arma crearArma(World world, float ppm) {
         return new Arma(world, ppm);
+    }
+
+    @Override
+    public String getDescripcion() {
+        return descripcion;
     }
 }

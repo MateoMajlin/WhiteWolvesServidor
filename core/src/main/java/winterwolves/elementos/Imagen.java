@@ -25,4 +25,8 @@ public class Imagen {
     public void setTransparencia(float a) {
         s.setAlpha(a);
     }
+
+    public void dispose() {
+        t.dispose();
+    }
 }

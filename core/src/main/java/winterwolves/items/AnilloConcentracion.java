@@ -9,6 +9,8 @@ import winterwolves.personajes.habilidadesGuerrero.ConcentracionMaxima;
 
 public class AnilloConcentracion extends Item {
 
+    String descripcion = "Anillo capaz de ampliar todos " + "\n" + "los sentidos de su portador";
+
     private final float duracion;
     private final float cooldown;
     private final float bonusVelocidad;
@@ -38,5 +40,10 @@ public class AnilloConcentracion extends Item {
     @Override
     public Arma crearArma(World world, float ppm) {
         return null; // No provee arma
+    }
+
+    @Override
+    public String getDescripcion() {
+        return descripcion;
     }
 }

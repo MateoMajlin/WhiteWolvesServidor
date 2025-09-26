@@ -114,6 +114,9 @@ public class Arma {
 
     public boolean puedeAtacar() { return tiempoDesdeUltimoGolpe >= cooldown; }
     public float getCooldownProgreso() { return Math.min(tiempoDesdeUltimoGolpe / cooldown, 1f); }
+
+    public float getDaño() { return daño; }
+
     public float getDañoReal() { return daño * multiplicadorDaño; }
     public void setMultiplicadorDaño(float valor) { multiplicadorDaño = valor; }
     public boolean isActivo() { return activo; }
