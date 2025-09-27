@@ -4,11 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
-import winterwolves.personajes.habilidadesGuerrero.Arma;
-import winterwolves.personajes.habilidadesGuerrero.ConcentracionMaxima;
-import winterwolves.personajes.habilidadesGuerrero.Espada;
+import winterwolves.personajes.habilidadesGuerrero.*;
 import winterwolves.personajes.habilidades.Habilidad;
-import winterwolves.personajes.habilidadesGuerrero.HabilidadCuracion;
 
 public class Guerrero extends Personaje implements Hudeable {
 
@@ -29,7 +26,7 @@ public class Guerrero extends Personaje implements Hudeable {
         this.world = world;
         this.ppm = ppm;
 
-        this.armaBasica = new Espada(world, ppm);
+        this.armaBasica = new Hacha(world, ppm);
         this.habilidad1 = new HabilidadCuracion(2f, 10f, 30);
         this.habilidad2 = new ConcentracionMaxima(10f, 15f, 2f, 20f);
 

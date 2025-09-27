@@ -85,20 +85,16 @@ public class TerrenoPractica implements Screen {
 
         EntradasJugador entradas = new EntradasJugador();
 
-        // Crear Guerrero
         guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
-        // Items equipables
         EspadaItem espadaItem = new EspadaItem();
         AmuletoCuracion amuleto = new AmuletoCuracion(2f, 10f, 30);
         AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
 
-        // Agregar al inventario
         guerrero.getInventario().agregarItem(espadaItem);
         guerrero.getInventario().agregarItem(amuleto);
         guerrero.getInventario().agregarItem(anillo);
 
-        // Equipar items
         guerrero.equiparArma(espadaItem);
         guerrero.equiparItem1(amuleto);
         guerrero.equiparItem2(anillo);
@@ -179,10 +175,14 @@ public class TerrenoPractica implements Screen {
         // Toggle inventario
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.I)) {
             inventarioHud.toggle();
+            if(guerrero.getPuedeMoverse() == false) {
+                guerrero.setPuedeMoverse(true);
+            }
+            else if(guerrero.getPuedeMoverse() == true){
+                guerrero.setPuedeMoverse(false);
+            }
         }
 
-        // Control de movimiento del jugador
-        guerrero.setPuedeMoverse(!inventarioHud.isVisible());
 
         // Actualizar inventario
         inventarioHud.actualizar();
@@ -195,6 +195,8 @@ public class TerrenoPractica implements Screen {
             Render.batch.setProjectionMatrix(camaraHud.combined);
             hud.render(Render.batch);
         }
+
+        debugRenderer.render(world, camaraBox2D.combined);
 
         // ESC para volver al menú
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
