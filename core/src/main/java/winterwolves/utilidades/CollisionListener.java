@@ -1,7 +1,7 @@
 package winterwolves.utilidades;
 
 import com.badlogic.gdx.physics.box2d.*;
-import winterwolves.personajes.habilidadesGuerrero.Arma;
+import winterwolves.personajes.armas.Arma;
 import winterwolves.props.Caja;
 
 public class CollisionListener implements ContactListener {

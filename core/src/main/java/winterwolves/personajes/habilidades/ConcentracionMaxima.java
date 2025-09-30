@@ -1,10 +1,9 @@
-package winterwolves.personajes.habilidadesGuerrero;
+package winterwolves.personajes.habilidades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import winterwolves.personajes.Guerrero;
-import winterwolves.personajes.habilidades.Habilidad;
+import winterwolves.personajes.clases.Guerrero;
 
 public class ConcentracionMaxima extends Habilidad {
 
@@ -24,7 +23,7 @@ public class ConcentracionMaxima extends Habilidad {
     }
 
     private void cargarAnimacion() {
-        Texture textura = new Texture(Gdx.files.internal("curacion.png"));
+        Texture textura = new Texture(Gdx.files.internal("curacion.png")); // cambia la ruta si quieres
         int anchoFrame = 64;
         int altoFrame = 64;
         TextureRegion[][] tmp = TextureRegion.split(textura, anchoFrame, altoFrame);
@@ -34,23 +33,22 @@ public class ConcentracionMaxima extends Habilidad {
 
     @Override
     public boolean usar() {
-        if (puedeUsarse()) {
-            tiempoActual = 0f;
-            tiempoDesdeUltimoUso = 0f;
-            tiempoAnimacion = 0f;
+        if (!puedeUsarse()) return false;
 
-            if (getTiempoCarga() > 0) {
-                cargando = true;
-                if (personaje != null) {
-                    personaje.setPuedeMoverse(false);
-                }
-            } else {
-                activa = true;
-                iniciarEfecto();
+        tiempoActual = 0f;
+        tiempoDesdeUltimoUso = 0f;
+        tiempoAnimacion = 0f;
+
+        if (getTiempoCarga() > 0f) {
+            cargando = true;
+            if (personaje != null) {
+                personaje.setPuedeMoverse(false);
             }
-            return true;
+        } else {
+            activa = true;
+            iniciarEfecto();
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -58,7 +56,7 @@ public class ConcentracionMaxima extends Habilidad {
         tiempoDesdeUltimoUso += delta;
 
         if (cargando) {
-            tiempoActual += delta; //es como que pasa el tiempo, sin desfasarse de acuerdo a los fps
+            tiempoActual += delta;
             if (tiempoActual >= getTiempoCarga()) {
                 cargando = false;
                 activa = true;
@@ -68,33 +66,32 @@ public class ConcentracionMaxima extends Habilidad {
                 if (personaje != null) {
                     personaje.setPuedeMoverse(true);
                 }
-
                 iniciarEfecto();
             }
         } else if (activa) {
             tiempoActual += delta;
             tiempoAnimacion += delta;
             if (tiempoActual >= duracion) {
+                finalizarEfecto();
                 activa = false;
                 tiempoAnimacion = 0f;
-                finalizarEfecto();
             }
         }
     }
 
     @Override
     protected void iniciarEfecto() {
-        if (personaje != null && personaje instanceof Guerrero) {
-            Guerrero g = (Guerrero) personaje;
-            g.speedBase += bonusVelocidad;
+        if (personaje instanceof Guerrero g) {
+            g.modifSpeedBase(bonusVelocidad);
+            g.getArma().modifAtaque(bonusAtaque);
         }
     }
 
     @Override
     protected void finalizarEfecto() {
-        if (personaje != null && personaje instanceof Guerrero) {
-            Guerrero g = (Guerrero) personaje;
-            g.speedBase -= bonusVelocidad;
+        if (personaje instanceof Guerrero g) {
+            g.modifSpeedBase(-bonusVelocidad);
+            g.getArma().modifAtaque(-bonusAtaque);
         }
     }
 

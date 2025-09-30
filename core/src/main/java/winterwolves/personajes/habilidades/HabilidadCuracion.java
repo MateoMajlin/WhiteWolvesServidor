@@ -1,10 +1,8 @@
-package winterwolves.personajes.habilidadesGuerrero;
+package winterwolves.personajes.habilidades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import winterwolves.personajes.Personaje;
-import winterwolves.personajes.habilidades.Habilidad;
 
 public class HabilidadCuracion extends Habilidad {
 

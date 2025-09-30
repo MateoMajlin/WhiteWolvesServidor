@@ -13,14 +13,14 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
+import winterwolves.items.GemaDeFuego;
 import winterwolves.personajes.InventarioHud;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.AmuletoCuracion;
 import winterwolves.items.AnilloConcentracion;
 import winterwolves.items.EspadaItem;
-import winterwolves.items.Inventario;
-import winterwolves.personajes.Guerrero;
 import winterwolves.personajes.Hud;
+import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
 import winterwolves.utilidades.*;
 
@@ -38,7 +38,7 @@ public class TerrenoPractica implements Screen {
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
-    private Guerrero guerrero;
+    private Mago mago;
     private InventarioHud inventarioHud;
 
     private Hud hud;
@@ -85,29 +85,29 @@ public class TerrenoPractica implements Screen {
 
         EntradasJugador entradas = new EntradasJugador();
 
-        guerrero = new Guerrero(world, entradas, 450 / PPM, 450 / PPM, PPM);
+        mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         EspadaItem espadaItem = new EspadaItem();
-        AmuletoCuracion amuleto = new AmuletoCuracion(2f, 10f, 30);
+        GemaDeFuego gema = new GemaDeFuego(3f,2f,20);
         AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
 
-        guerrero.getInventario().agregarItem(espadaItem);
-        guerrero.getInventario().agregarItem(amuleto);
-        guerrero.getInventario().agregarItem(anillo);
+        mago.getInventario().agregarItem(espadaItem);
+        mago.getInventario().agregarItem(gema);
+        mago.getInventario().agregarItem(anillo);
 
-        guerrero.equiparArma(espadaItem);
-        guerrero.equiparItem1(amuleto);
-        guerrero.equiparItem2(anillo);
+        mago.equiparArma(espadaItem);
+        mago.equiparItem1(gema);
+        mago.equiparItem2(anillo);
 
-        guerrero.setVida(50);
+        mago.setVida(50);
 
         camaraHud = new OrthographicCamera();
         camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
 
-        inventarioHud = new InventarioHud(guerrero.getInventario(), camaraHud);
-        hud = new Hud(guerrero, camaraHud);
+        inventarioHud = new InventarioHud(mago.getInventario(), camaraHud);
+        hud = new Hud(mago, camaraHud);
 
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
@@ -140,10 +140,10 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Seguir al guerrero
+        // Seguir al mago
         camara.position.set(
-            guerrero.getX() + guerrero.getWidth() / 2,
-            guerrero.getY() + guerrero.getHeight() / 2,
+            mago.getX() + mago.getWidth() / 2,
+            mago.getY() + mago.getHeight() / 2,
             0
         );
         camara.update();
@@ -158,7 +158,7 @@ public class TerrenoPractica implements Screen {
         // Dibujar mundo
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
-        guerrero.draw(Render.batch);
+        mago.draw(Render.batch);
         for (Caja c : cajas) {
             c.actualizar(delta);
             c.draw(Render.batch);
@@ -175,11 +175,11 @@ public class TerrenoPractica implements Screen {
         // Toggle inventario
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.I)) {
             inventarioHud.toggle();
-            if(guerrero.getPuedeMoverse() == false) {
-                guerrero.setPuedeMoverse(true);
+            if(mago.getPuedeMoverse() == false) {
+                mago.setPuedeMoverse(true);
             }
-            else if(guerrero.getPuedeMoverse() == true){
-                guerrero.setPuedeMoverse(false);
+            else if(mago.getPuedeMoverse() == true){
+                mago.setPuedeMoverse(false);
             }
         }
 
@@ -190,7 +190,7 @@ public class TerrenoPractica implements Screen {
         // Dibujar HUD o Inventario (mutuamente excluyentes)
         if (inventarioHud.isVisible()) {
             Render.batch.setProjectionMatrix(camaraHud.combined);
-            inventarioHud.dibujar(Render.batch,guerrero);
+            inventarioHud.dibujar(Render.batch,mago);
         } else {
             Render.batch.setProjectionMatrix(camaraHud.combined);
             hud.render(Render.batch);
@@ -229,7 +229,7 @@ public class TerrenoPractica implements Screen {
     public void dispose() {
         mapa.dispose();
         renderer.dispose();
-        guerrero.dispose();
+        mago.dispose();
         world.dispose();
         debugRenderer.dispose();
         for (Caja c : cajas) {
@@ -243,7 +243,4 @@ public class TerrenoPractica implements Screen {
         musica.setVolume(0.2f);
     }
 
-    public Guerrero getGuerrero() {
-        return guerrero;
-    }
 }

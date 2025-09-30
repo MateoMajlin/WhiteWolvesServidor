@@ -1,5 +1,5 @@
 package winterwolves.personajes;
-import winterwolves.personajes.habilidadesGuerrero.Arma;
+import winterwolves.personajes.armas.Arma;
 
 public interface Hudeable {
 

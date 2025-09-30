@@ -1,4 +1,4 @@
-package winterwolves.personajes.habilidadesGuerrero;
+package winterwolves.personajes.armas;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import java.util.HashMap;
 import java.util.Map;
-import winterwolves.personajes.Guerrero;
+
+import winterwolves.personajes.Personaje;
 
 public class Arma {
 
@@ -26,6 +27,10 @@ public class Arma {
     protected float multiplicadorDaño = 1f;
 
     protected Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
+
+    public void modifAtaque(float bonusAtaque) {
+        this.daño += bonusAtaque;
+    }
 
     protected static class HitboxConfig {
         float ancho, alto, offsetX, offsetY, angleDeg;
@@ -45,35 +50,31 @@ public class Arma {
         this.activo = false;
     }
 
-    public boolean atacar(float x, float y, Vector2 direccion, Guerrero propietario) {
+    public boolean atacar(float x, float y, Vector2 direccion, Personaje propietario) {
         if (!activo && puedeAtacar()) {
             activar(x, y, vectorADireccion(direccion));
-            if (propietario.habilidad2.isActiva()) {
-                setMultiplicadorDaño(1f + propietario.habilidad2.getBonusAtaque()/100f);
-            } else {
-                setMultiplicadorDaño(1f);
-            }
-            propietario.setPuedeMoverse(false);
+
+            if (propietario != null) propietario.setPuedeMoverse(false);
             return true;
         }
         return false;
     }
 
-    public void actualizar(float delta, float x, float y, Guerrero propietario) {
+    public void actualizar(float delta, float x, float y, Personaje propietario) {
         tiempoDesdeUltimoGolpe += delta;
 
         if (activo) {
             stateTime += delta;
             if (body != null) body.setTransform(x/ppm, y/ppm, 0);
 
-            if (animacion.isAnimationFinished(stateTime)) {
+            if (animacion != null && animacion.isAnimationFinished(stateTime)) {
                 activo = false;
                 if (body != null) {
                     world.destroyBody(body);
                     body = null;
                 }
                 multiplicadorDaño = 1f;
-                propietario.setPuedeMoverse(true);
+                if (propietario != null) propietario.setPuedeMoverse(true);
             }
         }
     }
@@ -116,7 +117,6 @@ public class Arma {
     public float getCooldownProgreso() { return Math.min(tiempoDesdeUltimoGolpe / cooldown, 1f); }
 
     public float getDaño() { return daño; }
-
     public float getDañoReal() { return daño * multiplicadorDaño; }
     public void setMultiplicadorDaño(float valor) { multiplicadorDaño = valor; }
     public boolean isActivo() { return activo; }
@@ -136,4 +136,6 @@ public class Arma {
     }
 
     public void dispose() { if (hoja != null) hoja.dispose(); }
+
+    public float getCooldown() { return cooldown; }
 }

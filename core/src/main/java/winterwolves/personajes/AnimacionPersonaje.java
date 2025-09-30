@@ -7,18 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimacionJugador {
+public class AnimacionPersonaje {
 
     private Texture spriteSheet;
     private Animation<TextureRegion> idleAbajo, idleDerecha, idleIzquierda, idleArriba;
     private Animation<TextureRegion> correrAbajo, correrDerecha, correrIzquierda, correrArriba;
     private float stateTime;
 
-    public AnimacionJugador() {
-        spriteSheet = new Texture("zorrito.png");
+    public AnimacionPersonaje(String path) {
+        spriteSheet = new Texture(path);
         TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 32, 32);
 
-        // --- Idle ---
         idleAbajo = crearAnimacionFila(tmp, 0, 0.2f);
         idleDerecha = crearAnimacionFila(tmp, 1, 0.2f);
         idleIzquierda = crearAnimacionFila(tmp, 2, 0.2f);

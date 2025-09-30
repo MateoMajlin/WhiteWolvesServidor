@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.personajes.habilidades.Habilidad;
-import winterwolves.personajes.habilidadesGuerrero.Arma;
-import winterwolves.personajes.habilidadesGuerrero.ConcentracionMaxima;
+import winterwolves.personajes.armas.Arma;
+import winterwolves.personajes.habilidades.ConcentracionMaxima;
 
 public class AnilloConcentracion extends Item {
 

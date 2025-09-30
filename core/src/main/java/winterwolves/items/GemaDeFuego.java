@@ -3,28 +3,31 @@ package winterwolves.items;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.World;
+import winterwolves.personajes.habilidades.BolaDeFuego;
 import winterwolves.personajes.habilidades.Habilidad;
 import winterwolves.personajes.armas.Arma;
-import winterwolves.personajes.habilidades.HabilidadCuracion;
 
-public class AmuletoCuracion extends Item {
-
-    String descripcion = "Amuleto que brinda la habilidad de"  + "\n" + "curarse a su portador";
+public class GemaDeFuego extends Item {
 
     private final float duracion;
     private final float cooldown;
-    private final int curacion;
+    private final int daño;
 
-    public AmuletoCuracion(float duracion, float cooldown, int curacion) {
-        super("Amuleto Curacion", new TextureRegion(new Texture("texturas/anillo.png"), 32, 16, 16, 16));
+    private final String descripcion;
+
+    public GemaDeFuego(float duracion, float cooldown, int daño) {
+        super("Gema De Fuego",
+            new TextureRegion(new Texture("texturas/anillo.png"), 48, 16, 16, 16));
         this.duracion = duracion;
         this.cooldown = cooldown;
-        this.curacion = curacion;
+        this.daño = daño;
+        this.descripcion = "Amuleto que permite lanzar una bola de fuego" + "\n" +
+            "que inflige " + daño + " de daño a los enemigos";
     }
 
     @Override
     public Habilidad crearHabilidad() {
-        return new HabilidadCuracion(duracion, cooldown, curacion);
+        return new BolaDeFuego(duracion, cooldown, daño);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class AmuletoCuracion extends Item {
     }
 
     @Override
-    public String getDescripcion(){
+    public String getDescripcion() {
         return descripcion;
     }
 }
