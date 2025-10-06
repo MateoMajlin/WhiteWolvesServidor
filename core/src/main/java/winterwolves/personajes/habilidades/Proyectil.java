@@ -8,9 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.personajes.Personaje;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Proyectil {
 
     Body body;
@@ -23,25 +20,15 @@ public class Proyectil {
     float tiempoRestante;
     Personaje lanzador;
     BolaDeFuego.Direccion direccion;
+    Vector2 offsetVisual;
+    Vector2 offsetHitbox;
 
     float ancho = 64f;
     float alto = 64f;
 
-    private static final Map<BolaDeFuego.Direccion, Vector2> visualOffsets = new HashMap<>();
-    static {
-        visualOffsets.put(BolaDeFuego.Direccion.UP, new Vector2(32, 10));
-        visualOffsets.put(BolaDeFuego.Direccion.DOWN, new Vector2(-32, -10));
-        visualOffsets.put(BolaDeFuego.Direccion.LEFT, new Vector2(-10, 32));
-        visualOffsets.put(BolaDeFuego.Direccion.RIGHT, new Vector2(10, -32));
-        visualOffsets.put(BolaDeFuego.Direccion.UP_LEFT, new Vector2(15, 30));
-        visualOffsets.put(BolaDeFuego.Direccion.UP_RIGHT, new Vector2(30, -15));
-        visualOffsets.put(BolaDeFuego.Direccion.DOWN_LEFT, new Vector2(-30, 15));
-        visualOffsets.put(BolaDeFuego.Direccion.DOWN_RIGHT, new Vector2(-15, -30));
-    }
-
     public Proyectil(World world, Vector2 pos, Vector2 dir, float velocidad, int daño,
                      Animation<TextureRegion> animacion, float duracion, Personaje lanzador,
-                     BolaDeFuego.Direccion direccion) {
+                     BolaDeFuego.Direccion direccion, Vector2 offsetVisual, Vector2 offsetHitbox) {
         this.dir = new Vector2(dir).nor();
         this.velocidad = velocidad;
         this.daño = daño;
@@ -49,14 +36,21 @@ public class Proyectil {
         this.tiempoRestante = duracion;
         this.lanzador = lanzador;
         this.direccion = direccion;
+        this.offsetVisual = offsetVisual;
+        this.offsetHitbox = offsetHitbox;
 
+        // Crear body en la posición inicial más offset de hitbox
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
-        def.position.set(pos.x / lanzador.ppm, pos.y / lanzador.ppm);
+        def.position.set(
+            (pos.x + (offsetHitbox != null ? offsetHitbox.x : 0)) / lanzador.ppm,
+            (pos.y + (offsetHitbox != null ? offsetHitbox.y : 0)) / lanzador.ppm
+        );
         def.bullet = true;
         def.gravityScale = 0;
         body = world.createBody(def);
 
+        // Crear hitbox
         CircleShape shape = new CircleShape();
         shape.setRadius(15 / lanzador.ppm);
 
@@ -86,7 +80,7 @@ public class Proyectil {
         Vector2 pos = body.getPosition().cpy().scl(lanzador.ppm);
         float angle = dir.angleDeg();
 
-        Vector2 offset = visualOffsets.getOrDefault(direccion, new Vector2(0,0));
+        Vector2 offset = offsetVisual != null ? offsetVisual : new Vector2(0,0);
 
         batch.draw(frame,
             pos.x - ancho / 2f + offset.x,

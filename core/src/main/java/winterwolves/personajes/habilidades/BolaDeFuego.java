@@ -18,16 +18,30 @@ public class BolaDeFuego extends Habilidad {
 
     public enum Direccion { UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT }
 
+    // Offset visual de la animación
     private static final Map<Direccion, Vector2> startOffsets = new HashMap<>();
     static {
-        startOffsets.put(Direccion.UP, new Vector2(0, 20));
-        startOffsets.put(Direccion.DOWN, new Vector2(0, -20));
-        startOffsets.put(Direccion.LEFT, new Vector2(-20, 0));
-        startOffsets.put(Direccion.RIGHT, new Vector2(20, 0));
-        startOffsets.put(Direccion.UP_LEFT, new Vector2(-15, 15));
-        startOffsets.put(Direccion.UP_RIGHT, new Vector2(15, 15));
-        startOffsets.put(Direccion.DOWN_LEFT, new Vector2(-15, -15));
-        startOffsets.put(Direccion.DOWN_RIGHT, new Vector2(15, -15));
+        startOffsets.put(Direccion.UP, new Vector2(32, 10));
+        startOffsets.put(Direccion.DOWN, new Vector2(-32, -10));
+        startOffsets.put(Direccion.LEFT, new Vector2(-10, 32));
+        startOffsets.put(Direccion.RIGHT, new Vector2(10, -32));
+        startOffsets.put(Direccion.UP_LEFT, new Vector2(15, 30));
+        startOffsets.put(Direccion.UP_RIGHT, new Vector2(30, -15));
+        startOffsets.put(Direccion.DOWN_LEFT, new Vector2(-30, 15));
+        startOffsets.put(Direccion.DOWN_RIGHT, new Vector2(-15, -30));
+    }
+
+    // Offset de hitbox
+    private static final Map<Direccion, Vector2> hitboxOffsets = new HashMap<>();
+    static {
+        hitboxOffsets.put(Direccion.UP, new Vector2(0, 10));
+        hitboxOffsets.put(Direccion.DOWN, new Vector2(0, -10));
+        hitboxOffsets.put(Direccion.LEFT, new Vector2(-10, 0));
+        hitboxOffsets.put(Direccion.RIGHT, new Vector2(10, 0));
+        hitboxOffsets.put(Direccion.UP_LEFT, new Vector2(-5, 5));
+        hitboxOffsets.put(Direccion.UP_RIGHT, new Vector2(5, 5));
+        hitboxOffsets.put(Direccion.DOWN_LEFT, new Vector2(-5, -5));
+        hitboxOffsets.put(Direccion.DOWN_RIGHT, new Vector2(5, -5));
     }
 
     public BolaDeFuego(float duracion, float cooldown, int daño) {
@@ -35,7 +49,6 @@ public class BolaDeFuego extends Habilidad {
         this.daño = daño;
 
         textura = new Texture("bolaDeFuego.png");
-        TextureRegion[][] tmp = TextureRegion.split(textura, 32, 32);
 
         int offsetX = 18;
         int offsetY = 4;
@@ -63,9 +76,11 @@ public class BolaDeFuego extends Habilidad {
 
         Vector2 dir = new Vector2(personaje.direccionMirando).nor();
         Direccion direccionEnum = vectorADireccion(dir);
-        Vector2 offset = startOffsets.getOrDefault(direccionEnum, new Vector2(0, 0));
 
-        Vector2 pos = centro.cpy().add(dir.cpy().scl(40f)).add(offset);
+        Vector2 offsetVisual = startOffsets.getOrDefault(direccionEnum, new Vector2(0, 0));
+        Vector2 offsetHitbox = hitboxOffsets.getOrDefault(direccionEnum, new Vector2(0, 0));
+
+        Vector2 pos = centro.cpy().add(dir.cpy().scl(40f)); // distancia inicial delante del pj
 
         proyectiles.add(new Proyectil(
             personaje.world,
@@ -76,7 +91,9 @@ public class BolaDeFuego extends Habilidad {
             animacionBola,
             duracion,
             personaje,
-            direccionEnum
+            direccionEnum,
+            offsetVisual,
+            offsetHitbox
         ));
     }
 

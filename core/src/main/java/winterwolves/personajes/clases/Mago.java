@@ -19,7 +19,7 @@ public class Mago extends Personaje {
         animaciones = new AnimacionPersonaje("pajarito.png");
 
         armaBasica = new Baston(world, ppm);
-        habilidad1 = new BolaDeFuego(3f,2f,60);
+        habilidad1 = new BolaDeFuego(0f,0f,60);
         habilidad2 = new ConcentracionMaxima(10f, 15f, 2f, 20f);
 
         habilidad1.setPersonaje(this);
