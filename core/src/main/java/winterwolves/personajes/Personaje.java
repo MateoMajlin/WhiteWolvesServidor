@@ -45,8 +45,10 @@ public class Personaje extends Sprite implements Hudeable {
 
     protected String nombreClase = "Personaje";
 
-    // --- Constructor ---
+    public World world;
+
     public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
+        this.world = world;
         this.entradas = entradas;
         this.inventario = new Inventario();
         this.ppm = ppm;

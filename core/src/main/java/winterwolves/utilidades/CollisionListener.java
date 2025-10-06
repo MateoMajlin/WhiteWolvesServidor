@@ -2,6 +2,7 @@ package winterwolves.utilidades;
 
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.personajes.armas.Arma;
+import winterwolves.personajes.habilidades.Proyectil;
 import winterwolves.props.Caja;
 
 public class CollisionListener implements ContactListener {
@@ -13,13 +14,20 @@ public class CollisionListener implements ContactListener {
 
         // Arma golpeando caja
         if (a instanceof Arma && b instanceof Caja) {
-            Caja caja = (Caja) b;
-            Arma arma = (Arma) a;
-            caja.recibirDaño(arma.getDañoReal());
+            ((Caja) b).recibirDaño(((Arma) a).getDañoReal());
         } else if (a instanceof Caja && b instanceof Arma) {
-            Caja caja = (Caja) a;
-            Arma arma = (Arma) b;
-            caja.recibirDaño(arma.getDañoReal());
+            ((Caja) a).recibirDaño(((Arma) b).getDañoReal());
+        }
+
+        // Proyectil golpeando caja
+        if (a instanceof Proyectil && b instanceof Caja) {
+            Proyectil p = (Proyectil) a;
+            ((Caja) b).recibirDaño(p.daño);
+            p.muerto = true;
+        } else if (a instanceof Caja && b instanceof Proyectil) {
+            Proyectil p = (Proyectil) b;
+            ((Caja) a).recibirDaño(p.daño);
+            p.muerto = true;
         }
     }
 

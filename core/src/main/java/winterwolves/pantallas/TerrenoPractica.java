@@ -88,7 +88,7 @@ public class TerrenoPractica implements Screen {
         mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         EspadaItem espadaItem = new EspadaItem();
-        GemaDeFuego gema = new GemaDeFuego(3f,2f,20);
+        GemaDeFuego gema = new GemaDeFuego(0f,0f,20);
         AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
 
         mago.getInventario().agregarItem(espadaItem);
