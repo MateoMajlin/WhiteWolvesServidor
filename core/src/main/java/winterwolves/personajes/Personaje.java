@@ -34,7 +34,6 @@ public class Personaje extends Sprite implements Hudeable {
 
     protected Inventario inventario;
 
-    // --- Slots de equipo ---
     protected Arma armaBasica;
     protected Habilidad habilidad1;
     protected Habilidad habilidad2;

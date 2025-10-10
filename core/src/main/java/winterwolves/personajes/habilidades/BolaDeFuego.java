@@ -6,42 +6,39 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import java.util.*;
+import com.badlogic.gdx.utils.Timer;
 import winterwolves.personajes.Personaje;
 
 public class BolaDeFuego extends Habilidad {
 
-    private final float velocidad = 100f;
+    private final float velocidad = 200f;
     private final int daño;
     private final List<Proyectil> proyectiles = new ArrayList<>();
     private final Texture textura;
     private final Animation<TextureRegion> animacionBola;
 
-    public enum Direccion { UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT }
-
-    // Offset visual de la animación
-    private static final Map<Direccion, Vector2> startOffsets = new HashMap<>();
+    private static final Map<DireccionUtil.Direccion, Vector2> startOffsets = new HashMap<>();
     static {
-        startOffsets.put(Direccion.UP, new Vector2(32, 10));
-        startOffsets.put(Direccion.DOWN, new Vector2(-32, -10));
-        startOffsets.put(Direccion.LEFT, new Vector2(-10, 32));
-        startOffsets.put(Direccion.RIGHT, new Vector2(10, -32));
-        startOffsets.put(Direccion.UP_LEFT, new Vector2(15, 30));
-        startOffsets.put(Direccion.UP_RIGHT, new Vector2(30, -15));
-        startOffsets.put(Direccion.DOWN_LEFT, new Vector2(-30, 15));
-        startOffsets.put(Direccion.DOWN_RIGHT, new Vector2(-15, -30));
+        startOffsets.put(DireccionUtil.Direccion.UP, new Vector2(32, 10));
+        startOffsets.put(DireccionUtil.Direccion.DOWN, new Vector2(-32, -10));
+        startOffsets.put(DireccionUtil.Direccion.LEFT, new Vector2(-10, 32));
+        startOffsets.put(DireccionUtil.Direccion.RIGHT, new Vector2(10, -32));
+        startOffsets.put(DireccionUtil.Direccion.UP_LEFT, new Vector2(15, 30));
+        startOffsets.put(DireccionUtil.Direccion.UP_RIGHT, new Vector2(30, -15));
+        startOffsets.put(DireccionUtil.Direccion.DOWN_LEFT, new Vector2(-30, 15));
+        startOffsets.put(DireccionUtil.Direccion.DOWN_RIGHT, new Vector2(-15, -30));
     }
 
-    // Offset de hitbox
-    private static final Map<Direccion, Vector2> hitboxOffsets = new HashMap<>();
+    private static final Map<DireccionUtil.Direccion, Vector2> hitboxOffsets = new HashMap<>();
     static {
-        hitboxOffsets.put(Direccion.UP, new Vector2(0, 10));
-        hitboxOffsets.put(Direccion.DOWN, new Vector2(0, -10));
-        hitboxOffsets.put(Direccion.LEFT, new Vector2(-10, 0));
-        hitboxOffsets.put(Direccion.RIGHT, new Vector2(10, 0));
-        hitboxOffsets.put(Direccion.UP_LEFT, new Vector2(-5, 5));
-        hitboxOffsets.put(Direccion.UP_RIGHT, new Vector2(5, 5));
-        hitboxOffsets.put(Direccion.DOWN_LEFT, new Vector2(-5, -5));
-        hitboxOffsets.put(Direccion.DOWN_RIGHT, new Vector2(5, -5));
+        hitboxOffsets.put(DireccionUtil.Direccion.UP, new Vector2(0, 10));
+        hitboxOffsets.put(DireccionUtil.Direccion.DOWN, new Vector2(0, -10));
+        hitboxOffsets.put(DireccionUtil.Direccion.LEFT, new Vector2(-10, 0));
+        hitboxOffsets.put(DireccionUtil.Direccion.RIGHT, new Vector2(10, 0));
+        hitboxOffsets.put(DireccionUtil.Direccion.UP_LEFT, new Vector2(-5, 5));
+        hitboxOffsets.put(DireccionUtil.Direccion.UP_RIGHT, new Vector2(5, 5));
+        hitboxOffsets.put(DireccionUtil.Direccion.DOWN_LEFT, new Vector2(-5, -5));
+        hitboxOffsets.put(DireccionUtil.Direccion.DOWN_RIGHT, new Vector2(5, -5));
     }
 
     public BolaDeFuego(float duracion, float cooldown, int daño) {
@@ -69,18 +66,30 @@ public class BolaDeFuego extends Habilidad {
 
     @Override
     protected void iniciarEfecto() {
+        // Bloquear al personaje medio segundo
+        personaje.setPuedeMoverse(false);
+        final float stunDuracion = 0.5f; // medio segundo
+
+        // Programar desbloqueo usando un Timer
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                personaje.setPuedeMoverse(true);
+            }
+        }, stunDuracion);
+
         Vector2 centro = new Vector2(
             personaje.body.getPosition().x * personaje.ppm,
             personaje.body.getPosition().y * personaje.ppm
         );
 
         Vector2 dir = new Vector2(personaje.direccionMirando).nor();
-        Direccion direccionEnum = vectorADireccion(dir);
+        DireccionUtil.Direccion direccionEnum = DireccionUtil.vectorADireccion(dir);
 
         Vector2 offsetVisual = startOffsets.getOrDefault(direccionEnum, new Vector2(0, 0));
         Vector2 offsetHitbox = hitboxOffsets.getOrDefault(direccionEnum, new Vector2(0, 0));
 
-        Vector2 pos = centro.cpy().add(dir.cpy().scl(40f)); // distancia inicial delante del pj
+        Vector2 pos = centro.cpy().add(dir.cpy().scl(40f));
 
         proyectiles.add(new Proyectil(
             personaje.world,
@@ -96,6 +105,7 @@ public class BolaDeFuego extends Habilidad {
             offsetHitbox
         ));
     }
+
 
     @Override
     protected void finalizarEfecto() {}
@@ -122,16 +132,4 @@ public class BolaDeFuego extends Habilidad {
 
     @Override
     public void dispose() { textura.dispose(); }
-
-    private static Direccion vectorADireccion(Vector2 dir) {
-        float angle = (float) Math.toDegrees(Math.atan2(dir.y, dir.x));
-        if (angle >= -22.5 && angle < 22.5) return Direccion.RIGHT;
-        if (angle >= 22.5 && angle < 67.5) return Direccion.UP_RIGHT;
-        if (angle >= 67.5 && angle < 112.5) return Direccion.UP;
-        if (angle >= 112.5 && angle < 157.5) return Direccion.UP_LEFT;
-        if (angle >= -67.5 && angle < -22.5) return Direccion.DOWN_RIGHT;
-        if (angle >= -112.5 && angle < -67.5) return Direccion.DOWN;
-        if (angle >= -157.5 && angle < -112.5) return Direccion.DOWN_LEFT;
-        return Direccion.LEFT;
-    }
 }

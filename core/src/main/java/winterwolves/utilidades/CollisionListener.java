@@ -3,6 +3,7 @@ package winterwolves.utilidades;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.personajes.armas.Arma;
 import winterwolves.personajes.habilidades.Proyectil;
+import winterwolves.personajes.habilidades.ProyectilRayo;
 import winterwolves.props.Caja;
 
 public class CollisionListener implements ContactListener {
@@ -12,14 +13,13 @@ public class CollisionListener implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
-        // Arma golpeando caja
+        // --- Armas vs Caja ---
         if (a instanceof Arma && b instanceof Caja) {
             ((Caja) b).recibirDaño(((Arma) a).getDañoReal());
         } else if (a instanceof Caja && b instanceof Arma) {
             ((Caja) a).recibirDaño(((Arma) b).getDañoReal());
         }
 
-        // Proyectil golpeando caja
         if (a instanceof Proyectil && b instanceof Caja) {
             Proyectil p = (Proyectil) a;
             ((Caja) b).recibirDaño(p.daño);
@@ -29,7 +29,19 @@ public class CollisionListener implements ContactListener {
             ((Caja) a).recibirDaño(p.daño);
             p.muerto = true;
         }
+
+        // --- ProyectilRayo vs Caja ---
+        if (a instanceof ProyectilRayo && b instanceof Caja) {
+            ProyectilRayo r = (ProyectilRayo) a;
+            ((Caja) b).recibirDaño(r.daño);
+            //r.muerto = true;
+        } else if (a instanceof Caja && b instanceof ProyectilRayo) {
+            ProyectilRayo r = (ProyectilRayo) b;
+            ((Caja) a).recibirDaño(r.daño);
+            //r.muerto = true;
+        }
     }
+
 
     @Override
     public void endContact(Contact contact) {}

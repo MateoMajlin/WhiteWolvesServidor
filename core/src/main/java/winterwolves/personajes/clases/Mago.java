@@ -9,6 +9,7 @@ import winterwolves.personajes.armas.Baston;
 import winterwolves.personajes.habilidades.BolaDeFuego;
 import winterwolves.personajes.habilidades.ConcentracionMaxima;
 import winterwolves.personajes.habilidades.HabilidadCuracion;
+import winterwolves.personajes.habilidades.RayoElectrico;
 
 public class Mago extends Personaje {
 
@@ -19,8 +20,8 @@ public class Mago extends Personaje {
         animaciones = new AnimacionPersonaje("pajarito.png");
 
         armaBasica = new Baston(world, ppm);
-        habilidad1 = new BolaDeFuego(0f,0f,60);
-        habilidad2 = new ConcentracionMaxima(10f, 15f, 2f, 20f);
+        habilidad1 = new BolaDeFuego(2f,5f,50);
+        habilidad2 = new RayoElectrico(3f,10f,80);
 
         habilidad1.setPersonaje(this);
         habilidad2.setPersonaje(this);
