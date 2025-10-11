@@ -1,6 +1,7 @@
 package winterwolves.pantallas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -169,25 +170,19 @@ public class TerrenoPractica implements Screen {
         }
         Render.batch.end();
 
-        // Capas delanteras
         renderer.render(capasDelanteras);
 
-        // Toggle inventario
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.I)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             inventarioHud.toggle();
-            if(mago.getPuedeMoverse() == false) {
-                mago.setPuedeMoverse(true);
-            }
-            else if(mago.getPuedeMoverse() == true){
-                mago.setPuedeMoverse(false);
-            }
+            mago.setPuedeMoverse(!mago.getPuedeMoverse());
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            mago.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
+        }
 
-        // Actualizar inventario
         inventarioHud.actualizar();
 
-        // Dibujar HUD o Inventario (mutuamente excluyentes)
         if (inventarioHud.isVisible()) {
             Render.batch.setProjectionMatrix(camaraHud.combined);
             inventarioHud.dibujar(Render.batch,mago);
@@ -198,7 +193,6 @@ public class TerrenoPractica implements Screen {
 
         debugRenderer.render(world, camaraBox2D.combined);
 
-        // ESC para volver al menú
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
             Render.app.setScreen(new Menu());
             musica.stop();

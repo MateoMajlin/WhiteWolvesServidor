@@ -71,14 +71,20 @@ public class InventarioHud {
         }
     }
 
-    public void dibujar(SpriteBatch batch,Personaje j) {
+    public void dibujar(SpriteBatch batch, Personaje j) {
         if (!visible) return;
 
-        // fondo
+        // Fondo y stats del personaje
         textoNombre.setTexto(j.getClase());
-        textoNombre.setPosition(80,680);
-        textoEstadisticas.setTexto("ATQ: " + j.getAtaque() + " ATQ.M: " + j.getAtaqueMagico() + " DEF: " + j.getDefensa() + " PV: " + j.getVida());
-        textoEstadisticas.setPosition(400,670);
+        textoNombre.setPosition(80, 680);
+        textoEstadisticas.setTexto(
+            "ATQ: " + j.getAtaque() +
+                " ATQ.M: " + j.getAtaqueMagico() +
+                " DEF: " + j.getDefensa() +
+                " PV: " + j.getVida()
+        );
+        textoEstadisticas.setPosition(400, 670);
+
         fondoInventario.setTransparencia(0.9f);
         batch.begin();
         fondoInventario.dibujar();
@@ -86,28 +92,30 @@ public class InventarioHud {
         textoEstadisticas.dibujar();
         batch.end();
 
-        dibujarCasilla(batch, casilla1, 0);
-        dibujarCasilla(batch, casilla2, 1);
-        dibujarCasilla(batch, casilla3, 2);
+        // Dibujar casillas
+        dibujarCasilla(batch, casilla1, j, 0);
+        dibujarCasilla(batch, casilla2, j, 1);
+        dibujarCasilla(batch, casilla3, j, 2);
 
-        dibujarDescripcionItems(batch,0,84,350);
-        dibujarDescripcionItems(batch,1,404,350);
-        dibujarDescripcionItems(batch,2,724,350);
-
+        // Descripciones
+        dibujarDescripcionItems(batch, j, 0, 84, 350);
+        dibujarDescripcionItems(batch, j, 1, 404, 350);
+        dibujarDescripcionItems(batch, j, 2, 724, 350);
     }
 
-    private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, int index) {
-        if (index >= inventario.getItems().size()) return;
+    // --- Casilla adaptada a slots del personaje ---
+    private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, Personaje j, int index) {
+        Item item = j.getSlot(index);
+        if (item == null) return;
 
-        Item item = inventario.getItem(index);
-
+        // Dibujar fondo de casilla
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(index == seleccionado ? Color.ORANGE : Color.DARK_GRAY);
         shapeRenderer.rect(casilla.x, casilla.y, casilla.ancho, casilla.alto);
         shapeRenderer.end();
 
-        // textura del item
+        // Dibujar textura del item/habilidad
         if (item.getTextura() != null) {
             float margenInterno = 8;
             batch.begin();
@@ -115,11 +123,12 @@ public class InventarioHud {
                 casilla.x + margenInterno,
                 casilla.y + margenInterno + 12,
                 casilla.ancho - 2 * margenInterno,
-                casilla.alto - 2 * margenInterno - 12);
+                casilla.alto - 2 * margenInterno - 12
+            );
             batch.end();
         }
 
-        // nombre del item
+        // Nombre del item/habilidad
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         textoItem.setTexto(item.getNombre());
@@ -128,11 +137,13 @@ public class InventarioHud {
         batch.end();
     }
 
-    private void dibujarDescripcionItems(SpriteBatch batch,int index,int posX,int posY) {
-        Item item = inventario.getItem(index);
-        Texto textoDescripcion = new Texto(Recursos.FUENTEMENU,14,Color.WHITE,true);
+    // --- Descripción adaptada ---
+    private void dibujarDescripcionItems(SpriteBatch batch, Personaje j, int index, int posX, int posY) {
+        Item item = j.getSlot(index);
+        if (item == null) return;
 
-        if(index == seleccionado) {
+        if (index == seleccionado) {
+            Texto textoDescripcion = new Texto(Recursos.FUENTEMENU, 14, Color.WHITE, true);
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             textoDescripcion.setTexto(item.getDescripcion());
@@ -141,6 +152,7 @@ public class InventarioHud {
             batch.end();
         }
     }
+
 
     public Item getSeleccionado() {
         if (inventario.getItems().isEmpty()) return null;

@@ -88,7 +88,6 @@ public class Personaje extends Sprite implements Hudeable {
             if (entradas.isHabilidad2()) habilidad2.usar();
         }
 
-        // Movimiento y animaciones
         mover();
         procesarHabilidades();
 
@@ -100,7 +99,6 @@ public class Personaje extends Sprite implements Hudeable {
             : animaciones.getFrame(movimiento, direccionMirando, speed, speedBase, delta);
         batch.draw(frame, getX(), getY(), getWidth(), getHeight());
 
-        // Dibujar arma
         if (armaBasica != null) {
             float desplazamiento = getWidth() * 0.6f;
             float armaX = getX() + direccionMirando.x * desplazamiento;
@@ -191,13 +189,58 @@ public class Personaje extends Sprite implements Hudeable {
     // --- Inventario y slots ---
     public Inventario getInventario() { return inventario; }
     public void equiparArma(Item item) { if (inventario.getItems().contains(item)) slotArma = item; }
-    public void equiparItem1(Item item) { if (inventario.getItems().contains(item)) slotHabilidad1 = item; }
-    public void equiparItem2(Item item) { if (inventario.getItems().contains(item)) slotHabilidad2 = item; }
+    public void equiparItem1(Item item) {
+        if (inventario.getItems().contains(item)) {
+            slotHabilidad1 = item;
+            if (habilidad1 != null) habilidad1.dispose();
+            habilidad1 = item.crearHabilidad();
+            habilidad1.setPersonaje(this);  // se asigna automáticamente
+        }
+    }
+
+    public void equiparItem2(Item item) {
+        if (inventario.getItems().contains(item)) {
+            slotHabilidad2 = item;
+            if (habilidad2 != null) habilidad2.dispose();
+            habilidad2 = item.crearHabilidad();
+            habilidad2.setPersonaje(this);  // se asigna automáticamente
+        }
+    }
+
     public void quitarArma() { slotArma = null; }
     public void quitarItem1() { slotHabilidad1 = null; }
     public void quitarItem2() { slotHabilidad2 = null; }
 
-    // --- Limpieza ---
+    public void intercambiarItems(Item item,int slot) {
+        switch (slot) {
+            case 0:
+                this.slotArma = item;
+                break;
+            case 1:
+                if (this.habilidad1 != null) this.habilidad1.dispose();
+                this.slotHabilidad1 = item;
+                this.habilidad1 = item.crearHabilidad();
+                this.habilidad1.setPersonaje(this);  // <-- asignar personaje
+                break;
+            case 2:
+                if (this.habilidad2 != null) this.habilidad2.dispose();
+                this.slotHabilidad2 = item;
+                this.habilidad2 = item.crearHabilidad();
+                this.habilidad2.setPersonaje(this);  // <-- asignar personaje
+                break;
+        }
+    }
+
+    public Item getSlot(int slot) {
+        switch (slot) {
+            case 0: return slotArma;
+            case 1: return slotHabilidad1;
+            case 2: return slotHabilidad2;
+            default: return null;
+        }
+    }
+
+
     public void dispose() {
         animaciones.dispose();
         if (armaBasica != null) armaBasica.dispose();
