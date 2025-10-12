@@ -16,7 +16,7 @@ public class AmuletoCuracion extends Item {
     private final int curacion;
 
     public AmuletoCuracion(float duracion, float cooldown, int curacion) {
-        super("Amuleto Curacion", new TextureRegion(new Texture("texturas/anillo.png"), 32, 16, 16, 16));
+        super("Amuleto Curacion", new TextureRegion(new Texture("texturas/anillo.png"), 64, 16, 16, 16));
         this.duracion = duracion;
         this.cooldown = cooldown;
         this.curacion = curacion;

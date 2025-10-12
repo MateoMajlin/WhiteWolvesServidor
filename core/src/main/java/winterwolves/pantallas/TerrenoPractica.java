@@ -14,12 +14,9 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import winterwolves.elementos.Texto;
-import winterwolves.items.GemaDeFuego;
+import winterwolves.items.*;
 import winterwolves.personajes.InventarioHud;
 import winterwolves.io.EntradasJugador;
-import winterwolves.items.AmuletoCuracion;
-import winterwolves.items.AnilloConcentracion;
-import winterwolves.items.EspadaItem;
 import winterwolves.personajes.Hud;
 import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
@@ -89,16 +86,16 @@ public class TerrenoPractica implements Screen {
         mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM);
 
         EspadaItem espadaItem = new EspadaItem();
-        GemaDeFuego gema = new GemaDeFuego(0f,0f,20);
-        AnilloConcentracion anillo = new AnilloConcentracion(10f, 15f, 2f, 20f);
+        GemaDeFuego gema = new GemaDeFuego(5f,5f,60);
+        GemaElectrica gemaElectrica = new GemaElectrica(5f, 10f, 80);
 
         mago.getInventario().agregarItem(espadaItem);
         mago.getInventario().agregarItem(gema);
-        mago.getInventario().agregarItem(anillo);
+        mago.getInventario().agregarItem(gemaElectrica);
 
         mago.equiparArma(espadaItem);
         mago.equiparItem1(gema);
-        mago.equiparItem2(anillo);
+        mago.equiparItem2(gemaElectrica);
 
         mago.setVida(50);
 
@@ -131,7 +128,6 @@ public class TerrenoPractica implements Screen {
 
         world.step(delta, 6, 2);
 
-        // Actualizar cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -141,7 +137,6 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Seguir al mago
         camara.position.set(
             mago.getX() + mago.getWidth() / 2,
             mago.getY() + mago.getHeight() / 2,
@@ -152,11 +147,9 @@ public class TerrenoPractica implements Screen {
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
-        // Fondo
         renderer.setView(camara);
         renderer.render(capasFondo);
 
-        // Dibujar mundo
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         mago.draw(Render.batch);

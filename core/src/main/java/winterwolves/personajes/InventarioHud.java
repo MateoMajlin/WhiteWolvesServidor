@@ -103,19 +103,16 @@ public class InventarioHud {
         dibujarDescripcionItems(batch, j, 2, 724, 350);
     }
 
-    // --- Casilla adaptada a slots del personaje ---
     private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, Personaje j, int index) {
         Item item = j.getSlot(index);
         if (item == null) return;
 
-        // Dibujar fondo de casilla
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(index == seleccionado ? Color.ORANGE : Color.DARK_GRAY);
         shapeRenderer.rect(casilla.x, casilla.y, casilla.ancho, casilla.alto);
         shapeRenderer.end();
 
-        // Dibujar textura del item/habilidad
         if (item.getTextura() != null) {
             float margenInterno = 8;
             batch.begin();
@@ -128,7 +125,6 @@ public class InventarioHud {
             batch.end();
         }
 
-        // Nombre del item/habilidad
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         textoItem.setTexto(item.getNombre());
@@ -137,7 +133,6 @@ public class InventarioHud {
         batch.end();
     }
 
-    // --- Descripción adaptada ---
     private void dibujarDescripcionItems(SpriteBatch batch, Personaje j, int index, int posX, int posY) {
         Item item = j.getSlot(index);
         if (item == null) return;
