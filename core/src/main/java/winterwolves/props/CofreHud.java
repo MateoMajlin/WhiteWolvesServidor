@@ -1,5 +1,7 @@
 package winterwolves.props;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -32,9 +34,10 @@ public class CofreHud {
 
     private Personaje personaje;
 
+    private int seleccionado = 0; // solo recorre los slots del cofre (0,1,2)
+
     public CofreHud(Inventario inventarioCofre, Personaje personaje, OrthographicCamera cameraHud) {
         this.inventarioCofre = inventarioCofre;
-        this.inventarioPersonaje = personaje.getInventario();
         this.personaje = personaje;
         this.cameraHud = cameraHud;
 
@@ -44,10 +47,12 @@ public class CofreHud {
         textoNombre = new Texto(Recursos.FUENTEMENU,50,Color.BLACK,true);
         textoEstadisticas = new Texto(Recursos.FUENTEMENU,25,Color.WHITE,true);
 
+        // Slots del personaje
         casillasPersonaje[0] = new CasillaInventario(84, 366, ANCHO_CASILLA, ALTO_CASILLA);
         casillasPersonaje[1] = new CasillaInventario(404, 366, ANCHO_CASILLA, ALTO_CASILLA);
         casillasPersonaje[2] = new CasillaInventario(724, 366, ANCHO_CASILLA, ALTO_CASILLA);
 
+        // Slots del cofre
         casillasCofre[0] = new CasillaInventario(84, 100, ANCHO_CASILLA, ALTO_CASILLA);
         casillasCofre[1] = new CasillaInventario(404, 100, ANCHO_CASILLA, ALTO_CASILLA);
         casillasCofre[2] = new CasillaInventario(724, 100, ANCHO_CASILLA, ALTO_CASILLA);
@@ -56,6 +61,7 @@ public class CofreHud {
     public void toggle() {
         visible = !visible;
         personaje.setPuedeMoverse(!visible);
+
         if (visible) {
             inventarioPersonaje = personaje.getInventario();
         }
@@ -63,6 +69,40 @@ public class CofreHud {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    public void actualizar() {
+        if (!visible) return;
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            seleccionado = (seleccionado + 1) % casillasCofre.length;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            seleccionado--;
+            if (seleccionado < 0) seleccionado = casillasCofre.length - 1;
+        }
+
+        // Intercambiar items al presionar ENTER
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            int idx = seleccionado;
+
+            Item itemPersonaje = inventarioPersonaje.getItem(idx);
+            Item itemCofre = inventarioCofre.getItem(idx);
+
+            // Intercambiar
+            if (itemCofre != null) {
+                personaje.intercambiarItems(itemCofre, idx);
+                inventarioPersonaje.setItemEnSlot(itemCofre, idx);
+            }
+            if (itemPersonaje != null) {
+                inventarioCofre.setItemEnSlot(itemPersonaje, idx);
+            }
+        }
+
+        // Cerrar HUD con ESC
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            toggle();
+        }
     }
 
     public void dibujar(SpriteBatch batch) {
@@ -79,7 +119,7 @@ public class CofreHud {
         textoNombre.dibujar();
 
         textoEstadisticas.setTexto(
-                "ATQ: " + personaje.getAtaque() +
+            "ATQ: " + personaje.getAtaque() +
                 " ATQ.M: " + personaje.getAtaqueMagico() +
                 " DEF: " + personaje.getDefensa() +
                 " PV: " + personaje.getVida()
@@ -88,17 +128,23 @@ public class CofreHud {
         textoEstadisticas.dibujar();
         batch.end();
 
-        for (int i = 0; i < 3; i++) dibujarCasilla(batch, casillasPersonaje[i], inventarioPersonaje.getItem(i));
 
-        for (int i = 0; i < 3; i++) dibujarCasilla(batch, casillasCofre[i], inventarioCofre.getItem(i));
+        for (int i = 0; i < casillasPersonaje.length; i++) {
+            dibujarCasilla(batch, casillasPersonaje[i], inventarioPersonaje.getItem(i), false);
+        }
+
+        for (int i = 0; i < casillasCofre.length; i++) {
+            boolean resaltado = (i == seleccionado);
+            dibujarCasilla(batch, casillasCofre[i], inventarioCofre.getItem(i), resaltado);
+        }
     }
 
-    private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, Item item) {
+    private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, Item item, boolean resaltado) {
         if (item == null) return;
 
         shapeRenderer.setProjectionMatrix(cameraHud.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.DARK_GRAY);
+        shapeRenderer.setColor(resaltado ? Color.ORANGE : Color.DARK_GRAY);
         shapeRenderer.rect(casilla.x, casilla.y, casilla.ancho, casilla.alto);
         shapeRenderer.end();
 

@@ -209,6 +209,7 @@ public class TerrenoPractica implements Screen {
         mago.actualizarInventario();
 
         if (hudCofre != null && hudCofre.isVisible()) {
+            hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);
         } else if (mago.inventarioHud != null && mago.inventarioHud.isVisible()) {
             mago.dibujarInventario(Render.batch);

@@ -77,7 +77,7 @@ public class InventarioHud {
         textoNombre.setTexto(j.getClase());
         textoNombre.setPosition(80, 680);
         textoEstadisticas.setTexto(
-            "ATQ: " + j.getAtaque() +
+                "ATQ: " + j.getAtaque() +
                 " ATQ.M: " + j.getAtaqueMagico() +
                 " DEF: " + j.getDefensa() +
                 " PV: " + j.getVida()
