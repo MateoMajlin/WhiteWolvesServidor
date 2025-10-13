@@ -1,8 +1,11 @@
 package winterwolves.personajes;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -14,7 +17,6 @@ import winterwolves.personajes.armas.Arma;
 
 public class Personaje extends Sprite implements Hudeable {
 
-    // --- Atributos básicos ---
     public Body body;
     protected EntradasJugador entradas;
     protected float speedBase = 2.5f;
@@ -46,14 +48,21 @@ public class Personaje extends Sprite implements Hudeable {
 
     public World world;
 
-    public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm) {
+    public InventarioHud inventarioHud;
+    public Hud hud;
+    protected OrthographicCamera camaraHud;
+
+    public Personaje(World world, EntradasJugador entradas, float x, float y, float ppm, OrthographicCamera camaraHud) {
         this.world = world;
         this.entradas = entradas;
         this.inventario = new Inventario();
         this.ppm = ppm;
         animaciones = new AnimacionPersonaje("zorrito.png");
 
-        // Crear cuerpo en Box2D
+        this.camaraHud = camaraHud;
+        this.hud = new Hud(this,camaraHud);
+        this.inventarioHud = new InventarioHud(this.inventario, camaraHud);
+
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
@@ -73,7 +82,31 @@ public class Personaje extends Sprite implements Hudeable {
         shape.dispose();
     }
 
-    // --- Draw ---
+    public void toggleInventario() {
+        if (inventarioHud == null) return;
+        inventarioHud.toggle();
+        setPuedeMoverse(!inventarioHud.isVisible());
+    }
+
+    public void actualizarInventario() {
+        if (inventarioHud != null && inventarioHud.isVisible()) {
+            inventarioHud.actualizar();
+        }
+    }
+
+    public void dibujarInventario(SpriteBatch batch) {
+        if (inventarioHud != null && inventarioHud.isVisible()) {
+            batch.setProjectionMatrix(camaraHud.combined);
+            inventarioHud.dibujar(batch, this);
+        }
+    }
+
+    public void dibujarHud(SpriteBatch batch) {
+        if (hud != null) {
+            hud.render(batch);
+        }
+    }
+
     @Override
     public void draw(Batch batch) {
         float delta = Gdx.graphics.getDeltaTime();

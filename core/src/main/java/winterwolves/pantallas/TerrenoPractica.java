@@ -74,6 +74,11 @@ public class TerrenoPractica implements Screen {
         camaraBox2D.position.set((Config.WIDTH / 2f) / PPM, (Config.HEIGTH / 2f) / PPM, 0);
         camaraBox2D.update();
 
+        camaraHud = new OrthographicCamera();
+        camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
+        camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
+        camaraHud.update();
+
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
 
@@ -83,7 +88,7 @@ public class TerrenoPractica implements Screen {
 
         EntradasJugador entradas = new EntradasJugador();
 
-        mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM);
+        mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM, camaraHud);
 
         EspadaItem espadaItem = new EspadaItem();
         GemaDeFuego gema = new GemaDeFuego(5f,5f,60);
@@ -98,14 +103,6 @@ public class TerrenoPractica implements Screen {
         mago.equiparItem2(gemaElectrica);
 
         mago.setVida(50);
-
-        camaraHud = new OrthographicCamera();
-        camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
-        camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
-        camaraHud.update();
-
-        inventarioHud = new InventarioHud(mago.getInventario(), camaraHud);
-        hud = new Hud(mago, camaraHud);
 
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
@@ -165,23 +162,20 @@ public class TerrenoPractica implements Screen {
 
         renderer.render(capasDelanteras);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-            inventarioHud.toggle();
-            mago.setPuedeMoverse(!mago.getPuedeMoverse());
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
             mago.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
         }
 
-        inventarioHud.actualizar();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            mago.toggleInventario();
+        }
 
-        if (inventarioHud.isVisible()) {
-            Render.batch.setProjectionMatrix(camaraHud.combined);
-            inventarioHud.dibujar(Render.batch,mago);
+        mago.actualizarInventario();
+
+        if (mago.inventarioHud != null && mago.inventarioHud.isVisible()) {
+            mago.dibujarInventario(Render.batch);
         } else {
-            Render.batch.setProjectionMatrix(camaraHud.combined);
-            hud.render(Render.batch);
+            mago.dibujarHud(Render.batch);
         }
 
         debugRenderer.render(world, camaraBox2D.combined);

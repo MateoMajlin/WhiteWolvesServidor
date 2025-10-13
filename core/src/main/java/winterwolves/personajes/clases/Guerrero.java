@@ -1,5 +1,6 @@
 package winterwolves.personajes.clases;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
@@ -10,8 +11,8 @@ import winterwolves.personajes.habilidades.HabilidadCuracion;
 
 public class Guerrero extends Personaje {
 
-    public Guerrero(World world, EntradasJugador entradas, float x, float y, float ppm) {
-        super(world, entradas, x, y, ppm);
+    public Guerrero(World world, EntradasJugador entradas, float x, float y, float ppm, OrthographicCamera camera) {
+        super(world, entradas, x, y, ppm, camera);
         nombreClase = "Guerrero";
 
         armaBasica = new Espada(world, ppm);

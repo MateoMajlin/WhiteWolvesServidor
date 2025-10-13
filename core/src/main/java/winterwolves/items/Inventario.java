@@ -1,5 +1,7 @@
 package winterwolves.items;
 
+import winterwolves.personajes.InventarioHud;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package winterwolves.personajes.clases;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import winterwolves.io.EntradasJugador;
@@ -7,14 +8,12 @@ import winterwolves.personajes.AnimacionPersonaje;
 import winterwolves.personajes.Personaje;
 import winterwolves.personajes.armas.Baston;
 import winterwolves.personajes.habilidades.BolaDeFuego;
-import winterwolves.personajes.habilidades.ConcentracionMaxima;
-import winterwolves.personajes.habilidades.HabilidadCuracion;
 import winterwolves.personajes.habilidades.RayoElectrico;
 
 public class Mago extends Personaje {
 
-    public Mago(World world, EntradasJugador entradas, float x, float y, float ppm) {
-        super(world, entradas, x, y, ppm);
+    public Mago(World world, EntradasJugador entradas, float x, float y, float ppm, OrthographicCamera camera) {
+        super(world, entradas, x, y, ppm, camera);
         nombreClase = "Mago";
 
         animaciones = new AnimacionPersonaje("pajarito.png");
