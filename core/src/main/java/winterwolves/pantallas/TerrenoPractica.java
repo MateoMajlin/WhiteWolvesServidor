@@ -20,6 +20,8 @@ import winterwolves.io.EntradasJugador;
 import winterwolves.personajes.Hud;
 import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
+import winterwolves.props.Cofre;
+import winterwolves.props.CofreHud;
 import winterwolves.utilidades.*;
 
 public class TerrenoPractica implements Screen {
@@ -42,6 +44,8 @@ public class TerrenoPractica implements Screen {
     private Hud hud;
     private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
+    private Cofre cofre;
+    private CofreHud hudCofre;
 
     private final float PPM = 100f;
 
@@ -111,6 +115,13 @@ public class TerrenoPractica implements Screen {
         cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM,60));
         totalCajas = cajas.size;
 
+        cofre = new Cofre(world, 300 / PPM, 200 / PPM, PPM);
+
+        cofre.getInventario().agregarItem(new EspadaItem());
+        cofre.getInventario().agregarItem(new AmuletoCuracion(5f,5f,60));
+        cofre.getInventario().agregarItem(new GemaElectrica(5f,10f,80));
+
+
         Gdx.input.setInputProcessor(entradas);
 
         ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
@@ -125,6 +136,7 @@ public class TerrenoPractica implements Screen {
 
         world.step(delta, 6, 2);
 
+        // Manejo de cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -134,6 +146,21 @@ public class TerrenoPractica implements Screen {
             }
         }
 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            System.out.println("=== Estado del personaje ===");
+
+            System.out.println("Inventario:");
+            for (int i = 0; i < mago.getInventario().getItems().size(); i++) {
+                Item item = mago.getInventario().getItem(i);
+                System.out.println(" - Item " + i + ": " + (item != null ? item.getNombre() : "VACÍO"));
+            }
+
+            System.out.println("Slots:");
+            for (int slot = 0; slot < 3; slot++) {
+                Item itemSlot = mago.getSlot(slot);
+                System.out.println(" - Slot " + slot + ": " + (itemSlot != null ? itemSlot.getNombre() : "VACÍO"));
+            }
+        }
         camara.position.set(
             mago.getX() + mago.getWidth() / 2,
             mago.getY() + mago.getHeight() / 2,
@@ -158,6 +185,8 @@ public class TerrenoPractica implements Screen {
         if (contCajasDestruidas == totalCajas) {
             ganaste.dibujar();
         }
+
+        cofre.draw(Render.batch);
         Render.batch.end();
 
         renderer.render(capasDelanteras);
@@ -166,21 +195,32 @@ public class TerrenoPractica implements Screen {
             mago.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
         }
 
+        if (cofre.estaCerca(new Vector2(mago.getX(), mago.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            if (hudCofre == null) {
+                hudCofre = new CofreHud(cofre.getInventario(), mago, camaraHud);
+            }
+            hudCofre.toggle();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             mago.toggleInventario();
         }
 
         mago.actualizarInventario();
 
-        if (mago.inventarioHud != null && mago.inventarioHud.isVisible()) {
+        if (hudCofre != null && hudCofre.isVisible()) {
+            hudCofre.dibujar(Render.batch);
+        } else if (mago.inventarioHud != null && mago.inventarioHud.isVisible()) {
             mago.dibujarInventario(Render.batch);
         } else {
             mago.dibujarHud(Render.batch);
         }
 
+        // Debug Box2D
         debugRenderer.render(world, camaraBox2D.combined);
 
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+        // Salir al menú
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Render.app.setScreen(new Menu());
             musica.stop();
             Recursos.musica.play();

@@ -244,25 +244,30 @@ public class Personaje extends Sprite implements Hudeable {
     public void quitarItem1() { slotHabilidad1 = null; }
     public void quitarItem2() { slotHabilidad2 = null; }
 
-    public void intercambiarItems(Item item,int slot) {
+    public void intercambiarItems(Item item, int slot) {
+        // Reemplaza el slot activo
         switch (slot) {
             case 0:
+                if(this.armaBasica != null) this.armaBasica.dispose();
                 this.slotArma = item;
+                this.armaBasica = item.crearArma(world,ppm);
                 break;
             case 1:
                 if (this.habilidad1 != null) this.habilidad1.dispose();
                 this.slotHabilidad1 = item;
                 this.habilidad1 = item.crearHabilidad();
-                this.habilidad1.setPersonaje(this);  // <-- asignar personaje
+                this.habilidad1.setPersonaje(this);
                 break;
             case 2:
                 if (this.habilidad2 != null) this.habilidad2.dispose();
                 this.slotHabilidad2 = item;
                 this.habilidad2 = item.crearHabilidad();
-                this.habilidad2.setPersonaje(this);  // <-- asignar personaje
+                this.habilidad2.setPersonaje(this);
                 break;
         }
+        inventario.setItemEnSlot(item, slot);
     }
+
 
     public Item getSlot(int slot) {
         switch (slot) {

@@ -27,4 +27,13 @@ public class Inventario {
         }
         return null;
     }
+
+    public void setItemEnSlot(Item item, int slot) {
+
+        while (items.size() <= slot) {
+            items.add(null);
+        }
+        items.set(slot, item);
+    }
+
 }

@@ -18,11 +18,9 @@ public class Caja extends Sprite {
     private float vida;     // vida actual
     private float vidaMax;  // vida máxima
 
-    // === HUD de vida (texto) ===
     private static BitmapFont font = new BitmapFont(); // fuente por defecto
     private static GlyphLayout layout = new GlyphLayout();
 
-    // === Mostrar vida solo al recibir daño ===
     private boolean mostrarVida = false;
     private float tiempoMostrarVida = 0f;
     private final float DURACION_MOSTRAR_VIDA = 2f;
@@ -43,7 +41,7 @@ public class Caja extends Sprite {
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(getWidth()/4f / ppm, getHeight()/4f / ppm); // hitbox coincide con sprite
+        shape.setAsBox(getWidth()/4f / ppm, getHeight()/4f / ppm);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -66,7 +64,6 @@ public class Caja extends Sprite {
         super.draw(batch);
     }
 
-    // === Actualizar estado de HUD ===
     public void actualizar(float delta) {
         if (mostrarVida) {
             tiempoMostrarVida += delta;

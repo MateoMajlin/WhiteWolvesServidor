@@ -74,7 +74,6 @@ public class InventarioHud {
     public void dibujar(SpriteBatch batch, Personaje j) {
         if (!visible) return;
 
-        // Fondo y stats del personaje
         textoNombre.setTexto(j.getClase());
         textoNombre.setPosition(80, 680);
         textoEstadisticas.setTexto(
