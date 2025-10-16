@@ -3,6 +3,7 @@ package winterwolves.personajes.habilidades;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import winterwolves.Dañable;
 import winterwolves.personajes.Personaje;
 
 public abstract class Habilidad {

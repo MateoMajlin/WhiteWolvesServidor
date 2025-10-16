@@ -1,6 +1,7 @@
 package winterwolves.utilidades;
 
 import com.badlogic.gdx.physics.box2d.*;
+import winterwolves.Dañable;
 import winterwolves.personajes.armas.Arma;
 import winterwolves.personajes.habilidades.Proyectil;
 import winterwolves.personajes.habilidades.ProyectilRayo;
@@ -13,34 +14,28 @@ public class CollisionListener implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
-        // --- Armas vs Caja ---
-        if (a instanceof Arma && b instanceof Caja) {
-            ((Caja) b).recibirDaño(((Arma) a).getDañoReal());
-        } else if (a instanceof Caja && b instanceof Arma) {
-            ((Caja) a).recibirDaño(((Arma) b).getDañoReal());
+        if (a instanceof Arma && b instanceof Dañable) {
+            ((Dañable) b).recibirDaño(((Arma) a).getDañoReal());
+        } else if (a instanceof Dañable && b instanceof Arma) {
+            ((Dañable) a).recibirDaño(((Arma) b).getDañoReal());
         }
 
-        if (a instanceof Proyectil && b instanceof Caja) {
-            Proyectil p = (Proyectil) a;
-            ((Caja) b).recibirDaño(p.daño);
-            p.muerto = true;
-        } else if (a instanceof Caja && b instanceof Proyectil) {
-            Proyectil p = (Proyectil) b;
-            ((Caja) a).recibirDaño(p.daño);
-            p.muerto = true;
+        if (a instanceof Proyectil && b instanceof Dañable) {
+            ((Dañable) b).recibirDaño(((Proyectil) a).daño);
+            ((Proyectil) a).muerto = true;
+        } else if (a instanceof Dañable && b instanceof Proyectil) {
+            ((Dañable) a).recibirDaño(((Proyectil) b).daño);
+            ((Proyectil) b).muerto = true;
         }
 
-        // --- ProyectilRayo vs Caja ---
-        if (a instanceof ProyectilRayo && b instanceof Caja) {
-            ProyectilRayo r = (ProyectilRayo) a;
-            ((Caja) b).recibirDaño(r.daño);
-            //r.muerto = true;
-        } else if (a instanceof Caja && b instanceof ProyectilRayo) {
-            ProyectilRayo r = (ProyectilRayo) b;
-            ((Caja) a).recibirDaño(r.daño);
-            //r.muerto = true;
+        // --- ProyectilRayo ---
+        if (a instanceof ProyectilRayo && b instanceof Dañable) {
+            ((Dañable) b).recibirDaño(((ProyectilRayo) a).daño);
+        } else if (a instanceof Dañable && b instanceof ProyectilRayo) {
+            ((Dañable) a).recibirDaño(((ProyectilRayo) b).daño);
         }
     }
+
 
 
     @Override

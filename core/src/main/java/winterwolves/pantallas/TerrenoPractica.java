@@ -52,7 +52,7 @@ public class TerrenoPractica implements Screen {
     int totalCajas;
     Texto ganaste;
 
-    private Jugador jugador;
+    private Jugador jugador, dummy;
 
     @Override
     public void show() {
@@ -94,10 +94,10 @@ public class TerrenoPractica implements Screen {
 
         EntradasJugador entradas = new EntradasJugador();
         jugador = new Jugador("Mateo", world, entradas, 450 / PPM, 450 / PPM, PPM, camaraHud);
+        dummy = new Jugador("Dummy", world, entradas, 650 / PPM, 450 / PPM, PPM, camaraHud);
 
         Gdx.input.setInputProcessor(entradas);
 
-        // Items iniciales
         Personaje p = jugador.getPersonaje();
         EspadaItem espada = new EspadaItem();
         GemaDeFuego gema = new GemaDeFuego(5f, 5f, 60);
@@ -141,7 +141,6 @@ public class TerrenoPractica implements Screen {
         Personaje p = jugador.getPersonaje();
         world.step(delta, 6, 2);
 
-        // Manejo de cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -151,7 +150,6 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Debug Inventario
         if(Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             System.out.println("=== Estado del personaje ===");
             System.out.println("Inventario:");
@@ -166,20 +164,18 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Cámara
         camara.position.set(p.getX() + p.getWidth() / 2, p.getY() + p.getHeight() / 2, 0);
         camara.update();
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
-        // Render fondo
         renderer.setView(camara);
         renderer.render(capasFondo);
 
-        // Render personajes y objetos
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
         p.draw(Render.batch);
+        dummy.draw(Render.batch);
         for (Caja c : cajas) {
             c.actualizar(delta);
             c.draw(Render.batch);
@@ -191,10 +187,8 @@ public class TerrenoPractica implements Screen {
         cofre.draw(Render.batch);
         Render.batch.end();
 
-        // Render capas delanteras
         renderer.render(capasDelanteras);
 
-        // Interacciones
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
             p.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
         }
@@ -212,7 +206,6 @@ public class TerrenoPractica implements Screen {
 
         p.actualizarInventario();
 
-        // HUD e Inventario
         if (hudCofre != null && hudCofre.isVisible()) {
             hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);

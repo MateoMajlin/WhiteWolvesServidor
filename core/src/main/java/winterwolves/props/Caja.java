@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import winterwolves.Dañable;
 
-public class Caja extends Sprite {
+public class Caja extends Sprite implements Dañable {
 
     private Body body;
     private float ppm;

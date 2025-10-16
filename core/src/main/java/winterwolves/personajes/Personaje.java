@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import winterwolves.Dañable;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.Inventario;
 import winterwolves.items.Item;
 import winterwolves.personajes.habilidades.Habilidad;
 import winterwolves.personajes.armas.Arma;
 
-public class Personaje extends Sprite implements Hudeable {
+public class Personaje extends Sprite implements Hudeable, Dañable {
 
     public Body body;
     protected EntradasJugador entradas;
@@ -80,6 +81,8 @@ public class Personaje extends Sprite implements Hudeable {
         fixtureDef.restitution = 0f;
         body.createFixture(fixtureDef);
         shape.dispose();
+
+        body.setUserData(this);
     }
 
     public void toggleInventario() {
@@ -285,4 +288,13 @@ public class Personaje extends Sprite implements Hudeable {
         if (habilidad1 != null) habilidad1.dispose();
         if (habilidad2 != null) habilidad2.dispose();
     }
+
+    @Override
+    public void recibirDaño(float cantidad) {
+        this.vida -= cantidad;
+        if (vida <= 0) {
+            vida = 0;
+        }
+    }
+
 }
