@@ -2,6 +2,7 @@ package winterwolves.utilidades;
 
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.Dañable;
+import winterwolves.personajes.Personaje;
 import winterwolves.personajes.armas.Arma;
 import winterwolves.personajes.habilidades.Proyectil;
 import winterwolves.personajes.habilidades.ProyectilRayo;
@@ -15,9 +16,19 @@ public class CollisionListener implements ContactListener {
         Object b = contact.getFixtureB().getBody().getUserData();
 
         if (a instanceof Arma && b instanceof Dañable) {
-            ((Dañable) b).recibirDaño(((Arma) a).getDañoReal());
+            Arma arma = (Arma) a;
+            Dañable target = (Dañable) b;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != arma.propietario) {
+                target.recibirDaño(arma.getDañoReal());
+            }
         } else if (a instanceof Dañable && b instanceof Arma) {
-            ((Dañable) a).recibirDaño(((Arma) b).getDañoReal());
+            Arma arma = (Arma) b;
+            Dañable target = (Dañable) a;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != arma.propietario) {
+                target.recibirDaño(arma.getDañoReal());
+            }
         }
 
         if (a instanceof Proyectil && b instanceof Dañable) {

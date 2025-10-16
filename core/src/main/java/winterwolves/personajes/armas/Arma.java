@@ -13,6 +13,7 @@ import winterwolves.personajes.Personaje;
 
 public class Arma {
 
+    public Personaje propietario; // ⚡ importante: el propietario del arma
     protected float tiempoDesdeUltimoGolpe = 0f;
     protected float cooldown = 1f;
     protected Animation<TextureRegion> animacion;
@@ -27,6 +28,14 @@ public class Arma {
     protected float multiplicadorDaño = 1f;
 
     protected Map<Direccion, HitboxConfig> hitboxes = new HashMap<>();
+
+    public Arma(World world, float ppm) {
+        this.world = world;
+        this.ppm = ppm;
+        this.stateTime = 0;
+        this.activo = false;
+        this.propietario = null;
+    }
 
     public void modifAtaque(float bonusAtaque) {
         this.daño += bonusAtaque;
@@ -43,15 +52,9 @@ public class Arma {
         }
     }
 
-    public Arma(World world, float ppm) {
-        this.world = world;
-        this.ppm = ppm;
-        this.stateTime = 0;
-        this.activo = false;
-    }
-
     public boolean atacar(float x, float y, Vector2 direccion, Personaje propietario) {
         if (!activo && puedeAtacar()) {
+            this.propietario = propietario; // ⚡ asignar propietario
             activar(x, y, vectorADireccion(direccion));
 
             if (propietario != null) propietario.setPuedeMoverse(false);
@@ -60,12 +63,12 @@ public class Arma {
         return false;
     }
 
-    public void actualizar(float delta, float x, float y, Personaje propietario) {
+    public void actualizar(float delta, float x, float y) {
         tiempoDesdeUltimoGolpe += delta;
 
         if (activo) {
             stateTime += delta;
-            if (body != null) body.setTransform(x/ppm, y/ppm, 0);
+            if (body != null) body.setTransform(x / ppm, y / ppm, 0);
 
             if (animacion != null && animacion.isAnimationFinished(stateTime)) {
                 activo = false;
@@ -74,7 +77,12 @@ public class Arma {
                     body = null;
                 }
                 multiplicadorDaño = 1f;
+
+                // ⚡ liberar control de movimiento al propietario
                 if (propietario != null) propietario.setPuedeMoverse(true);
+
+                // ⚡ resetear propietario para la próxima activación
+                propietario = null;
             }
         }
     }
@@ -90,11 +98,13 @@ public class Arma {
 
             BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.DynamicBody;
-            bodyDef.position.set(x/ppm, y/ppm);
+            bodyDef.position.set(x / ppm, y / ppm);
             body = world.createBody(bodyDef);
 
             PolygonShape shape = new PolygonShape();
-            shape.setAsBox(cfg.ancho/2/ppm, cfg.alto/2/ppm, new Vector2(cfg.offsetX/ppm, cfg.offsetY/ppm), (float)Math.toRadians(cfg.angleDeg));
+            shape.setAsBox(cfg.ancho / 2 / ppm, cfg.alto / 2 / ppm,
+                new Vector2(cfg.offsetX / ppm, cfg.offsetY / ppm),
+                (float) Math.toRadians(cfg.angleDeg));
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
@@ -109,7 +119,7 @@ public class Arma {
     public void draw(Batch batch, float x, float y, float width, float height, float angle) {
         if (activo && animacion != null) {
             TextureRegion frame = animacion.getKeyFrame(stateTime);
-            batch.draw(frame, x, y, width/2, height/2, width, height, 1, 1, angle);
+            batch.draw(frame, x, y, width / 2, height / 2, width, height, 1, 1, angle);
         }
     }
 

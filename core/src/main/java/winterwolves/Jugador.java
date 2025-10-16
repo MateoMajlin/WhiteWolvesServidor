@@ -55,15 +55,6 @@ public class Jugador {
         return personaje;
     }
 
-    public void cambiarClase(Personaje nuevo) {
-        if (this.personaje != null) {
-            this.personaje.dispose();
-        }
-        this.personaje = nuevo;
-        this.hud = nuevo.hud;
-        this.inventarioHud = nuevo.inventarioHud;
-    }
-
     public String getNombre() {
         return nombre;
     }

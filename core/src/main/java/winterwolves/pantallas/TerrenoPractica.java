@@ -18,10 +18,7 @@ import winterwolves.Jugador;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.*;
-import winterwolves.personajes.Hud;
-import winterwolves.personajes.InventarioHud;
 import winterwolves.personajes.Personaje;
-import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
 import winterwolves.props.Cofre;
 import winterwolves.props.CofreHud;
@@ -50,9 +47,16 @@ public class TerrenoPractica implements Screen {
 
     int contCajasDestruidas = 0;
     int totalCajas;
-    Texto ganaste;
+    private Texto ganaste;
 
     private Jugador jugador, dummy;
+
+    // --- Variables de partida 1v1 ---
+    private float tiempoRestante = 1 * 60f; // 5 minutos
+    private boolean partidaFinalizada = false;
+    private boolean pj1YaContado = false, pj2YaContado = false;
+    private Texto textoGanador;
+    private Texto textoJugador1, textoJugador2, textoTiempo;
 
     @Override
     public void show() {
@@ -61,9 +65,9 @@ public class TerrenoPractica implements Screen {
         mapa = loader.load("mapas/mapaNieve.tmx");
 
         int mapWidth = mapa.getProperties().get("width", Integer.class)
-            * mapa.getProperties().get("tilewidth", Integer.class);
+                * mapa.getProperties().get("tilewidth", Integer.class);
         int mapHeight = mapa.getProperties().get("height", Integer.class)
-            * mapa.getProperties().get("tileheight", Integer.class);
+                * mapa.getProperties().get("tileheight", Integer.class);
 
         float centroMapaX = mapWidth / 2f;
         float centroMapaY = mapHeight / 2f;
@@ -131,16 +135,26 @@ public class TerrenoPractica implements Screen {
         ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
         ganaste.setTexto("Ganaste");
         ganaste.setPosition(centroMapaX - ganaste.getAncho() / 2f,
-            centroMapaY + ganaste.getAlto() / 2f);
+                centroMapaY + ganaste.getAlto() / 2f);
+
+        // --- Textos HUD ---
+        textoJugador1 = new Texto(Recursos.FUENTEMENU, 20, Color.WHITE, true);
+        textoJugador2 = new Texto(Recursos.FUENTEMENU, 20, Color.WHITE, true);
+        textoTiempo = new Texto(Recursos.FUENTEMENU, 20, Color.YELLOW, true);
     }
 
     @Override
     public void render(float delta) {
+        // Limpiar pantalla
         Render.limpiarPantalla(1, 1, 1);
 
-        Personaje p = jugador.getPersonaje();
+        // Actualizar mundo
         world.step(delta, 6, 2);
 
+        Personaje pj1 = jugador.getPersonaje();
+        Personaje pj2 = dummy.getPersonaje();
+
+        // Actualizar cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -150,32 +164,52 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.L)) {
-            System.out.println("=== Estado del personaje ===");
-            System.out.println("Inventario:");
-            for (int i = 0; i < p.getInventario().getItems().size(); i++) {
-                Item item = p.getInventario().getItem(i);
-                System.out.println(" - Item " + i + ": " + (item != null ? item.getNombre() : "VACÍO"));
+        // --- Lógica 1v1 ---
+        if (!partidaFinalizada) {
+            tiempoRestante -= delta;
+
+            if (pj1.estaMuerto() && !pj1YaContado) {
+                pj2.incrementarKill();
+                pj1YaContado = true;
+                pj1.respawn(450 / PPM, 450 / PPM);
             }
-            System.out.println("Slots:");
-            for (int slot = 0; slot < 3; slot++) {
-                Item itemSlot = p.getSlot(slot);
-                System.out.println(" - Slot " + slot + ": " + (itemSlot != null ? itemSlot.getNombre() : "VACÍO"));
+            if (pj2.estaMuerto() && !pj2YaContado) {
+                pj1.incrementarKill();
+                pj2YaContado = true;
+                pj2.respawn(650 / PPM, 450 / PPM);
+            }
+
+            if (!pj1.estaMuerto()) pj1YaContado = false;
+            if (!pj2.estaMuerto()) pj2YaContado = false;
+
+            if (tiempoRestante <= 0) {
+                partidaFinalizada = true;
+                String ganador;
+                if (pj1.getKills() > pj2.getKills()) ganador = jugador.getNombre();
+                else if (pj2.getKills() > pj1.getKills()) ganador = dummy.getNombre();
+                else ganador = "EMPATE";
+
+                textoGanador = new Texto(Recursos.FUENTEMENU, 50, Color.RED, true);
+                textoGanador.setTexto("Ganador: " + ganador);
+                textoGanador.centrar();
             }
         }
 
-        camara.position.set(p.getX() + p.getWidth() / 2, p.getY() + p.getHeight() / 2, 0);
+        // Actualizar cámara
+        camara.position.set(pj1.getX() + pj1.getWidth()/2, pj1.getY() + pj1.getHeight()/2, 0);
         camara.update();
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
+        // Renderizar mapa
         renderer.setView(camara);
         renderer.render(capasFondo);
 
+        // Renderizar entidades
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
-        p.draw(Render.batch);
-        dummy.draw(Render.batch);
+        pj1.draw(Render.batch);
+        pj2.draw(Render.batch);
         for (Caja c : cajas) {
             c.actualizar(delta);
             c.draw(Render.batch);
@@ -187,31 +221,58 @@ public class TerrenoPractica implements Screen {
         cofre.draw(Render.batch);
         Render.batch.end();
 
+        // Capas delanteras
         renderer.render(capasDelanteras);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-            p.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
-        }
-
-        if (cofre.estaCerca(new Vector2(p.getX(), p.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            if (hudCofre == null) {
-                hudCofre = new CofreHud(cofre.getInventario(), p, camaraHud);
+        // Inputs
+        if (!partidaFinalizada) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+                pj1.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
             }
-            hudCofre.toggle();
+            if (cofre.estaCerca(new Vector2(pj1.getX(), pj1.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                if (hudCofre == null) {
+                    hudCofre = new CofreHud(cofre.getInventario(), pj1, camaraHud);
+                }
+                hudCofre.toggle();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+                jugador.toggleInventario();
+            }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-            jugador.toggleInventario();
-        }
-
-        p.actualizarInventario();
-
+        // HUD / Inventario
+        pj1.actualizarInventario();
         if (hudCofre != null && hudCofre.isVisible()) {
+            Render.batch.setProjectionMatrix(camaraHud.combined);
+            Render.batch.begin();
             hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);
+            Render.batch.end();
         } else {
             jugador.drawHud(Render.batch);
         }
+
+        // --- Mostrar kills y tiempo con Texto ---
+        Render.batch.setProjectionMatrix(camaraHud.combined);
+        Render.batch.begin();
+        textoJugador1.setTexto(jugador.getNombre() + ": " + pj1.getKills());
+        textoJugador1.setPosition(20, Config.HEIGTH - 20);
+        textoJugador1.dibujar();
+
+        textoJugador2.setTexto(dummy.getNombre() + ": " + pj2.getKills());
+        textoJugador2.setPosition(Config.WIDTH - 150, Config.HEIGTH - 20);
+        textoJugador2.dibujar();
+
+        int min = (int)(tiempoRestante / 60);
+        int sec = (int)(tiempoRestante % 60);
+        textoTiempo.setTexto(String.format("%02d:%02d", min, sec));
+        textoTiempo.setPosition(Config.WIDTH/2f - textoTiempo.getAncho()/2f, Config.HEIGTH - 20);
+        textoTiempo.dibujar();
+
+        if (partidaFinalizada && textoGanador != null) {
+            textoGanador.dibujar();
+        }
+        Render.batch.end();
 
         // Debug Box2D
         debugRenderer.render(world, camaraBox2D.combined);
@@ -225,7 +286,14 @@ public class TerrenoPractica implements Screen {
             Recursos.musica.setLooping(true);
             dispose();
         }
+
+        // Bloquear movimiento si terminó la partida
+        if (partidaFinalizada) {
+            pj1.setPuedeMoverse(false);
+            pj2.setPuedeMoverse(false);
+        }
     }
+
 
     @Override
     public void resize(int width, int height) {

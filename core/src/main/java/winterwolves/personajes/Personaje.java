@@ -144,7 +144,7 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
                 armaBasica.atacar(armaX, armaY, direccionMirando, this);
             }
 
-            armaBasica.actualizar(delta, armaX, armaY, this);
+            armaBasica.actualizar(delta, armaX, armaY);
             armaBasica.draw(batch, armaX, armaY, getWidth(), getHeight(), direccionMirando.angleDeg());
         }
 
@@ -153,7 +153,7 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         if (habilidad2 != null) habilidad2.dibujar(batch, getX(), getY(), getWidth(), getHeight());
     }
 
-    // --- Movimiento ---
+
     protected void mover() {
         if (!puedeMoverse) {
             body.setLinearVelocity(0,0);
@@ -296,5 +296,26 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
             vida = 0;
         }
     }
+
+    private int kills = 0;
+
+    public boolean estaMuerto() {
+        return vida <= 0;
+    }
+
+    public void incrementarKill() {
+        kills++;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void respawn(float x, float y) {
+        setVida(100);
+        body.setTransform(x, y, 0);
+        setPuedeMoverse(true);
+    }
+
 
 }
