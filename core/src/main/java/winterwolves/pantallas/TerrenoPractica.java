@@ -13,11 +13,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+
+import winterwolves.Jugador;
 import winterwolves.elementos.Texto;
-import winterwolves.items.*;
-import winterwolves.personajes.InventarioHud;
 import winterwolves.io.EntradasJugador;
+import winterwolves.items.*;
 import winterwolves.personajes.Hud;
+import winterwolves.personajes.InventarioHud;
+import winterwolves.personajes.Personaje;
 import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
 import winterwolves.props.Cofre;
@@ -30,6 +33,7 @@ public class TerrenoPractica implements Screen {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camara;
     private OrthographicCamera camaraBox2D;
+    private OrthographicCamera camaraHud;
     private Music musica = Recursos.musicaBatalla;
 
     int[] capasFondo = {0, 1};
@@ -38,11 +42,6 @@ public class TerrenoPractica implements Screen {
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
-    private Mago mago;
-    private InventarioHud inventarioHud;
-
-    private Hud hud;
-    private OrthographicCamera camaraHud;
     private Array<Caja> cajas;
     private Cofre cofre;
     private CofreHud hudCofre;
@@ -53,8 +52,11 @@ public class TerrenoPractica implements Screen {
     int totalCajas;
     Texto ganaste;
 
+    private Jugador jugador;
+
     @Override
     public void show() {
+        // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
 
@@ -83,47 +85,49 @@ public class TerrenoPractica implements Screen {
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
 
+        // Crear mundo y colisiones
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
-
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
 
         debugRenderer = new Box2DDebugRenderer();
 
         EntradasJugador entradas = new EntradasJugador();
-
-        mago = new Mago(world, entradas, 450 / PPM, 450 / PPM, PPM, camaraHud);
-
-        EspadaItem espadaItem = new EspadaItem();
-        GemaDeFuego gema = new GemaDeFuego(5f,5f,60);
-        GemaElectrica gemaElectrica = new GemaElectrica(5f, 10f, 80);
-
-        mago.getInventario().agregarItem(espadaItem);
-        mago.getInventario().agregarItem(gema);
-        mago.getInventario().agregarItem(gemaElectrica);
-
-        mago.equiparArma(espadaItem);
-        mago.equiparItem1(gema);
-        mago.equiparItem2(gemaElectrica);
-
-        mago.setVida(50);
-
-        cajas = new Array<>();
-        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM,100));
-        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM,100));
-        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM,125));
-        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM,60));
-        totalCajas = cajas.size;
-
-        cofre = new Cofre(world, 300 / PPM, 200 / PPM, PPM);
-
-        cofre.getInventario().agregarItem(new EspadaItem());
-        cofre.getInventario().agregarItem(new AmuletoCuracion(5f,5f,60));
-        cofre.getInventario().agregarItem(new GemaElectrica(5f,10f,80));
-
+        jugador = new Jugador("Mateo", world, entradas, 450 / PPM, 450 / PPM, PPM, camaraHud);
 
         Gdx.input.setInputProcessor(entradas);
 
+        // Items iniciales
+        Personaje p = jugador.getPersonaje();
+        EspadaItem espada = new EspadaItem();
+        GemaDeFuego gema = new GemaDeFuego(5f, 5f, 60);
+        GemaElectrica gemaElectrica = new GemaElectrica(5f, 10f, 80);
+
+        p.getInventario().agregarItem(espada);
+        p.getInventario().agregarItem(gema);
+        p.getInventario().agregarItem(gemaElectrica);
+
+        p.equiparArma(espada);
+        p.equiparItem1(gema);
+        p.equiparItem2(gemaElectrica);
+
+        p.setVida(50);
+
+        // Cajas
+        cajas = new Array<>();
+        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM, 100));
+        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM, 100));
+        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM, 125));
+        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM, 60));
+        totalCajas = cajas.size;
+
+        // Cofre
+        cofre = new Cofre(world, 300 / PPM, 200 / PPM, PPM);
+        cofre.getInventario().agregarItem(new EspadaItem());
+        cofre.getInventario().agregarItem(new AmuletoCuracion(5f, 5f, 60));
+        cofre.getInventario().agregarItem(new GemaElectrica(5f, 10f, 80));
+
+        // Texto de victoria
         ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
         ganaste.setTexto("Ganaste");
         ganaste.setPosition(centroMapaX - ganaste.getAncho() / 2f,
@@ -134,6 +138,7 @@ public class TerrenoPractica implements Screen {
     public void render(float delta) {
         Render.limpiarPantalla(1, 1, 1);
 
+        Personaje p = jugador.getPersonaje();
         world.step(delta, 6, 2);
 
         // Manejo de cajas
@@ -146,37 +151,35 @@ public class TerrenoPractica implements Screen {
             }
         }
 
+        // Debug Inventario
         if(Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             System.out.println("=== Estado del personaje ===");
-
             System.out.println("Inventario:");
-            for (int i = 0; i < mago.getInventario().getItems().size(); i++) {
-                Item item = mago.getInventario().getItem(i);
+            for (int i = 0; i < p.getInventario().getItems().size(); i++) {
+                Item item = p.getInventario().getItem(i);
                 System.out.println(" - Item " + i + ": " + (item != null ? item.getNombre() : "VACÍO"));
             }
-
             System.out.println("Slots:");
             for (int slot = 0; slot < 3; slot++) {
-                Item itemSlot = mago.getSlot(slot);
+                Item itemSlot = p.getSlot(slot);
                 System.out.println(" - Slot " + slot + ": " + (itemSlot != null ? itemSlot.getNombre() : "VACÍO"));
             }
         }
-        camara.position.set(
-            mago.getX() + mago.getWidth() / 2,
-            mago.getY() + mago.getHeight() / 2,
-            0
-        );
-        camara.update();
 
+        // Cámara
+        camara.position.set(p.getX() + p.getWidth() / 2, p.getY() + p.getHeight() / 2, 0);
+        camara.update();
         camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
         camaraBox2D.update();
 
+        // Render fondo
         renderer.setView(camara);
         renderer.render(capasFondo);
 
+        // Render personajes y objetos
         Render.batch.setProjectionMatrix(camara.combined);
         Render.batch.begin();
-        mago.draw(Render.batch);
+        p.draw(Render.batch);
         for (Caja c : cajas) {
             c.actualizar(delta);
             c.draw(Render.batch);
@@ -185,36 +188,36 @@ public class TerrenoPractica implements Screen {
         if (contCajasDestruidas == totalCajas) {
             ganaste.dibujar();
         }
-
         cofre.draw(Render.batch);
         Render.batch.end();
 
+        // Render capas delanteras
         renderer.render(capasDelanteras);
 
+        // Interacciones
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-            mago.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
+            p.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
         }
 
-        if (cofre.estaCerca(new Vector2(mago.getX(), mago.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+        if (cofre.estaCerca(new Vector2(p.getX(), p.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             if (hudCofre == null) {
-                hudCofre = new CofreHud(cofre.getInventario(), mago, camaraHud);
+                hudCofre = new CofreHud(cofre.getInventario(), p, camaraHud);
             }
             hudCofre.toggle();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-            mago.toggleInventario();
+            jugador.toggleInventario();
         }
 
-        mago.actualizarInventario();
+        p.actualizarInventario();
 
+        // HUD e Inventario
         if (hudCofre != null && hudCofre.isVisible()) {
             hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);
-        } else if (mago.inventarioHud != null && mago.inventarioHud.isVisible()) {
-            mago.dibujarInventario(Render.batch);
         } else {
-            mago.dibujarHud(Render.batch);
+            jugador.drawHud(Render.batch);
         }
 
         // Debug Box2D
@@ -230,7 +233,6 @@ public class TerrenoPractica implements Screen {
             dispose();
         }
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -251,7 +253,7 @@ public class TerrenoPractica implements Screen {
     public void dispose() {
         mapa.dispose();
         renderer.dispose();
-        mago.dispose();
+        jugador.dispose();
         world.dispose();
         debugRenderer.dispose();
         for (Caja c : cajas) {
@@ -264,5 +266,4 @@ public class TerrenoPractica implements Screen {
         musica.setLooping(true);
         musica.setVolume(0.2f);
     }
-
 }
