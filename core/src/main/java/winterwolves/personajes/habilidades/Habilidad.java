@@ -8,12 +8,12 @@ import winterwolves.personajes.Personaje;
 
 public abstract class Habilidad {
 
-    protected boolean activa = false;       // Habilidad en ejecución
-    protected boolean cargando = false;     // Solo si tiene fase de carga
-    protected float duracion;               // Duración del efecto
-    protected float tiempoActual = 0f;      // Contador interno
-    protected float tiempoDesdeUltimoUso;   // Para cooldown
-    protected final float cooldown;         // Cooldown total
+    protected boolean activa = false;
+    protected boolean cargando = false;
+    protected float duracion;
+    protected float tiempoActual = 0f;
+    protected float tiempoDesdeUltimoUso;
+    protected final float cooldown;
     protected Animation<TextureRegion> animacion;
     protected float tiempoAnimacion = 0f;
     protected Personaje personaje;
@@ -21,7 +21,7 @@ public abstract class Habilidad {
     public Habilidad(float duracion, float cooldown) {
         this.duracion = duracion;
         this.cooldown = cooldown;
-        this.tiempoDesdeUltimoUso = cooldown; // inicia lista para usar
+        this.tiempoDesdeUltimoUso = cooldown;
     }
 
     public void setPersonaje(Personaje p) {
@@ -29,7 +29,6 @@ public abstract class Habilidad {
     }
 
     protected abstract void iniciarEfecto();
-
     protected abstract void finalizarEfecto();
 
     public void actualizar(float delta) {
@@ -79,21 +78,10 @@ public abstract class Habilidad {
         return false;
     }
 
-    public boolean isActiva() {
-        return activa;
-    }
-
-    public boolean isCargando() {
-        return cargando;
-    }
-
-    public float getTiempoDesdeUltimoUso() {
-        return tiempoDesdeUltimoUso;
-    }
-
-    public float getCooldown() {
-        return cooldown;
-    }
+    public boolean isActiva() { return activa; }
+    public boolean isCargando() { return cargando; }
+    public float getTiempoDesdeUltimoUso() { return tiempoDesdeUltimoUso; }
+    public float getCooldown() { return cooldown; }
 
     public void dibujar(Batch batch, float x, float y, float width, float height) {
         if ((activa || cargando) && animacion != null) {
@@ -108,11 +96,12 @@ public abstract class Habilidad {
         }
     }
 
-    public float getBonusVelocidad() {
-        return 0;
-    }
+    public float getBonusVelocidad() { return 0; }
+    public float getBonusAtaque() { return 0; }
 
-    public float getBonusAtaque() {
-        return 0;
+    protected void aplicarDaño(Dañable objetivo, float daño) {
+        if (objetivo != null && objetivo != personaje) {
+            objetivo.recibirDaño(daño);
+        }
     }
 }

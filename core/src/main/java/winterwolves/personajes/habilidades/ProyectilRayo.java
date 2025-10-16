@@ -18,7 +18,7 @@ public class ProyectilRayo {
     private Vector2 dir;
     public boolean muerto = false;
     private float tiempoRestante;
-    private Personaje lanzador;
+    public Personaje lanzador;
     private float ancho = 256f;
     private float alto = 128f;
     private Vector2 offsetHitbox;

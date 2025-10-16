@@ -10,18 +10,18 @@ import winterwolves.personajes.Personaje;
 
 public class Proyectil {
 
-    Body body;
-    Vector2 dir;
-    float velocidad;
+    private Body body;
+    private Vector2 dir;
+    private float velocidad;
     public int daño;
-    Animation<TextureRegion> animacion;
-    float stateTime = 0f;
+    private Animation<TextureRegion> animacion;
+    private float stateTime = 0f;
     public boolean muerto = false;
-    float tiempoRestante;
-    Personaje lanzador;
-    DireccionUtil.Direccion direccion;
-    Vector2 offsetVisual;
-    Vector2 offsetHitbox;
+    private float tiempoRestante;
+    public Personaje lanzador;
+    public DireccionUtil.Direccion direccion;
+    private Vector2 offsetVisual;
+    public Vector2 offsetHitbox;
 
     float ancho = 64f;
     float alto = 64f;

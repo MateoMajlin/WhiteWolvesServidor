@@ -32,18 +32,40 @@ public class CollisionListener implements ContactListener {
         }
 
         if (a instanceof Proyectil && b instanceof Dañable) {
-            ((Dañable) b).recibirDaño(((Proyectil) a).daño);
-            ((Proyectil) a).muerto = true;
+            Proyectil proj = (Proyectil) a;
+            Dañable target = (Dañable) b;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != proj.lanzador) {
+                target.recibirDaño(proj.daño);
+                proj.muerto = true;
+            }
+
         } else if (a instanceof Dañable && b instanceof Proyectil) {
-            ((Dañable) a).recibirDaño(((Proyectil) b).daño);
-            ((Proyectil) b).muerto = true;
+            Proyectil proj = (Proyectil) b;
+            Dañable target = (Dañable) a;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != proj.lanzador) {
+                target.recibirDaño(proj.daño);
+                proj.muerto = true;
+            }
+
         }
 
-        // --- ProyectilRayo ---
+
         if (a instanceof ProyectilRayo && b instanceof Dañable) {
-            ((Dañable) b).recibirDaño(((ProyectilRayo) a).daño);
+            ProyectilRayo proj = (ProyectilRayo) a;
+            Dañable target = (Dañable) b;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != proj.lanzador) {
+                target.recibirDaño(proj.daño);
+            }
         } else if (a instanceof Dañable && b instanceof ProyectilRayo) {
-            ((Dañable) a).recibirDaño(((ProyectilRayo) b).daño);
+            ProyectilRayo proj = (ProyectilRayo) b;
+            Dañable target = (Dañable) a;
+
+            if (!(target instanceof Personaje) || ((Personaje) target) != proj.lanzador) {
+                target.recibirDaño(proj.daño);
+            }
         }
     }
 
