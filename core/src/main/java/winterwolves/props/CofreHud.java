@@ -44,8 +44,8 @@ public class CofreHud {
         fondoHud = new Imagen("inventarioFondo.png");
         shapeRenderer = new ShapeRenderer();
         textoItem = new Texto(Recursos.FUENTEMENU, 14, Color.WHITE, true);
-        textoNombre = new Texto(Recursos.FUENTEMENU,50,Color.BLACK,true);
-        textoEstadisticas = new Texto(Recursos.FUENTEMENU,25,Color.WHITE,true);
+        textoNombre = new Texto(Recursos.FUENTEMENU, 50, Color.BLACK, true);
+        textoEstadisticas = new Texto(Recursos.FUENTEMENU, 25, Color.WHITE, true);
 
         // Slots del personaje
         casillasPersonaje[0] = new CasillaInventario(84, 366, ANCHO_CASILLA, ALTO_CASILLA);
@@ -82,14 +82,11 @@ public class CofreHud {
             if (seleccionado < 0) seleccionado = casillasCofre.length - 1;
         }
 
-        // Intercambiar items al presionar ENTER
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            int idx = seleccionado;
+        int idx = seleccionado;
+        Item itemPersonaje = inventarioPersonaje.getItem(idx);
+        Item itemCofre = inventarioCofre.getItem(idx);
 
-            Item itemPersonaje = inventarioPersonaje.getItem(idx);
-            Item itemCofre = inventarioCofre.getItem(idx);
-
-            // Intercambiar
             if (itemCofre != null) {
                 personaje.intercambiarItems(itemCofre, idx);
                 inventarioPersonaje.setItemEnSlot(itemCofre, idx);
@@ -109,10 +106,10 @@ public class CofreHud {
         if (!visible) return;
 
         batch.setProjectionMatrix(cameraHud.combined);
+        batch.begin();
 
         // Fondo y stats
         fondoHud.setTransparencia(0.9f);
-        batch.begin();
         fondoHud.dibujar();
         textoNombre.setTexto(personaje.getClase());
         textoNombre.setPosition(80, 680);
@@ -126,45 +123,55 @@ public class CofreHud {
         );
         textoEstadisticas.setPosition(400, 670);
         textoEstadisticas.dibujar();
+
         batch.end();
 
+        // --- Dibujar casillas (fondo gris o naranja si seleccionada)
+        shapeRenderer.setProjectionMatrix(cameraHud.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (int i = 0; i < casillasPersonaje.length; i++) {
-            dibujarCasilla(batch, casillasPersonaje[i], inventarioPersonaje.getItem(i), false);
+            shapeRenderer.setColor(Color.DARK_GRAY);
+            shapeRenderer.rect(casillasPersonaje[i].x, casillasPersonaje[i].y, ANCHO_CASILLA, ALTO_CASILLA);
         }
 
         for (int i = 0; i < casillasCofre.length; i++) {
-            boolean resaltado = (i == seleccionado);
-            dibujarCasilla(batch, casillasCofre[i], inventarioCofre.getItem(i), resaltado);
+            shapeRenderer.setColor(i == seleccionado ? Color.ORANGE : Color.DARK_GRAY);
+            shapeRenderer.rect(casillasCofre[i].x, casillasCofre[i].y, ANCHO_CASILLA, ALTO_CASILLA);
         }
-    }
 
-    private void dibujarCasilla(SpriteBatch batch, CasillaInventario casilla, Item item, boolean resaltado) {
-        if (item == null) return;
-
-        shapeRenderer.setProjectionMatrix(cameraHud.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(resaltado ? Color.ORANGE : Color.DARK_GRAY);
-        shapeRenderer.rect(casilla.x, casilla.y, casilla.ancho, casilla.alto);
         shapeRenderer.end();
 
+        // --- Dibujar ítems sobre las casillas
+        batch.begin();
+        for (int i = 0; i < casillasPersonaje.length; i++) {
+            Item item = inventarioPersonaje.getItem(i);
+            dibujarItem(batch, item, casillasPersonaje[i]);
+        }
+
+        for (int i = 0; i < casillasCofre.length; i++) {
+            Item item = inventarioCofre.getItem(i);
+            dibujarItem(batch, item, casillasCofre[i]);
+        }
+        batch.end();
+    }
+
+    private void dibujarItem(SpriteBatch batch, Item item, CasillaInventario casilla) {
+        if (item == null) return;
+
+        float margenInterno = 8;
         if (item.getTextura() != null) {
-            float margenInterno = 8;
-            batch.begin();
             batch.draw(item.getTextura(),
                 casilla.x + margenInterno,
                 casilla.y + margenInterno + 12,
                 casilla.ancho - 2 * margenInterno,
                 casilla.alto - 2 * margenInterno - 12
             );
-            batch.end();
         }
 
-        batch.begin();
         textoItem.setTexto(item.getNombre());
         textoItem.setPosition(casilla.x + 5, casilla.y + casilla.alto - 5);
         textoItem.dibujar();
-        batch.end();
     }
 
     public void dispose() {
@@ -174,8 +181,12 @@ public class CofreHud {
 
     private static class CasillaInventario {
         float x, y, ancho, alto;
+
         CasillaInventario(float x, float y, float ancho, float alto) {
-            this.x = x; this.y = y; this.ancho = ancho; this.alto = alto;
+            this.x = x;
+            this.y = y;
+            this.ancho = ancho;
+            this.alto = alto;
         }
     }
 }

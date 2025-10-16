@@ -224,33 +224,37 @@ public class TerrenoPractica implements Screen {
         // Capas delanteras
         renderer.render(capasDelanteras);
 
-        // Inputs
+// Dentro de render() (reemplazá el bloque de interacción con el cofre por este)
         if (!partidaFinalizada) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
                 pj1.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
             }
-            if (cofre.estaCerca(new Vector2(pj1.getX(), pj1.getY()), 50) && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                if (hudCofre == null) {
+
+            // --- Interacción con el cofre ---
+            if (cofre.estaCerca(new Vector2(pj1.getX(), pj1.getY()), 50)
+                && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+                if (hudCofre == null)
                     hudCofre = new CofreHud(cofre.getInventario(), pj1, camaraHud);
-                }
+
                 hudCofre.toggle();
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+
+            // Evitar que se abra el inventario normal si el cofre está visible
+            if (Gdx.input.isKeyJustPressed(Input.Keys.I) && (hudCofre == null || !hudCofre.isVisible())) {
                 jugador.toggleInventario();
             }
         }
 
-        // HUD / Inventario
         pj1.actualizarInventario();
+
         if (hudCofre != null && hudCofre.isVisible()) {
-            Render.batch.setProjectionMatrix(camaraHud.combined);
-            Render.batch.begin();
             hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);
-            Render.batch.end();
         } else {
             jugador.drawHud(Render.batch);
         }
+
 
         // --- Mostrar kills y tiempo con Texto ---
         Render.batch.setProjectionMatrix(camaraHud.combined);
