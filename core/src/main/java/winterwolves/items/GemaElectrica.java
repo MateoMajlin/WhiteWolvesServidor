@@ -10,18 +10,15 @@ import winterwolves.personajes.habilidades.RayoElectrico;
 
 public class GemaElectrica extends Item {
 
-    private final float duracion;
-    private final float cooldown;
-    private final int daño;
+    private final float duracion = 5f;
+    private final float cooldown = 10f;
+    private final int daño = 70;
 
     private final String descripcion;
 
-    public GemaElectrica(float duracion, float cooldown, int daño) {
+    public GemaElectrica() {
         super("Gema Electrica",
             new TextureRegion(new Texture("texturas/anillo.png"), 32, 16, 16, 16));
-        this.duracion = duracion;
-        this.cooldown = cooldown;
-        this.daño = daño;
         this.descripcion = "Amuleto que permite lanzar un rayo que atravieza " + "\n" +
             "e inflige " + daño + " de daño a los enemigos";
     }

@@ -114,7 +114,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void draw(Batch batch) {
         float delta = Gdx.graphics.getDeltaTime();
 
-        // Actualizar habilidades
         if (habilidad1 != null) {
             habilidad1.actualizar(delta);
             if (entradas.isHabilidad1()) habilidad1.usar();

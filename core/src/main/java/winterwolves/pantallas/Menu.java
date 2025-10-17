@@ -85,7 +85,7 @@ public class Menu implements Screen {
             case 1:
                 Recursos.musica.stop();
                 Recursos.musica.dispose();
-                Render.app.setScreen(new TerrenoPractica());
+                Render.app.setScreen(new PantallaSeleccion());
                 break;
             case 4:
                 Render.app.setScreen(new PantallaTutorial());
@@ -126,5 +126,13 @@ public class Menu implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-    @Override public void dispose() {}
+    @Override
+    public void dispose() {
+        if (fondo != null) fondo.dispose();
+        for (Texto t : opciones) {
+            if (t != null) t.dispose();
+        }
+        if (titulo != null) titulo.dispose();
+    }
+
 }

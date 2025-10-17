@@ -2,6 +2,7 @@ package winterwolves.pantallas;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -17,8 +18,12 @@ import com.badlogic.gdx.utils.Array;
 import winterwolves.Jugador;
 import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
+import winterwolves.io.EntradasJugador2;
 import winterwolves.items.*;
 import winterwolves.personajes.Personaje;
+import winterwolves.personajes.clases.Clerigo;
+import winterwolves.personajes.clases.Guerrero;
+import winterwolves.personajes.clases.Mago;
 import winterwolves.props.Caja;
 import winterwolves.props.Cofre;
 import winterwolves.props.CofreHud;
@@ -51,12 +56,18 @@ public class TerrenoPractica implements Screen {
 
     private Jugador jugador, dummy;
 
-    // --- Variables de partida 1v1 ---
     private float tiempoRestante = 1 * 60f; // 5 minutos
     private boolean partidaFinalizada = false;
     private boolean pj1YaContado = false, pj2YaContado = false;
     private Texto textoGanador;
     private Texto textoJugador1, textoJugador2, textoTiempo;
+    public PantallaSeleccion pantallaSeleccion;
+
+    private int[] personajesElegidosIdx;
+
+    public TerrenoPractica(int[] personajesElegidosIdx) {
+        this.personajesElegidosIdx = personajesElegidosIdx;
+    }
 
     @Override
     public void show() {
@@ -65,9 +76,9 @@ public class TerrenoPractica implements Screen {
         mapa = loader.load("mapas/mapaNieve.tmx");
 
         int mapWidth = mapa.getProperties().get("width", Integer.class)
-                * mapa.getProperties().get("tilewidth", Integer.class);
+            * mapa.getProperties().get("tilewidth", Integer.class);
         int mapHeight = mapa.getProperties().get("height", Integer.class)
-                * mapa.getProperties().get("tileheight", Integer.class);
+            * mapa.getProperties().get("tileheight", Integer.class);
 
         float centroMapaX = mapWidth / 2f;
         float centroMapaY = mapHeight / 2f;
@@ -89,31 +100,38 @@ public class TerrenoPractica implements Screen {
         camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
         camaraHud.update();
 
-        // Crear mundo y colisiones
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
 
         debugRenderer = new Box2DDebugRenderer();
 
-        EntradasJugador entradas = new EntradasJugador();
-        jugador = new Jugador("Mateo", world, entradas, 450 / PPM, 450 / PPM, PPM, camaraHud);
-        dummy = new Jugador("Dummy", world, entradas, 650 / PPM, 450 / PPM, PPM, camaraHud);
+        EntradasJugador entradas1 = new EntradasJugador();
+        EntradasJugador2 entradas2 = new EntradasJugador2();
+        EntradasJugador[] entradasJugadores = new EntradasJugador[]{entradas1,entradas2};
 
-        Gdx.input.setInputProcessor(entradas);
+        Personaje[] personajes = aplicarPersonajesJugadores(world, entradasJugadores, personajesElegidosIdx, PPM, camaraHud);
+
+        jugador = new Jugador("Mateo", world, entradas1, 450 / PPM, 450 / PPM, PPM, camaraHud, personajes[0]);
+        dummy   = new Jugador("Dummy", world, entradas2, 650 / PPM, 450 / PPM, PPM, camaraHud, personajes[1]);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(entradas1);
+        multiplexer.addProcessor(entradas2);
+        Gdx.input.setInputProcessor(multiplexer);
 
         Personaje p = jugador.getPersonaje();
-        EspadaItem espada = new EspadaItem();
-        GemaDeFuego gema = new GemaDeFuego(5f, 5f, 60);
-        GemaElectrica gemaElectrica = new GemaElectrica(5f, 10f, 80);
-
-        p.getInventario().agregarItem(espada);
-        p.getInventario().agregarItem(gema);
-        p.getInventario().agregarItem(gemaElectrica);
-
-        p.equiparArma(espada);
-        p.equiparItem1(gema);
-        p.equiparItem2(gemaElectrica);
+//        EspadaItem espada = new EspadaItem();
+//        GemaDeFuego gema = new GemaDeFuego(5f, 5f, 60);
+//        GemaElectrica gemaElectrica = new GemaElectrica(5f, 10f, 80);
+//
+//        p.getInventario().agregarItem(espada);
+//        p.getInventario().agregarItem(gema);
+//        p.getInventario().agregarItem(gemaElectrica);
+//
+//        p.equiparArma(espada);
+//        p.equiparItem1(gema);
+//        p.equiparItem2(gemaElectrica);
 
         p.setVida(50);
 
@@ -128,8 +146,8 @@ public class TerrenoPractica implements Screen {
         // Cofre
         cofre = new Cofre(world, 300 / PPM, 200 / PPM, PPM);
         cofre.getInventario().agregarItem(new EspadaItem());
-        cofre.getInventario().agregarItem(new AmuletoCuracion(5f, 5f, 60));
-        cofre.getInventario().agregarItem(new GemaElectrica(5f, 10f, 80));
+        cofre.getInventario().agregarItem(new AmuletoCuracion());
+        cofre.getInventario().agregarItem(new GemaElectrica());
 
         // Texto de victoria
         ganaste = new Texto(Recursos.FUENTEMENU, 150, Color.BLACK, true);
@@ -142,6 +160,32 @@ public class TerrenoPractica implements Screen {
         textoJugador2 = new Texto(Recursos.FUENTEMENU, 20, Color.WHITE, true);
         textoTiempo = new Texto(Recursos.FUENTEMENU, 20, Color.YELLOW, true);
     }
+
+    private Personaje[] aplicarPersonajesJugadores(World world, EntradasJugador[] entradasJugadores,
+                                                   int[] personajesElegidosIdx,float ppm, OrthographicCamera camaraHud) {
+        Personaje[] personajes = new Personaje[2];
+
+        float[] posicionesX = {2f, 10f};
+        float[] posicionesY = {3f, 3f};
+
+        for (int i = 0; i < 2; i++) {
+            switch (personajesElegidosIdx[i]) {
+                case 0:
+                    personajes[i] = new Guerrero(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
+                    break;
+                case 1:
+                    personajes[i] = new Mago(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
+                    break;
+                case 2:
+                    personajes[i] = new Clerigo(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
+                    break;
+            }
+        }
+
+        return personajes;
+    }
+
+
 
     @Override
     public void render(float delta) {
@@ -227,7 +271,7 @@ public class TerrenoPractica implements Screen {
 // Dentro de render() (reemplazá el bloque de interacción con el cofre por este)
         if (!partidaFinalizada) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-                pj1.intercambiarItems(new AmuletoCuracion(2f,5f,30),1);
+                pj1.intercambiarItems(new AmuletoCuracion(),1);
             }
 
             // --- Interacción con el cofre ---

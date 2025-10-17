@@ -22,14 +22,14 @@ public class Jugador {
 
     private String nombre;
 
-    public Jugador(String nombre, World world, EntradasJugador entradas, float x, float y, float ppm, OrthographicCamera camaraHud) {
+    public Jugador(String nombre, World world, EntradasJugador entradas, float x, float y, float ppm, OrthographicCamera camaraHud, Personaje personaje) {
         this.nombre = nombre;
         this.world = world;
         this.entradas = entradas;
         this.ppm = ppm;
         this.camaraHud = camaraHud;
 
-        this.personaje = new Mago(world, entradas, x, y, ppm, camaraHud);
+        this.personaje = personaje;
 
         this.hud = personaje.hud;
         this.inventarioHud = personaje.inventarioHud;

@@ -11,25 +11,21 @@ public class AnilloConcentracion extends Item {
 
     String descripcion = "Anillo capaz de ampliar todos " + "\n" + "los sentidos de su portador";
 
-    private final float duracion;
-    private final float cooldown;
-    private final float bonusVelocidad;
-    private final float bonusAtaque;
+    private final float duracion = 10f;
+    private final float cooldown = 10f;
+    private final float bonusVelocidad = 50;
+    private final float bonusAtaque = 50;
 
     Texture textura = new Texture("texturas/anillo.png");
     TextureRegion[][] cuadricula = TextureRegion.split(textura, 16, 16);
 
     TextureRegion frame = cuadricula[0][2];
 
-    public AnilloConcentracion(float duracion, float cooldown, float bonusVelocidad, float bonusAtaque) {
+    public AnilloConcentracion() {
         super(
             "Anillo Concentracion",
             new TextureRegion(new Texture("texturas/anillo.png"), 64, 16, 16, 16) // x, y, width, height
         );
-        this.duracion = duracion;
-        this.cooldown = cooldown;
-        this.bonusVelocidad = bonusVelocidad;
-        this.bonusAtaque = bonusAtaque;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class Principal extends Game {
         Render.app = this;
         Render.batch = new SpriteBatch();
         // setearMusica();
-        this.setScreen(new TerrenoPractica());
+        this.setScreen(new Menu());
     }
 
     @Override

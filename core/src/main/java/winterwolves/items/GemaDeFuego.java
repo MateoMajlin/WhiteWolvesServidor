@@ -9,18 +9,15 @@ import winterwolves.personajes.armas.Arma;
 
 public class GemaDeFuego extends Item {
 
-    private final float duracion;
-    private final float cooldown;
-    private final int daño;
+    private final float duracion = 5f;
+    private final float cooldown = 5f;
+    private final int daño = 50;
 
     private final String descripcion;
 
-    public GemaDeFuego(float duracion, float cooldown, int daño) {
+    public GemaDeFuego() {
         super("Gema De Fuego",
             new TextureRegion(new Texture("texturas/anillo.png"), 48, 16, 16, 16));
-        this.duracion = duracion;
-        this.cooldown = cooldown;
-        this.daño = daño;
         this.descripcion = "Amuleto que permite lanzar una bola de fuego" + "\n" +
             "que inflige " + daño + " de daño a los enemigos";
     }

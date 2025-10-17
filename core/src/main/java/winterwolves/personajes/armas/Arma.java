@@ -54,7 +54,7 @@ public class Arma {
 
     public boolean atacar(float x, float y, Vector2 direccion, Personaje propietario) {
         if (!activo && puedeAtacar()) {
-            this.propietario = propietario; // ⚡ asignar propietario
+            this.propietario = propietario;
             activar(x, y, vectorADireccion(direccion));
 
             if (propietario != null) propietario.setPuedeMoverse(false);

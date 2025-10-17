@@ -18,6 +18,10 @@ public class Imagen {
         s.draw(Render.batch);
     }
 
+    public void setPosition(int x,int y) {
+        s.setPosition(x,y);
+    }
+
     public void escalar(float ancho,float alto){
         s.setSize(ancho,alto);
     }

@@ -63,7 +63,7 @@ public class InventarioHud {
         if (!visible || inventario.getItems().isEmpty()) return;
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            seleccionado = (seleccionado + 1) % 3; // solo 3 casillas
+            seleccionado = (seleccionado + 1) % 3;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
             seleccionado--;

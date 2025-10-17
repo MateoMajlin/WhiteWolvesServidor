@@ -87,4 +87,12 @@ public class Texto {
     public Vector2 getPosition() {
         return new Vector2(x,y);
     }
+
+    public void dispose() {
+        if (fuente != null) {
+            fuente.dispose();
+            fuente = null;
+        }
+    }
+
 }

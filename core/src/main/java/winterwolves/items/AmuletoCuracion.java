@@ -11,15 +11,12 @@ public class AmuletoCuracion extends Item {
 
     String descripcion = "Amuleto que brinda la habilidad de"  + "\n" + "curarse a su portador";
 
-    private final float duracion;
-    private final float cooldown;
-    private final int curacion;
+    private final float duracion = 3f;
+    private final float cooldown = 5f;
+    private final int curacion = 30;
 
-    public AmuletoCuracion(float duracion, float cooldown, int curacion) {
+    public AmuletoCuracion() {
         super("Amuleto Curacion", new TextureRegion(new Texture("texturas/anillo.png"), 64, 16, 16, 16));
-        this.duracion = duracion;
-        this.cooldown = cooldown;
-        this.curacion = curacion;
     }
 
     @Override

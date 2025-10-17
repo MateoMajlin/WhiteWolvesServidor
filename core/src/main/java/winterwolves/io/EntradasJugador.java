@@ -24,7 +24,6 @@ public class EntradasJugador implements InputProcessor {
         return derecha;
     }
 
-    // --- Dash ---
     public boolean isDash() {
         return control;
     }
