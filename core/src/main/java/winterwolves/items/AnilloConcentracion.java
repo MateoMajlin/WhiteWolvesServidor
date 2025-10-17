@@ -24,7 +24,7 @@ public class AnilloConcentracion extends Item {
     public AnilloConcentracion() {
         super(
             "Anillo Concentracion",
-            new TextureRegion(new Texture("texturas/anillo.png"), 64, 16, 16, 16) // x, y, width, height
+            new TextureRegion(new Texture("texturas/anillo.png"), 80, 16, 16, 16) // x, y, width, height
         );
     }
 

@@ -38,6 +38,10 @@ public class Guerrero extends Personaje {
         inventario.agregarItem(espada);
         inventario.agregarItem(amuleto);
         inventario.agregarItem(anillo);
+
+        slotArma = espada;
+        slotHabilidad1 = amuleto;
+        slotHabilidad2 = anillo;
     }
 
     @Override
