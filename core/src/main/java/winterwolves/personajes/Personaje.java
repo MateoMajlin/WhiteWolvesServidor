@@ -317,4 +317,7 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     }
 
 
+    public int getPpm() {
+        return (int) ppm;
+    }
 }
