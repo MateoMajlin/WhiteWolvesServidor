@@ -159,7 +159,7 @@ public class PantallaSeleccion implements Screen {
 
             if (tiempoEspera >= 3f) {
                 esperando = false;
-                Render.app.setScreen(new TerrenoPractica(personajesElegidosIdx));
+                Render.app.setScreen(new MapaNieve(personajesElegidosIdx));
             }
         }
     }

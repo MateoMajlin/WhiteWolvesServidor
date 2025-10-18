@@ -1,5 +1,6 @@
 package winterwolves;
 
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -69,5 +70,9 @@ public class Jugador {
 
     public void dispose() {
         personaje.dispose();
+    }
+
+    public EntradasJugador getEntradas() {
+        return entradas;
     }
 }

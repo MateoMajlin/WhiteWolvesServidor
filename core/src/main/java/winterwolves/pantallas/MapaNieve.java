@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -15,32 +14,32 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
-import winterwolves.Jugador;
 import winterwolves.Partida;
 import winterwolves.elementos.Texto;
-import winterwolves.io.EntradasJugador;
-import winterwolves.io.EntradasJugador2;
-import winterwolves.items.*;
-import winterwolves.personajes.Personaje;
-import winterwolves.personajes.clases.Clerigo;
-import winterwolves.personajes.clases.Guerrero;
-import winterwolves.personajes.clases.Mago;
+import winterwolves.items.AmuletoCuracion;
+import winterwolves.items.EspadaItem;
+import winterwolves.items.GemaElectrica;
 import winterwolves.props.Caja;
 import winterwolves.props.Cofre;
 import winterwolves.props.CofreHud;
-import winterwolves.utilidades.*;
+import winterwolves.utilidades.CameraManager;
+import winterwolves.utilidades.Config;
+import winterwolves.utilidades.PlayerManager;
+import winterwolves.utilidades.Render;
+import winterwolves.utilidades.Recursos;
+import winterwolves.utilidades.Box2DColisiones;
+import winterwolves.utilidades.CollisionListener;
 
-public class TerrenoPractica implements Screen {
+public class MapaNieve implements Screen {
 
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camara;
-    private OrthographicCamera camaraBox2D;
-    private OrthographicCamera camaraHud;
+    private CameraManager cameraManager;
+    private PlayerManager playerManager;
     private Music musica = Recursos.musicaBatalla;
 
-    int[] capasFondo = {0, 1};
-    int[] capasDelanteras = {3};
+    private int[] capasFondo = {0, 1};
+    private int[] capasDelanteras = {3};
 
     private World world;
     private Box2DDebugRenderer debugRenderer;
@@ -51,17 +50,14 @@ public class TerrenoPractica implements Screen {
 
     private final float PPM = 100f;
 
-    int contCajasDestruidas = 0;
-    int totalCajas;
+    private int contCajasDestruidas = 0;
+    private int totalCajas;
     private Texto ganaste;
 
-    private Jugador jugador, dummy;
     private Partida partida;
-
-    public PantallaSeleccion pantallaSeleccion;
     private int[] personajesElegidosIdx;
 
-    public TerrenoPractica(int[] personajesElegidosIdx) {
+    public MapaNieve(int[] personajesElegidosIdx) {
         this.personajesElegidosIdx = personajesElegidosIdx;
     }
 
@@ -81,47 +77,29 @@ public class TerrenoPractica implements Screen {
 
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
-        camara = new OrthographicCamera();
-        camara.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
-        camara.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
-        camara.update();
+        // Inicializar CameraManager
+        cameraManager = new CameraManager(Config.WIDTH, Config.HEIGTH, PPM);
 
-        camaraBox2D = new OrthographicCamera();
-        camaraBox2D.setToOrtho(false, Config.WIDTH / PPM, Config.HEIGTH / PPM);
-        camaraBox2D.position.set((Config.WIDTH / 2f) / PPM, (Config.HEIGTH / 2f) / PPM, 0);
-        camaraBox2D.update();
-
-        camaraHud = new OrthographicCamera();
-        camaraHud.setToOrtho(false, Config.WIDTH, Config.HEIGTH);
-        camaraHud.position.set(Config.WIDTH / 2f, Config.HEIGTH / 2f, 0);
-        camaraHud.update();
-
+        // Mundo Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
-
         debugRenderer = new Box2DDebugRenderer();
 
-        EntradasJugador entradas1 = new EntradasJugador();
-        EntradasJugador2 entradas2 = new EntradasJugador2();
-        EntradasJugador[] entradasJugadores = new EntradasJugador[]{entradas1, entradas2};
-
-        Personaje[] personajes = aplicarPersonajesJugadores(world, entradasJugadores, personajesElegidosIdx, PPM, camaraHud);
-
-        jugador = new Jugador("Mateo", world, entradas1, 450 / PPM, 450 / PPM, PPM, camaraHud, personajes[0]);
-        dummy = new Jugador("Dummy", world, entradas2, 650 / PPM, 650 / PPM, PPM, camaraHud, personajes[1]);
+        // Inicializar jugadores
+        playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
+        playerManager.getJugador1().getPersonaje().setVida(50);
 
         // Crear partida (duración 60 segundos)
-        partida = new Partida(jugador.getNombre(), jugador.getPersonaje(),
-            dummy.getNombre(), dummy.getPersonaje(),
+        partida = new Partida(playerManager.getJugador1().getNombre(), playerManager.getJugador1().getPersonaje(),
+            playerManager.getJugador2().getNombre(), playerManager.getJugador2().getPersonaje(),
             60f);
 
+        // Input
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(entradas1);
-        multiplexer.addProcessor(entradas2);
+        multiplexer.addProcessor(playerManager.getJugador1().getEntradas());
+        multiplexer.addProcessor(playerManager.getJugador2().getEntradas());
         Gdx.input.setInputProcessor(multiplexer);
-
-        jugador.getPersonaje().setVida(50);
 
         // Cajas
         cajas = new Array<>();
@@ -144,36 +122,10 @@ public class TerrenoPractica implements Screen {
             centroMapaY + ganaste.getAlto() / 2f);
     }
 
-    private Personaje[] aplicarPersonajesJugadores(World world, EntradasJugador[] entradasJugadores,
-                                                   int[] personajesElegidosIdx, float ppm, OrthographicCamera camaraHud) {
-        Personaje[] personajes = new Personaje[2];
-
-        float[] posicionesX = {2f, 10f};
-        float[] posicionesY = {3f, 5f};
-
-        for (int i = 0; i < 2; i++) {
-            switch (personajesElegidosIdx[i]) {
-                case 0:
-                    personajes[i] = new Guerrero(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
-                    break;
-                case 1:
-                    personajes[i] = new Mago(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
-                    break;
-                case 2:
-                    personajes[i] = new Clerigo(world, entradasJugadores[i], posicionesX[i], posicionesY[i], ppm, camaraHud);
-                    break;
-            }
-        }
-        return personajes;
-    }
-
     @Override
     public void render(float delta) {
         Render.limpiarPantalla(1, 1, 1);
         world.step(delta, 6, 2);
-
-        Personaje pj1 = jugador.getPersonaje();
-        Personaje pj2 = dummy.getPersonaje();
 
         // Actualizar cajas
         for (int i = cajas.size - 1; i >= 0; i--) {
@@ -185,24 +137,23 @@ public class TerrenoPractica implements Screen {
             }
         }
 
-        // Actualizar partida (tiempo, kills, etc.)
+        // Actualizar partida
         partida.actualizar(delta);
 
+        // Actualizar jugadores
+        playerManager.actualizar(delta);
+
         // Actualizar cámara
-        camara.position.set(pj1.getX() + pj1.getWidth() / 2, pj1.getY() + pj1.getHeight() / 2, 0);
-        camara.update();
-        camaraBox2D.position.set(camara.position.x / PPM, camara.position.y / PPM, 0);
-        camaraBox2D.update();
+        cameraManager.seguir(playerManager.getPosicionJugador1());
 
         // Renderizar mapa
-        renderer.setView(camara);
+        renderer.setView(cameraManager.getPrincipal());
         renderer.render(capasFondo);
 
-        // Dibujar entidades
-        Render.batch.setProjectionMatrix(camara.combined);
+        // Dibujar jugadores y cajas
+        Render.batch.setProjectionMatrix(cameraManager.getPrincipal().combined);
         Render.batch.begin();
-        pj1.draw(Render.batch);
-        pj2.draw(Render.batch);
+        playerManager.draw(Render.batch);
         for (Caja c : cajas) {
             c.actualizar(delta);
             c.draw(Render.batch);
@@ -216,41 +167,42 @@ public class TerrenoPractica implements Screen {
 
         // Interacciones
         if (!partida.isPartidaFinalizada()) {
+
+            // Intercambiar items
             if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-                pj1.intercambiarItems(new AmuletoCuracion(), 1);
+                playerManager.getJugador1().getPersonaje().intercambiarItems(new AmuletoCuracion(), 1);
             }
 
-            if (cofre.estaCerca(new Vector2(pj1.getX(), pj1.getY()), 50)
+            // Abrir cofre
+            if (cofre.estaCerca(playerManager.getPosicionJugador1(), 50)
                 && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 if (hudCofre == null)
-                    hudCofre = new CofreHud(cofre.getInventario(), pj1, camaraHud);
+                    hudCofre = new CofreHud(cofre.getInventario(), playerManager.getJugador1().getPersonaje(), cameraManager.getHud());
                 hudCofre.toggle();
             }
 
+            // Abrir inventario
             if (Gdx.input.isKeyJustPressed(Input.Keys.I) && (hudCofre == null || !hudCofre.isVisible())) {
-                jugador.toggleInventario();
+                playerManager.getJugador1().toggleInventario();
             }
         }
 
-        pj1.actualizarInventario();
-
+        // Dibujar HUD
         if (hudCofre != null && hudCofre.isVisible()) {
             hudCofre.actualizar();
             hudCofre.dibujar(Render.batch);
         } else {
-            jugador.drawHud(Render.batch);
+            playerManager.drawHud(Render.batch);
         }
 
-        // HUD de la partida
-        Render.batch.setProjectionMatrix(camaraHud.combined);
+        // HUD partida
+        Render.batch.setProjectionMatrix(cameraManager.getHud().combined);
         Render.batch.begin();
         partida.dibujarHUD();
         Render.batch.end();
 
-        // Debug
-        debugRenderer.render(world, camaraBox2D.combined);
+        debugRenderer.render(world, cameraManager.getBox2D().combined);
 
-        // Salir al menú
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Render.app.setScreen(new Menu());
             musica.stop();
@@ -260,22 +212,15 @@ public class TerrenoPractica implements Screen {
             dispose();
         }
 
-        // Bloquear movimiento si terminó la partida
+        // Bloquear movimiento si termina la partida
         if (partida.isPartidaFinalizada()) {
-            pj1.setPuedeMoverse(false);
-            pj2.setPuedeMoverse(false);
+            playerManager.setPuedeMoverse(false);
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        camara.viewportWidth = width;
-        camara.viewportHeight = height;
-        camara.update();
-
-        camaraBox2D.viewportWidth = width / PPM;
-        camaraBox2D.viewportHeight = height / PPM;
-        camaraBox2D.update();
+        cameraManager.resize(width, height);
     }
 
     @Override public void pause() {}
@@ -286,17 +231,11 @@ public class TerrenoPractica implements Screen {
     public void dispose() {
         mapa.dispose();
         renderer.dispose();
-        jugador.dispose();
+        playerManager.dispose();
         world.dispose();
         debugRenderer.dispose();
         for (Caja c : cajas) {
             c.dispose();
         }
-    }
-
-    private void setearMusica() {
-        musica.play();
-        musica.setLooping(true);
-        musica.setVolume(0.2f);
     }
 }
