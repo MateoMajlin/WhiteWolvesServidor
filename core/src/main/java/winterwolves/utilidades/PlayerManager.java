@@ -22,8 +22,8 @@ public class PlayerManager {
 
         // Crear personajes
         Personaje[] personajes = new Personaje[2];
-        float[] posicionesX = {2f, 10f};
-        float[] posicionesY = {3f, 5f};
+        float[] posicionesX = {4f, 21f};
+        float[] posicionesY = {2.5f, 10f};
 
         for (int i = 0; i < 2; i++) {
             switch (personajesElegidosIdx[i]) {
