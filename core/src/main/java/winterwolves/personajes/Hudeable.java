@@ -15,5 +15,5 @@ public interface Hudeable {
 
         float getTiempoDesdeUltimoDash();
         float getCooldownDash();
-
+        int getVidaMax();
 }

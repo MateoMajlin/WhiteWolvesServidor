@@ -38,7 +38,7 @@ public class Hud {
         float yBarra = camera.viewportHeight - 40;
 
         // Vida
-        dibujarBarra(xBarra, yBarra, ANCHO_BARRA, ALTO_BARRA_VIDA, personaje.getVida() / 100f, Color.RED);
+        dibujarBarra(xBarra, yBarra, ANCHO_BARRA, ALTO_BARRA_VIDA, personaje.getVida() / (float) personaje.getVidaMax(), Color.RED);
 
         float yActual = yBarra - ALTO_BARRA_VIDA - ESPACIO_BARRAS;
 

@@ -16,11 +16,9 @@ public class PlayerManager {
     private Jugador jugador2;
 
     public PlayerManager(World world, int[] personajesElegidosIdx, float PPM, OrthographicCamera camaraHud) {
-        // Entradas
         EntradasJugador entradas1 = new EntradasJugador();
         EntradasJugador entradas2 = new EntradasJugador2();
 
-        // Crear personajes
         Personaje[] personajes = new Personaje[2];
         float[] posicionesX = {4f, 21f};
         float[] posicionesY = {2.5f, 10f};
@@ -50,7 +48,6 @@ public class PlayerManager {
 
     public void drawHud(Batch batch) {
         jugador1.drawHud(Render.batch);
-        jugador2.drawHud(Render.batch);
     }
 
     public void toggleInventarioJugador1() {

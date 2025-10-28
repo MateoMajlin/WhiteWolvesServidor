@@ -38,9 +38,9 @@ public class Mago extends Personaje {
         defensa = 30;
         vida = 100;
 
-        inventario.agregarItem(baston);
-        inventario.agregarItem(gemaDeFuego);
-        inventario.agregarItem(gemaElectrica);
+        slotArma = baston;
+        slotHabilidad1 = gemaDeFuego;
+        slotHabilidad2 = gemaElectrica;
     }
 
     @Override

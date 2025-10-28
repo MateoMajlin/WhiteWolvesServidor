@@ -25,7 +25,8 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     protected float multiplicadorCorrer = 1.7f;
     public float ppm;
 
-    protected int vida = 100;
+    protected int vida;
+    protected int vidaMax;
     protected float ataque, ataqueMagico, defensa;
 
     protected AnimacionPersonaje animaciones;
@@ -202,8 +203,12 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     // --- Vida y stats ---
     public int getVida() { return vida; }
     public void setVida(int nuevaVida) {
-        vida = Math.min(nuevaVida, 100);
+        vida = Math.min(nuevaVida, this.getVidaMax());
         if (vida < 0) vida = 0;
+    }
+
+    public int getVidaMax() {
+        return this.vidaMax;
     }
 
 

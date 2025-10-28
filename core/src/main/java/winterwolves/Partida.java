@@ -29,8 +29,8 @@ public class Partida {
         this.tiempoRestante = duracionSegundos;
         this.partidaFinalizada = false;
 
-        textoJugador1 = new Texto(Recursos.FUENTEMENU, 20, Color.WHITE, true);
-        textoJugador2 = new Texto(Recursos.FUENTEMENU, 20, Color.WHITE, true);
+        textoJugador1 = new Texto(Recursos.FUENTEMENU, 20, Color.BLUE, true);
+        textoJugador2 = new Texto(Recursos.FUENTEMENU, 20, Color.RED, true);
         textoTiempo   = new Texto(Recursos.FUENTEMENU, 20, Color.YELLOW, true);
     }
 
@@ -43,12 +43,12 @@ public class Partida {
         if (pj1.estaMuerto() && !pj1YaContado) {
             pj2.incrementarKill();
             pj1YaContado = true;
-            pj1.respawn(450 / 100f, 450 / 100f);
+            pj1.respawn(4f, 2f);
         }
         if (pj2.estaMuerto() && !pj2YaContado) {
             pj1.incrementarKill();
             pj2YaContado = true;
-            pj2.respawn(650 / 100f, 650 / 100f);
+            pj2.respawn(21f, 10f);
         }
 
         if (!pj1.estaMuerto()) pj1YaContado = false;
@@ -59,7 +59,6 @@ public class Partida {
         }
     }
 
-    /** Marca la partida como finalizada y calcula el ganador */
     private void finalizarPartida() {
         partidaFinalizada = true;
 
@@ -73,14 +72,13 @@ public class Partida {
         textoGanador.centrar();
     }
 
-    /** Dibuja los textos del HUD (kills, tiempo y ganador si aplica) */
     public void dibujarHUD() {
         textoJugador1.setTexto(nombrePj1 + ": " + pj1.getKills());
-        textoJugador1.setPosition(20, Config.HEIGTH - 20);
+        textoJugador1.setPosition(20, Config.HEIGTH - 150);
         textoJugador1.dibujar();
 
         textoJugador2.setTexto(nombrePj2 + ": " + pj2.getKills());
-        textoJugador2.setPosition(Config.WIDTH - 150, Config.HEIGTH - 20);
+        textoJugador2.setPosition(Config.WIDTH - 150, Config.HEIGTH - 150);
         textoJugador2.dibujar();
 
         int min = (int) (tiempoRestante / 60);

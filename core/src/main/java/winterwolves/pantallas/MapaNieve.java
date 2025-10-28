@@ -63,7 +63,6 @@ public class MapaNieve implements Screen {
 
     @Override
     public void show() {
-        // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
 
@@ -77,31 +76,25 @@ public class MapaNieve implements Screen {
 
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
-        // Inicializar CameraManager
         cameraManager = new CameraManager(Config.WIDTH, Config.HEIGTH, PPM);
 
-        // Mundo Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
         debugRenderer = new Box2DDebugRenderer();
 
-        // Inicializar jugadores
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
         playerManager.getJugador1().getPersonaje().setVida(50);
 
-        // Crear partida (duración 60 segundos)
         partida = new Partida(playerManager.getJugador1().getNombre(), playerManager.getJugador1().getPersonaje(),
             playerManager.getJugador2().getNombre(), playerManager.getJugador2().getPersonaje(),
             60f);
 
-        // Input
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(playerManager.getJugador1().getEntradas());
         multiplexer.addProcessor(playerManager.getJugador2().getEntradas());
         Gdx.input.setInputProcessor(multiplexer);
 
-        // Cajas
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM, 100));
         cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM, 100));
@@ -109,8 +102,7 @@ public class MapaNieve implements Screen {
         cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM, 60));
         totalCajas = cajas.size;
 
-        // Cofre
-        cofre = new Cofre(world, 300 / PPM, 200 / PPM, PPM);
+        cofre = new Cofre(world, 500 / PPM, 500 / PPM, PPM);
         cofre.getInventario().agregarItem(new EspadaItem());
         cofre.getInventario().agregarItem(new AmuletoCuracion());
         cofre.getInventario().agregarItem(new GemaElectrica());
@@ -212,7 +204,6 @@ public class MapaNieve implements Screen {
             dispose();
         }
 
-        // Bloquear movimiento si termina la partida
         if (partida.isPartidaFinalizada()) {
             playerManager.setPuedeMoverse(false);
         }

@@ -35,7 +35,7 @@ public class AnilloConcentracion extends Item {
 
     @Override
     public Arma crearArma(World world, float ppm) {
-        return null; // No provee arma
+        return null;
     }
 
     @Override

@@ -34,6 +34,7 @@ public class Guerrero extends Personaje {
         ataqueMagico = 10;
         defensa = 30;
         vida = 150;
+        vidaMax = vida;
 
         inventario.agregarItem(espada);
         inventario.agregarItem(amuleto);
