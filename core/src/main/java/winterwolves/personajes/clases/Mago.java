@@ -37,6 +37,7 @@ public class Mago extends Personaje {
         ataqueMagico = 50;
         defensa = 30;
         vida = 100;
+        vidaMax = vida;
 
         slotArma = baston;
         slotHabilidad1 = gemaDeFuego;

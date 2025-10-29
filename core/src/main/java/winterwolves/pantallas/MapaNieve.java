@@ -132,6 +132,8 @@ public class MapaNieve implements Screen {
         // Actualizar partida
         partida.actualizar(delta);
 
+        System.out.println(playerManager.getJugador2().getPersonaje().getVida());
+        System.out.println(playerManager.getJugador2().getPersonaje().getVidaMax());
         // Actualizar jugadores
         playerManager.actualizar(delta);
 

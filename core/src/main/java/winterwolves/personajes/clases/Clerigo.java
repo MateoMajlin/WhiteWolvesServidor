@@ -40,6 +40,7 @@ public class Clerigo extends Personaje{
         ataqueMagico = 40;
         defensa = 60;
         vida = 150;
+        vidaMax = vida;
 
         slotArma = baston;
         slotHabilidad1 = amuleto;

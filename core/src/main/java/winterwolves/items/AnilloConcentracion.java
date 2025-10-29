@@ -13,8 +13,8 @@ public class AnilloConcentracion extends Item {
 
     private final float duracion = 10f;
     private final float cooldown = 10f;
-    private final float bonusVelocidad = 5;
-    private final float bonusAtaque = 50;
+    private final float bonusVelocidad = 3;
+    private final float bonusAtaque = 25;
 
     Texture textura = new Texture("texturas/anillo.png");
     TextureRegion[][] cuadricula = TextureRegion.split(textura, 16, 16);

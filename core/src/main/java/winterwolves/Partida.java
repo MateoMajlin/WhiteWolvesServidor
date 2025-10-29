@@ -39,7 +39,6 @@ public class Partida {
 
         tiempoRestante -= delta;
 
-        // Muerte y respawn
         if (pj1.estaMuerto() && !pj1YaContado) {
             pj2.incrementarKill();
             pj1YaContado = true;

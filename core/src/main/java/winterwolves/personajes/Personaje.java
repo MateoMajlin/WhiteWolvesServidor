@@ -59,8 +59,8 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         this.entradas = entradas;
         this.inventario = new Inventario();
         this.ppm = ppm;
-        animaciones = new AnimacionPersonaje("zorrito.png");
-
+        this.animaciones = new AnimacionPersonaje("zorrito.png");
+        this.vidaMax = vida;
         this.camaraHud = camaraHud;
         this.hud = new Hud(this,camaraHud);
         this.inventarioHud = new InventarioHud(this.inventario, camaraHud);
@@ -179,7 +179,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         body.setLinearVelocity(movimiento.x, movimiento.y);
     }
 
-    // --- Procesar habilidades ---
     protected void procesarHabilidades() {
         if (entradas.isGolpeBasico()) usarHabilidadBasica();
         if (entradas.isHabilidad1()) usarHabilidadEspecial();
@@ -190,7 +189,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void usarHabilidadEspecial() {}
     public void usarUltimate() {}
 
-    // --- Getters cooldowns ---
     public float getTiempoHabilidad1() { return habilidad1 != null ? habilidad1.getTiempoDesdeUltimoUso() : 0f; }
     public float getCooldownHabilidad1() { return habilidad1 != null ? habilidad1.getCooldown() : 0f; }
     public float getTiempoHabilidad2() { return habilidad2 != null ? habilidad2.getTiempoDesdeUltimoUso() : 0f; }
@@ -200,7 +198,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public Arma getArma() { return armaBasica; }
     public String getClase() { return nombreClase; }
 
-    // --- Vida y stats ---
     public int getVida() { return vida; }
     public void setVida(int nuevaVida) {
         vida = Math.min(nuevaVida, this.getVidaMax());
@@ -210,7 +207,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public int getVidaMax() {
         return this.vidaMax;
     }
-
 
     public float getAtaque() { return ataque; }
     public float modifAtaque(float monto) {
@@ -226,33 +222,9 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void setPuedeMoverse(boolean valor) { puedeMoverse = valor; }
     public boolean getPuedeMoverse() { return puedeMoverse; }
 
-    // --- Inventario y slots ---
     public Inventario getInventario() { return inventario; }
-    public void equiparArma(Item item) { if (inventario.getItems().contains(item)) slotArma = item; }
-    public void equiparItem1(Item item) {
-        if (inventario.getItems().contains(item)) {
-            slotHabilidad1 = item;
-            if (habilidad1 != null) habilidad1.dispose();
-            habilidad1 = item.crearHabilidad();
-            habilidad1.setPersonaje(this);  // se asigna automáticamente
-        }
-    }
-
-    public void equiparItem2(Item item) {
-        if (inventario.getItems().contains(item)) {
-            slotHabilidad2 = item;
-            if (habilidad2 != null) habilidad2.dispose();
-            habilidad2 = item.crearHabilidad();
-            habilidad2.setPersonaje(this);  // se asigna automáticamente
-        }
-    }
-
-    public void quitarArma() { slotArma = null; }
-    public void quitarItem1() { slotHabilidad1 = null; }
-    public void quitarItem2() { slotHabilidad2 = null; }
 
     public void intercambiarItems(Item item, int slot) {
-        // Reemplaza el slot activo
         switch (slot) {
             case 0:
                 if(this.armaBasica != null) this.armaBasica.dispose();
@@ -316,11 +288,10 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     }
 
     public void respawn(float x, float y) {
-        setVida(100);
+        setVida(getVidaMax());
         body.setTransform(x, y, 0);
         setPuedeMoverse(true);
     }
-
 
     public int getPpm() {
         return (int) ppm;
