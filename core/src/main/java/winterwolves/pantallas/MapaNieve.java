@@ -86,14 +86,22 @@ public class MapaNieve implements Screen {
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
         playerManager.getJugador1().getPersonaje().setVida(50);
 
-        partida = new Partida(playerManager.getJugador1().getNombre(), playerManager.getJugador1().getPersonaje(),
+        partida = new Partida(
+            playerManager.getJugador1().getNombre(), playerManager.getJugador1().getPersonaje(),
             playerManager.getJugador2().getNombre(), playerManager.getJugador2().getPersonaje(),
-            60f);
+            playerManager.getJugador3().getNombre(), playerManager.getJugador3().getPersonaje(),
+            playerManager.getJugador4().getNombre(), playerManager.getJugador4().getPersonaje(),
+            120f
+        );
+
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(playerManager.getJugador1().getEntradas());
         multiplexer.addProcessor(playerManager.getJugador2().getEntradas());
+        multiplexer.addProcessor(playerManager.getJugador3().getEntradas());
+        multiplexer.addProcessor(playerManager.getJugador4().getEntradas());
         Gdx.input.setInputProcessor(multiplexer);
+
 
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM, 100));

@@ -20,17 +20,17 @@ public class PantallaSeleccion implements Screen {
     private Texto pjElegido;
     private int seleccion = 0;
     ShapeRenderer[] personajesCasillas;
-    private final int CANT_PJS = 3;
+    private final int CANT_PJS = 3; // cantidad de tipos de personaje disponibles
     private final int casillaAncho = 200;
     private final int casillaAlto = 500;
-    private int i = 0;
+
+    // 🔹 Ahora permitimos 4 jugadores
     public int[] personajesElegidosIdx;
     private int personajesElegidos = 0;
     private boolean partidaIniciada = false;
     private float tiempoEspera = 0f;
     private boolean esperando = false;
     private boolean mostrarMensajeInicio = false;
-
 
     @Override
     public void show() {
@@ -41,16 +41,16 @@ public class PantallaSeleccion implements Screen {
         personajesImg[2] = new Imagen("gatoEleccion.png");
 
         eleccion = new Texto(Recursos.FUENTEMENU, 50, Color.WHITE, true);
-        pjElegido = new Texto(Recursos.FUENTEMENU,30,Color.WHITE,true);
+        pjElegido = new Texto(Recursos.FUENTEMENU, 30, Color.WHITE, true);
 
         personajesCasillas = new ShapeRenderer[CANT_PJS];
         for (int i = 0; i < CANT_PJS; i++) {
             personajesCasillas[i] = new ShapeRenderer();
         }
 
-        personajesElegidosIdx = new int[2];
+        personajesElegidosIdx = new int[4];
         eleccion.setTexto("Elija a su personaje");
-        pjElegido.setTexto(" ");
+        pjElegido.setTexto("Jugador 1 eligiendo...");
     }
 
     @Override
@@ -59,9 +59,8 @@ public class PantallaSeleccion implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         fondo.escalar(Config.WIDTH, Config.HEIGTH);
-        eleccion.setPosition((Config.WIDTH / 2f) - (eleccion.getAncho())/2, Config.HEIGTH - 50);
-
-        pjElegido.setPosition((Config.WIDTH / 2f) - (pjElegido.getAncho()/2), 50);
+        eleccion.setPosition((Config.WIDTH / 2f) - (eleccion.getAncho()) / 2, Config.HEIGTH - 50);
+        pjElegido.setPosition((Config.WIDTH / 2f) - (pjElegido.getAncho() / 2), 50);
 
         Render.batch.begin();
         fondo.dibujar();
@@ -74,31 +73,6 @@ public class PantallaSeleccion implements Screen {
         actualizar();
         elegirPersonaje();
         iniciarPartida();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     private void dibujarCasillas() {
@@ -131,18 +105,23 @@ public class PantallaSeleccion implements Screen {
     }
 
     public void elegirPersonaje() {
-        String[] elegido = {"Guerrero","Mago","Clerigo"};
+        String[] nombres = {"Guerrero", "Mago", "Clérigo"};
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            if (personajesElegidos < 2) {
+            if (personajesElegidos < 4) {
                 personajesElegidosIdx[personajesElegidos] = seleccion;
                 personajesElegidos++;
-                pjElegido.setTexto("Personaje Elegido Por Jugador " + personajesElegidos + ": " + elegido[seleccion]);
+
+                // 🔹 Indicar quién elige y a qué equipo pertenece
+                int jugadorActual = personajesElegidos;
+                int equipo = (jugadorActual <= 2) ? 1 : 2;
+
+                pjElegido.setTexto("Jugador " + jugadorActual + " (Equipo " + equipo + ") eligió: " + nombres[seleccion]);
             }
         }
     }
 
     private void iniciarPartida() {
-        if (!partidaIniciada && personajesElegidos == 2) {
+        if (!partidaIniciada && personajesElegidos == 4) {
             partidaIniciada = true;
             esperando = true;
             tiempoEspera = 0f;
@@ -153,7 +132,7 @@ public class PantallaSeleccion implements Screen {
 
             if (tiempoEspera >= 1f && !mostrarMensajeInicio) {
                 mostrarMensajeInicio = true;
-                pjElegido.setTexto("¡Empezando la partida!");
+                pjElegido.setTexto("¡Comienza la partida!");
                 pjElegido.setPosition((Config.WIDTH / 2f) - (pjElegido.getAncho() / 2), 50);
             }
 
@@ -164,4 +143,9 @@ public class PantallaSeleccion implements Screen {
         }
     }
 
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+    @Override public void dispose() {}
 }
