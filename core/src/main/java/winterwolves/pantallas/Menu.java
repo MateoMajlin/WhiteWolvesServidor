@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Color;
+import org.w3c.dom.ls.LSOutput;
 import winterwolves.elementos.Imagen;
 import winterwolves.elementos.Texto;
 import winterwolves.io.Entradas;
@@ -31,7 +32,7 @@ public class Menu implements Screen {
         fondo.escalar(Config.WIDTH,Config.HEIGTH);
         b = Render.batch;
         cargarOpciones();
-
+        System.out.println("Hola soy el menu");
         Gdx.input.setInputProcessor(entradas);
     }
 
