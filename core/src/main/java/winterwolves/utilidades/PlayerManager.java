@@ -54,12 +54,15 @@ public class PlayerManager {
         jugadores[0].toggleInventario();
     }
 
+
     public Jugador getJugador(int index) {
-        if (index >= 0 && index < NUM_JUGADORES) {
-            return jugadores[index];
+        int arrayIndex = index - 1;
+        if (arrayIndex >= 0 && arrayIndex < NUM_JUGADORES) {
+            return jugadores[arrayIndex];
         }
         return null;
     }
+
 
     public Vector2 getPosicionJugador(int index) {
         if (index >= 0 && index < NUM_JUGADORES) {

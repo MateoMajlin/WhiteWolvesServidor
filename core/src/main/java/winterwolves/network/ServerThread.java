@@ -13,8 +13,9 @@ public class ServerThread extends Thread {
     private int serverPort = 5555;
     private boolean end = false;
     private final int MAX_CLIENTS = 2;
-    private int connectedClients = 2;
+    private int connectedClients = 0;
     private ArrayList<Client> clients = new ArrayList<>();
+    private ArrayList<Integer> personajesElegidos = new ArrayList<>();
     private GameController gameController;
 
     public ServerThread(GameController gameController) {
@@ -46,6 +47,14 @@ public class ServerThread extends Thread {
         System.out.println("Mensaje recibido " + message);
 
         if (parts[0].equals("Connect")) {
+            int personajeIdx = 0;
+            if (parts.length > 1) {
+                try {
+                    personajeIdx = Integer.parseInt(parts[1]); // el índice del personaje
+                } catch (NumberFormatException e) {
+                    System.out.println("Índice de personaje inválido");
+                }
+            }
 
             if (index != -1) {
                 System.out.println("Client already connected");
@@ -54,18 +63,31 @@ public class ServerThread extends Thread {
             }
 
             if (connectedClients < MAX_CLIENTS) {
-                connectedClients++;
+                connectedClients++; // 🔹 Subimos primero para que empiece en 1, no en 0
                 Client newClient = new Client(connectedClients, packet.getAddress(), packet.getPort());
                 clients.add(newClient);
+                personajesElegidos.add(personajeIdx);
+
+                System.out.println("Cliente conectado #" + connectedClients + " con personaje " + personajeIdx);
                 sendMessage("Connected:" + connectedClients, packet.getAddress(), packet.getPort());
 
                 if (connectedClients == MAX_CLIENTS) {
+                    StringBuilder data = new StringBuilder();
+                    for (int i = 0; i < personajesElegidos.size(); i++) {
+                        data.append(personajesElegidos.get(i));
+                        if (i < personajesElegidos.size() - 1)
+                            data.append(",");
+                    }
+
+                    String mensajeStart = "Start:" + data;
                     for (Client client : clients) {
-                        sendMessage("Start", client.getIp(), client.getPort());
+                        sendMessage(mensajeStart, client.getIp(), client.getPort());
+                    }
+
+                    if (gameController != null) {
                         gameController.startGame();
                     }
                 }
-
             } else {
                 sendMessage("Full", packet.getAddress(), packet.getPort());
             }
