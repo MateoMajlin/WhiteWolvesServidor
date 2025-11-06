@@ -9,11 +9,14 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import winterwolves.Jugador;
 import winterwolves.Partida;
 import winterwolves.elementos.Texto;
 import winterwolves.items.*;
+import winterwolves.network.Client;
 import winterwolves.network.GameController;
 import winterwolves.network.ServerThread;
+import winterwolves.personajes.Personaje;
 import winterwolves.props.*;
 import winterwolves.utilidades.*;
 
@@ -127,7 +130,28 @@ public class MapaNieve implements Screen, GameController {
         if (partida != null) {
             partida.actualizar(delta);
         }
+
+        enviarMovimientos();
     }
+
+    public void enviarMovimientos() {
+        if (serverThread == null || playerManager == null) return;
+
+        for (int i = 0; i < 2; i++) {
+            Jugador jugador = playerManager.getJugador(i);
+            if (jugador == null) continue;
+
+            Personaje p = jugador.getPersonaje();
+            if (p == null) continue;
+
+            float dx = p.body.getLinearVelocity().x;
+            float dy = p.body.getLinearVelocity().y;
+
+            String mensaje = "Move:" + i + ":" + dx + ":" + dy;
+            serverThread.sendMessageToAll(mensaje);
+        }
+    }
+
 
     @Override public void resize(int width, int height) { cameraManager.resize(width, height); }
     @Override public void pause() {}
@@ -144,4 +168,9 @@ public class MapaNieve implements Screen, GameController {
         if (serverThread != null) serverThread.terminate();
         for (Caja c : cajas) c.dispose();
     }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
 }

@@ -1,5 +1,8 @@
 package winterwolves.network;
 
+import winterwolves.pantallas.MapaNieve;
+import winterwolves.personajes.Personaje;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -100,9 +103,30 @@ public class ServerThread extends Thread {
             Client client = clients.get(index);
             switch (parts[0]) {
                 case "MOVE":
-                    System.out.println(message);
-                    sendMessageToAll(message);
+                    if (parts.length < 4) {
+                        System.out.println("[Servidor] MOVE inválido: " + message);
+                        break;
+                    }
+                    try {
+                        int playerId = Integer.parseInt(parts[1]);
+                        float dx = Float.parseFloat(parts[2]);
+                        float dy = Float.parseFloat(parts[3]);
+
+                        if (gameController instanceof MapaNieve) {
+                            MapaNieve mapa = (MapaNieve) gameController;
+                            Personaje p = mapa.getPlayerManager().getJugador(playerId).getPersonaje();
+                            if (p != null) {
+                                p.body.setLinearVelocity(dx, dy);
+                            }
+                        }
+
+                        sendMessageToAll(message);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("[Servidor] MOVE inválido: " + message);
+                    }
                     break;
+
             }
         }
     }
