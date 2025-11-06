@@ -51,10 +51,8 @@ public class MapaNieve implements Screen, GameController {
         world = new World(new Vector2(0, 0), true);
         debugRenderer = new Box2DDebugRenderer();
 
-        // Inicializar jugadores (PlayerManager)
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
 
-        // Inicializar servidor
         serverThread = new ServerThread(this);
         serverThread.start();
 
@@ -63,6 +61,9 @@ public class MapaNieve implements Screen, GameController {
 
     @Override
     public void startGame() {
+        for (int i = 0; i < serverThread.getMaxClients(); i++) {
+            serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
+        }
 
         partida = new Partida(
             playerManager.getJugador(0).getNombre(),
@@ -73,6 +74,7 @@ public class MapaNieve implements Screen, GameController {
         );
         System.out.println("Partida iniciada en el servidor");
     }
+
 
     @Override
     public void connect(int numPlayer) {

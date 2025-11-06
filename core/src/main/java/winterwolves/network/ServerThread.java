@@ -63,7 +63,7 @@ public class ServerThread extends Thread {
             }
 
             if (connectedClients < MAX_CLIENTS) {
-                connectedClients++; // 🔹 Subimos primero para que empiece en 1, no en 0
+                connectedClients++;
                 Client newClient = new Client(connectedClients, packet.getAddress(), packet.getPort());
                 clients.add(newClient);
                 personajesElegidos.add(personajeIdx);
@@ -100,7 +100,19 @@ public class ServerThread extends Thread {
             Client client = clients.get(index);
             switch (parts[0]) {
                 case "Move":
+                    if (parts.length >= 5) {
+                        String moveMessage = "Move:" + client.getNum() + ":" + parts[1] + ":" + parts[2] + ":" + parts[3] + ":" + parts[4];
+
+                        for (Client c : clients) {
+                            if (!c.getId().equals(client.getId())) {
+                                sendMessage(moveMessage, c.getIp(), c.getPort());
+                            }
+                        }
+                    } else {
+                        System.out.println("Mensaje Move inválido: " + message);
+                    }
                     break;
+
             }
         }
     }
@@ -148,5 +160,13 @@ public class ServerThread extends Thread {
         }
         this.clients.clear();
         this.connectedClients = 0;
+    }
+
+    public int getMaxClients() {
+        return MAX_CLIENTS;
+    }
+
+    public Client getClientePorId(int i) {
+        return clients.get(i);
     }
 }
