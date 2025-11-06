@@ -99,20 +99,10 @@ public class ServerThread extends Thread {
         } else {
             Client client = clients.get(index);
             switch (parts[0]) {
-                case "Move":
-                    if (parts.length >= 5) {
-                        String moveMessage = "Move:" + client.getNum() + ":" + parts[1] + ":" + parts[2] + ":" + parts[3] + ":" + parts[4];
-
-                        for (Client c : clients) {
-                            if (!c.getId().equals(client.getId())) {
-                                sendMessage(moveMessage, c.getIp(), c.getPort());
-                            }
-                        }
-                    } else {
-                        System.out.println("Mensaje Move inválido: " + message);
-                    }
+                case "MOVE":
+                    System.out.println(message);
+                    sendMessageToAll(message);
                     break;
-
             }
         }
     }

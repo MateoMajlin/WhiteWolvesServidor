@@ -7,13 +7,15 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 import winterwolves.Partida;
+import winterwolves.elementos.Texto;
+import winterwolves.items.*;
 import winterwolves.network.GameController;
 import winterwolves.network.ServerThread;
-import winterwolves.utilidades.CameraManager;
-import winterwolves.utilidades.Config;
-import winterwolves.utilidades.PlayerManager;
+import winterwolves.props.*;
+import winterwolves.utilidades.*;
 
 public class MapaNieve implements Screen, GameController {
 
@@ -24,13 +26,17 @@ public class MapaNieve implements Screen, GameController {
 
     private World world;
     private Box2DDebugRenderer debugRenderer;
+    private Array<Caja> cajas;
+    private Cofre cofre;
+
     private final float PPM = 100f;
+    private int contCajasDestruidas = 0;
+    private int totalCajas;
 
     private Partida partida;
-
     private ServerThread serverThread;
-    private int numPlayersConectados = 0;
 
+    private int numPlayersConectados = 0;
     private int[] personajesElegidosIdx;
 
     public MapaNieve(int[] personajesElegidosIdx) {
@@ -44,15 +50,33 @@ public class MapaNieve implements Screen, GameController {
         mapa = loader.load("mapas/mapaNieve.tmx");
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
 
-        // Cámara
+        // Cámara (solo si el servidor necesita vistas debug)
         cameraManager = new CameraManager(Config.WIDTH, Config.HEIGTH, PPM);
 
         // Mundo Box2D
         world = new World(new Vector2(0, 0), true);
+        world.setContactListener(new CollisionListener());
+        Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
         debugRenderer = new Box2DDebugRenderer();
 
+        // Crear cajas
+        cajas = new Array<>();
+        cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM, 100));
+        cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM, 100));
+        cajas.add(new Caja(world, 1000 / PPM, 500 / PPM, PPM, 125));
+        cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM, 60));
+        totalCajas = cajas.size;
+
+        // Cofre con ítems
+        cofre = new Cofre(world, 500 / PPM, 500 / PPM, PPM);
+        cofre.getInventario().agregarItem(new EspadaItem());
+        cofre.getInventario().agregarItem(new AmuletoCuracion());
+        cofre.getInventario().agregarItem(new GemaElectrica());
+
+        // Jugadores
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
 
+        // Hilo servidor
         serverThread = new ServerThread(this);
         serverThread.start();
 
@@ -65,16 +89,15 @@ public class MapaNieve implements Screen, GameController {
             serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
         }
 
-        partida = new Partida(
-            playerManager.getJugador(0).getNombre(),
-            playerManager.getJugador(0).getPersonaje(),
-            playerManager.getJugador(1).getNombre(),
-            playerManager.getJugador(1).getPersonaje(),
-            120f
-        );
+//        partida = new Partida(
+//            playerManager.getJugador(0).getNombre(),
+//            playerManager.getJugador(0).getPersonaje(),
+//            playerManager.getJugador(1).getNombre(),
+//            playerManager.getJugador(1).getPersonaje(),
+//            120f
+//        );
         System.out.println("Partida iniciada en el servidor");
     }
-
 
     @Override
     public void connect(int numPlayer) {
@@ -87,10 +110,23 @@ public class MapaNieve implements Screen, GameController {
         if (playerManager != null) {
             playerManager.actualizar(delta);
         }
+
         if (world != null) {
             world.step(delta, 6, 2);
         }
 
+        for (int i = cajas.size - 1; i >= 0; i--) {
+            Caja c = cajas.get(i);
+            if (c.isMarcadaParaDestruir()) {
+                contCajasDestruidas++;
+                c.eliminarDelMundo();
+                cajas.removeIndex(i);
+            }
+        }
+
+        if (partida != null) {
+            partida.actualizar(delta);
+        }
     }
 
     @Override public void resize(int width, int height) { cameraManager.resize(width, height); }
@@ -106,5 +142,6 @@ public class MapaNieve implements Screen, GameController {
         if (world != null) world.dispose();
         if (debugRenderer != null) debugRenderer.dispose();
         if (serverThread != null) serverThread.terminate();
+        for (Caja c : cajas) c.dispose();
     }
 }
