@@ -32,7 +32,7 @@ public class Jugador {
         this.camaraHud = camaraHud;
         this.entradas = new EntradasJugador();
         this.personaje = personaje;
-        this.personaje.entradas = this.entradas;
+//        this.personaje.entradas = this.entradas;
         this.hud = personaje.hud;
         this.inventarioHud = personaje.inventarioHud;
         this.id = id;
@@ -58,14 +58,6 @@ public class Jugador {
         return personaje;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nuevoNombre) {
-        this.nombre = nuevoNombre;
-    }
-
     public void toggleInventario() {
         personaje.toggleInventario();
     }
@@ -74,7 +66,7 @@ public class Jugador {
         personaje.dispose();
     }
 
-    public EntradasJugador getEntradas() {
-        return entradas;
+    public int getId() {
+        return id;
     }
 }

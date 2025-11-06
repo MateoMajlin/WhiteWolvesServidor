@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import winterwolves.Dañable;
+import winterwolves.elementos.Texto;
 import winterwolves.io.EntradasJugador;
 import winterwolves.items.Inventario;
 import winterwolves.items.Item;
@@ -52,7 +53,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public InventarioHud inventarioHud;
     public Hud hud;
     protected OrthographicCamera camaraHud;
-    public EntradasJugador entradas;
 
     public Personaje(World world, float x, float y, float ppm, OrthographicCamera camaraHud) {
         this.world = world;
@@ -63,7 +63,6 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         this.camaraHud = camaraHud;
         this.hud = new Hud(this,camaraHud);
         this.inventarioHud = new InventarioHud(this.inventario, camaraHud);
-        EntradasJugador entradas;
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -115,17 +114,17 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void draw(Batch batch) {
         float delta = Gdx.graphics.getDeltaTime();
 
-        if (habilidad1 != null) {
-            habilidad1.actualizar(delta);
-            if (entradas.isHabilidad1()) habilidad1.usar();
-        }
-        if (habilidad2 != null) {
-            habilidad2.actualizar(delta);
-            if (entradas.isHabilidad2()) habilidad2.usar();
-        }
+//        if (habilidad1 != null) {
+//            habilidad1.actualizar(delta);
+//            if (entradas.isHabilidad1()) habilidad1.usar();
+//        }
+//        if (habilidad2 != null) {
+//            habilidad2.actualizar(delta);
+//            if (entradas.isHabilidad2()) habilidad2.usar();
+//        }
 
-        mover();
-        procesarHabilidades();
+        moverSegunCliente();
+//        procesarHabilidades();
 
         Vector2 pos = body.getPosition();
         setPosition(pos.x * ppm - getWidth()/2, pos.y * ppm - getHeight()/2);
@@ -140,9 +139,9 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
             float armaX = getX() + direccionMirando.x * desplazamiento;
             float armaY = getY() + direccionMirando.y * desplazamiento;
 
-            if (entradas.isGolpeBasico()) {
-                armaBasica.atacar(armaX, armaY, direccionMirando, this);
-            }
+//            if (entradas.isGolpeBasico()) {
+//                armaBasica.atacar(armaX, armaY, direccionMirando, this);
+//            }
 
             armaBasica.actualizar(delta, armaX, armaY);
             armaBasica.draw(batch, armaX, armaY, getWidth(), getHeight(), direccionMirando.angleDeg());
@@ -153,36 +152,36 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     }
 
 
-    protected void mover() {
-        if (!puedeMoverse) {
-            body.setLinearVelocity(0,0);
-            return;
-        }
+//    protected void mover() {
+//        if (!puedeMoverse) {
+//            body.setLinearVelocity(0,0);
+//            return;
+//        }
+//
+//        float delta = Gdx.graphics.getDeltaTime();
+//        dash.update(delta, body, direccionMirando);
+//
+//        if (entradas.isDash() && dash.intentarActivar(direccionMirando)) return;
+//        if (dash.isActivo()) return;
+//
+//        movimiento.set(0,0);
+//        speed = entradas.isCorrer() ? speedBase * multiplicadorCorrer : speedBase;
+//
+//        if (entradas.isArriba()) movimiento.y = 1;
+//        if (entradas.isAbajo()) movimiento.y = -1;
+//        if (entradas.isIzquierda()) movimiento.x = -1;
+//        if (entradas.isDerecha()) movimiento.x = 1;
+//
+//        if (movimiento.len() > 0) direccionMirando.set(movimiento).nor();
+//        movimiento.nor().scl(speed);
+//        body.setLinearVelocity(movimiento.x, movimiento.y);
+//    }
 
-        float delta = Gdx.graphics.getDeltaTime();
-        dash.update(delta, body, direccionMirando);
-
-        if (entradas.isDash() && dash.intentarActivar(direccionMirando)) return;
-        if (dash.isActivo()) return;
-
-        movimiento.set(0,0);
-        speed = entradas.isCorrer() ? speedBase * multiplicadorCorrer : speedBase;
-
-        if (entradas.isArriba()) movimiento.y = 1;
-        if (entradas.isAbajo()) movimiento.y = -1;
-        if (entradas.isIzquierda()) movimiento.x = -1;
-        if (entradas.isDerecha()) movimiento.x = 1;
-
-        if (movimiento.len() > 0) direccionMirando.set(movimiento).nor();
-        movimiento.nor().scl(speed);
-        body.setLinearVelocity(movimiento.x, movimiento.y);
-    }
-
-    protected void procesarHabilidades() {
-        if (entradas.isGolpeBasico()) usarHabilidadBasica();
-        if (entradas.isHabilidad1()) usarHabilidadEspecial();
-        if (entradas.isHabilidad2()) usarUltimate();
-    }
+//    protected void procesarHabilidades() {
+//        if (entradas.isGolpeBasico()) usarHabilidadBasica();
+//        if (entradas.isHabilidad1()) usarHabilidadEspecial();
+//        if (entradas.isHabilidad2()) usarUltimate();
+//    }
 
     public void usarHabilidadBasica() {}
     public void usarHabilidadEspecial() {}
@@ -296,4 +295,55 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         return (int) ppm;
     }
 
+    String orden,msgJugador;
+
+    public void moverSegunCliente() {
+        orden = getMensaje();
+        msgJugador = getMensajeJugador();
+        System.out.println("Moviendo jugador" + msgJugador + "hacia: " + orden + "Posicion Actual:" + body.getPosition());
+
+        if (!puedeMoverse) {
+            body.setLinearVelocity(0,0);
+            return;
+        }
+
+        float delta = Gdx.graphics.getDeltaTime();
+        dash.update(delta, body, direccionMirando);
+
+//        if (entradas.isDash() && dash.intentarActivar(direccionMirando)) return;
+//        if (dash.isActivo()) return;
+
+        movimiento.set(0,0);
+//        speed = entradas.isCorrer() ? speedBase * multiplicadorCorrer : speedBase;
+
+        if (orden == null) return;
+        if (orden.equals("ARRIBA")) movimiento.y = 1;
+        else if (orden.equals("ABAJO")) movimiento.y = -1;
+        else if (orden.equals("IZQUIERDA")) movimiento.x = -1;
+        else if (orden.equals("DERECHA")) movimiento.x = 1;
+
+
+        if (movimiento.len() > 0) direccionMirando.set(movimiento).nor();
+        movimiento.nor().scl(speed);
+        body.setLinearVelocity(movimiento.x, movimiento.y);
+    }
+
+    private String getMensaje() {
+        return orden;
+    }
+
+    public void setMensaje(String part) {
+        orden = part;
+    }
+
+    private String getMensajeJugador() {
+        return msgJugador;
+    }
+    public void setMensajeJugador(String part) {
+        msgJugador = part;
+    }
+
+    public Body getBody() {
+        return this.body;
+    }
 }

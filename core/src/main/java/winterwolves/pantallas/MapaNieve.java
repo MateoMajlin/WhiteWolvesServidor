@@ -76,7 +76,6 @@ public class MapaNieve implements Screen, GameController {
         cofre.getInventario().agregarItem(new AmuletoCuracion());
         cofre.getInventario().agregarItem(new GemaElectrica());
 
-        // Jugadores
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
 
         // Hilo servidor
@@ -99,6 +98,12 @@ public class MapaNieve implements Screen, GameController {
 //            playerManager.getJugador(1).getPersonaje(),
 //            120f
 //        );
+
+        for (int i = 0; i < serverThread.getClients().size(); i++) {
+            serverThread.getClients().get(i).setJugador(playerManager.getJugador(i + 1));
+        }
+
+
         System.out.println("Partida iniciada en el servidor");
     }
 
@@ -113,6 +118,8 @@ public class MapaNieve implements Screen, GameController {
         if (playerManager != null) {
             playerManager.actualizar(delta);
         }
+
+        update();
 
         if (world != null) {
             world.step(delta, 6, 2);
@@ -130,26 +137,11 @@ public class MapaNieve implements Screen, GameController {
         if (partida != null) {
             partida.actualizar(delta);
         }
-
-        enviarMovimientos();
     }
 
-    public void enviarMovimientos() {
-        if (serverThread == null || playerManager == null) return;
-
-        for (int i = 0; i < 2; i++) {
-            Jugador jugador = playerManager.getJugador(i);
-            if (jugador == null) continue;
-
-            Personaje p = jugador.getPersonaje();
-            if (p == null) continue;
-
-            float dx = p.body.getLinearVelocity().x;
-            float dy = p.body.getLinearVelocity().y;
-
-            String mensaje = "Move:" + i + ":" + dx + ":" + dy;
-            serverThread.sendMessageToAll(mensaje);
-        }
+    private void update() {
+            playerManager.getJugador(1).getPersonaje().moverSegunCliente();
+            playerManager.getJugador(2).getPersonaje().moverSegunCliente();
     }
 
 

@@ -1,5 +1,6 @@
 package winterwolves.network;
 
+import com.badlogic.gdx.maps.MapLayers;
 import winterwolves.pantallas.MapaNieve;
 import winterwolves.personajes.Personaje;
 
@@ -103,28 +104,13 @@ public class ServerThread extends Thread {
             Client client = clients.get(index);
             switch (parts[0]) {
                 case "MOVE":
-                    if (parts.length < 4) {
-                        System.out.println("[Servidor] MOVE inválido: " + message);
-                        break;
-                    }
-                    try {
-                        int playerId = Integer.parseInt(parts[1]);
-                        float dx = Float.parseFloat(parts[2]);
-                        float dy = Float.parseFloat(parts[3]);
-
-                        if (gameController instanceof MapaNieve) {
-                            MapaNieve mapa = (MapaNieve) gameController;
-                            Personaje p = mapa.getPlayerManager().getJugador(playerId).getPersonaje();
-                            if (p != null) {
-                                p.body.setLinearVelocity(dx, dy);
-                            }
-                        }
-
+                    String direccion = parts[1];
+                    String jugador = parts[2];
+                    Personaje personaje = client.getJugador().getPersonaje();
+                        client.getJugador().getPersonaje().setMensaje(direccion);
+                        client.getJugador().getPersonaje().setMensajeJugador(jugador);
                         sendMessageToAll(message);
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("[Servidor] MOVE inválido: " + message);
-                    }
+                        sendMessageToAll("MOVE:" + jugador + ":" + personaje.getBody().getPosition().x + ":" + personaje.getBody().getPosition().y);
                     break;
 
             }
@@ -182,5 +168,9 @@ public class ServerThread extends Thread {
 
     public Client getClientePorId(int i) {
         return clients.get(i);
+    }
+
+    public ArrayList<Client> getClients() {
+        return clients;
     }
 }
