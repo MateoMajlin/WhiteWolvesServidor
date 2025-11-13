@@ -321,6 +321,10 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         else if (orden.equals("ABAJO")) movimiento.y = -1;
         else if (orden.equals("IZQUIERDA")) movimiento.x = -1;
         else if (orden.equals("DERECHA")) movimiento.x = 1;
+        else if (orden.equals("QUIETO")) {
+            movimiento.x = 0;
+            movimiento.y = 0;
+        }
 
 
         if (movimiento.len() > 0) direccionMirando.set(movimiento).nor();

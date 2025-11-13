@@ -44,13 +44,14 @@ public class ServerThread extends Thread {
         } while (!end);
     }
 
-    private void processMessage(DatagramPacket packet) {
+    private void processMessage(DatagramPacket packet) { //Procesamieno de mensajes recibidos de la App Cliente
         String message = (new String(packet.getData())).trim();
-        String[] parts = message.split(":");
-        int index = findClientIndex(packet);
-        System.out.println("Mensaje recibido " + message);
+        String[] parts = message.split(":");//Separo partes del mensaje con identificador ":"
+        int index = findClientIndex(packet); // Identifico jugador
+        System.out.println("Mensaje recibido " + message); // Muestro mensaje en pantalla
 
-        if (parts[0].equals("Connect")) {
+        if (parts[0].equals("Connect"))
+        {//Si el principio del mensaje es CONNECT
             int personajeIdx = 0;
             if (parts.length > 1) {
                 try {
@@ -96,11 +97,21 @@ public class ServerThread extends Thread {
                 sendMessage("Full", packet.getAddress(), packet.getPort());
             }
 
-        } else if (index == -1) {
+        }
+        else if (parts[0].equals("Disccnnect"))
+        {//Para cuando se cierra un Cliente y se debe liberar recursos
+
+        }
+
+        else if (index == -1)
+        {//Error de principio de mensaje
             System.out.println("Client not connected");
             this.sendMessage("NotConnected", packet.getAddress(), packet.getPort());
             return;
-        } else {
+        }
+
+
+        else {//Procesamiento de mensajes que no son de conexion -
             Client client = clients.get(index);
             switch (parts[0]) {
                 case "MOVE":

@@ -1,6 +1,9 @@
 package winterwolves.pantallas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -31,6 +34,9 @@ public class MapaNieve implements Screen, GameController {
     private Box2DDebugRenderer debugRenderer;
     private Array<Caja> cajas;
     private Cofre cofre;
+
+    private int[] capasFondo = {0, 1};
+    private int[] capasDelanteras = {3};
 
     private final float PPM = 100f;
     private int contCajasDestruidas = 0;
@@ -78,7 +84,6 @@ public class MapaNieve implements Screen, GameController {
 
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
 
-        // Hilo servidor
         serverThread = new ServerThread(this);
         serverThread.start();
 
@@ -87,25 +92,18 @@ public class MapaNieve implements Screen, GameController {
 
     @Override
     public void startGame() {
+
         for (int i = 0; i < serverThread.getMaxClients(); i++) {
             serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
         }
-
-//        partida = new Partida(
-//            playerManager.getJugador(0).getNombre(),
-//            playerManager.getJugador(0).getPersonaje(),
-//            playerManager.getJugador(1).getNombre(),
-//            playerManager.getJugador(1).getPersonaje(),
-//            120f
-//        );
 
         for (int i = 0; i < serverThread.getClients().size(); i++) {
             serverThread.getClients().get(i).setJugador(playerManager.getJugador(i + 1));
         }
 
-
         System.out.println("Partida iniciada en el servidor");
     }
+
 
     @Override
     public void connect(int numPlayer) {
@@ -115,16 +113,12 @@ public class MapaNieve implements Screen, GameController {
 
     @Override
     public void render(float delta) {
-        if (playerManager != null) {
-            playerManager.actualizar(delta);
-        }
+        if (playerManager == null) return;
+
+        Render.limpiarPantalla(1, 1, 1);
+        world.step(delta, 6, 2);
 
         update();
-
-        if (world != null) {
-            world.step(delta, 6, 2);
-        }
-
         for (int i = cajas.size - 1; i >= 0; i--) {
             Caja c = cajas.get(i);
             if (c.isMarcadaParaDestruir()) {
@@ -134,10 +128,40 @@ public class MapaNieve implements Screen, GameController {
             }
         }
 
-        if (partida != null) {
-            partida.actualizar(delta);
+//        partida.actualizar(delta);
+        playerManager.actualizar(delta);
+        cameraManager.seguir(playerManager.getPosicionJugador(0));
+
+        renderer.setView(cameraManager.getPrincipal());
+        renderer.render(capasFondo);
+
+        Render.batch.setProjectionMatrix(cameraManager.getPrincipal().combined);
+        Render.batch.begin();
+        playerManager.draw(Render.batch);
+        for (Caja c : cajas) {
+            c.actualizar(delta);
+            c.draw(Render.batch);
+            c.drawVidaTexto(Render.batch);
         }
+//        if (contCajasDestruidas == totalCajas) ganaste.dibujar();
+        cofre.draw(Render.batch);
+        Render.batch.end();
+
+        renderer.render(capasDelanteras);
+
+
+        Render.batch.setProjectionMatrix(cameraManager.getHud().combined);
+        Render.batch.begin();
+//        partida.dibujarHUD();
+        Render.batch.end();
+
+        debugRenderer.render(world, cameraManager.getBox2D().combined);
+
     }
+
+
+
+
 
     private void update() {
             playerManager.getJugador(1).getPersonaje().moverSegunCliente();
