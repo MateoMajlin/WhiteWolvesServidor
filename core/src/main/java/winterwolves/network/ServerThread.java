@@ -19,7 +19,7 @@ public class ServerThread extends Thread {
     private final int MAX_CLIENTS = 2;
     private int connectedClients = 0;
     private ArrayList<Client> clients = new ArrayList<>();
-    private ArrayList<Integer> personajesElegidos = new ArrayList<>();
+    public ArrayList<Integer> personajesElegidos = new ArrayList<>();
     private GameController gameController;
 
     public ServerThread(GameController gameController) {
@@ -89,9 +89,9 @@ public class ServerThread extends Thread {
                         sendMessage(mensajeStart, client.getIp(), client.getPort());
                     }
 
-                    if (gameController != null) {
-                        gameController.startGame();
-                    }
+//                    if (gameController != null) {
+//                        gameController.startGame();
+//                    }
                 }
             } else {
                 sendMessage("Full", packet.getAddress(), packet.getPort());
@@ -112,14 +112,15 @@ public class ServerThread extends Thread {
 
 
         else {//Procesamiento de mensajes que no son de conexion -
-            Client client = clients.get(index);
+            Client c = clients.get(index);
+            if (c.getJugador() == null) return; // <- IGNORA MENSAJES HASTA QUE SE ASIGNE EL JUGADOR
             switch (parts[0]) {
                 case "MOVE":
                     String direccion = parts[1];
                     String jugador = parts[2];
-                    Personaje personaje = client.getJugador().getPersonaje();
-                        client.getJugador().getPersonaje().setMensaje(direccion);
-                        client.getJugador().getPersonaje().setMensajeJugador(jugador);
+                    Personaje personaje = c.getJugador().getPersonaje();
+                        c.getJugador().getPersonaje().setMensaje(direccion);
+                        c.getJugador().getPersonaje().setMensajeJugador(jugador);
                         sendMessageToAll(message);
                         sendMessageToAll("MOVE:" + jugador + ":" + personaje.getBody().getPosition().x + ":" + personaje.getBody().getPosition().y);
                     break;

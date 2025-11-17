@@ -300,7 +300,7 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void moverSegunCliente() {
         orden = getMensaje();
         msgJugador = getMensajeJugador();
-        System.out.println("Moviendo jugador" + msgJugador + "hacia: " + orden + "Posicion Actual:" + body.getPosition());
+//        System.out.println("Moviendo jugador" + msgJugador + "hacia: " + orden + "Posicion Actual:" + body.getPosition());
 
         if (!puedeMoverse) {
             body.setLinearVelocity(0,0);

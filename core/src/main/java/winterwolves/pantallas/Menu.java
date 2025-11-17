@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.Color;
 import winterwolves.elementos.Imagen;
 import winterwolves.elementos.Texto;
 import winterwolves.io.Entradas;
+import winterwolves.network.GameController;
+import winterwolves.network.ServerThread;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
 import winterwolves.utilidades.Render;
 
-public class Menu implements Screen {
+public class Menu implements Screen, GameController {
 
     Imagen fondo;
     SpriteBatch b;
@@ -21,6 +23,8 @@ public class Menu implements Screen {
     String textosOpc[] = {"Nueva Partida","Opciones","Creditos","¿Como Jugar?", "Salir"};
 
     Entradas entradas = new Entradas(this);
+
+    ServerThread serverThread;
 
     int opc = 1;
     public float tiempo = 0;
@@ -33,6 +37,9 @@ public class Menu implements Screen {
         cargarOpciones();
 
         Gdx.input.setInputProcessor(entradas);
+
+        serverThread = new ServerThread(this);
+        serverThread.start();
     }
 
     @Override
@@ -85,7 +92,7 @@ public class Menu implements Screen {
             case 1:
                 Recursos.musica.stop();
                 Recursos.musica.dispose();
-                Render.app.setScreen(new PantallaSeleccion());
+                Render.app.setScreen(new PantallaSeleccion(serverThread));
                 break;
             case 4:
                 Render.app.setScreen(new PantallaTutorial());
@@ -135,4 +142,13 @@ public class Menu implements Screen {
         if (titulo != null) titulo.dispose();
     }
 
+    @Override
+    public void startGame() {
+
+    }
+
+    @Override
+    public void connect(int numPlayer) {
+
+    }
 }

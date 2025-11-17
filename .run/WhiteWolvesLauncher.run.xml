@@ -2,7 +2,7 @@
   <configuration default="false" name="WhiteWolvesLauncher" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="winterwolves.principal.lwjgl3.Lwjgl3Launcher" />
     <module name="WhiteWolvesServidor.lwjgl3.main" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/WhiteWolvesServidor/assets" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/assets" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="winterwolves.principal.lwjgl3.*" />

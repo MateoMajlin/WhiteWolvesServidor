@@ -48,8 +48,9 @@ public class MapaNieve implements Screen, GameController {
     private int numPlayersConectados = 0;
     private int[] personajesElegidosIdx;
 
-    public MapaNieve(int[] personajesElegidosIdx) {
+    public MapaNieve(int[] personajesElegidosIdx, ServerThread serverThread) {
         this.personajesElegidosIdx = personajesElegidosIdx;
+        this.serverThread = serverThread;
     }
 
     @Override
@@ -83,9 +84,6 @@ public class MapaNieve implements Screen, GameController {
         cofre.getInventario().agregarItem(new GemaElectrica());
 
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
-
-        serverThread = new ServerThread(this);
-        serverThread.start();
 
         System.out.println("Servidor iniciado, esperando jugadores...");
     }
@@ -158,10 +156,6 @@ public class MapaNieve implements Screen, GameController {
         debugRenderer.render(world, cameraManager.getBox2D().combined);
 
     }
-
-
-
-
 
     private void update() {
             playerManager.getJugador(1).getPersonaje().moverSegunCliente();
