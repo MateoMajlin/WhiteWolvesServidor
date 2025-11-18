@@ -98,13 +98,14 @@ public class PantallaSeleccion implements Screen {
 
         if (clientes.size() == 2 && !juegoIniciando) {
             juegoIniciando = true;
+            iniciarPartida();
             estado.setTexto("¡Jugadores conectados! Iniciando...");
         }
 
-        if (juegoIniciando) {
-            tiempo += delta;
-            if (tiempo >= 2) iniciarPartida();
-        }
+//        if (juegoIniciando) {
+//            tiempo += delta;
+//            if (tiempo >= 2) iniciarPartida();
+//        }
     }
 
     private void iniciarPartida() {

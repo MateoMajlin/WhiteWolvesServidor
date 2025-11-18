@@ -114,17 +114,22 @@ public class ServerThread extends Thread {
         else {//Procesamiento de mensajes que no son de conexion -
             Client c = clients.get(index);
             if (c.getJugador() == null) return; // <- IGNORA MENSAJES HASTA QUE SE ASIGNE EL JUGADOR
+            String jugador;
+            Personaje personaje;
             switch (parts[0]) {
                 case "MOVE":
                     String direccion = parts[1];
-                    String jugador = parts[2];
-                    Personaje personaje = c.getJugador().getPersonaje();
+                    jugador = parts[2];
+                    personaje = c.getJugador().getPersonaje();
                         c.getJugador().getPersonaje().setMensaje(direccion);
                         c.getJugador().getPersonaje().setMensajeJugador(jugador);
-                        sendMessageToAll(message);
-                        sendMessageToAll("MOVE:" + jugador + ":" + personaje.getBody().getPosition().x + ":" + personaje.getBody().getPosition().y);
                     break;
-
+                case "ACCION":
+                    String accion = parts[1];
+                    jugador = parts[2];
+                    personaje = c.getJugador().getPersonaje();
+                    c.getJugador().getPersonaje().setMensaje(accion);
+                    c.getJugador().getPersonaje().setMensajeJugador(jugador);
             }
         }
     }

@@ -54,6 +54,9 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public Hud hud;
     protected OrthographicCamera camaraHud;
 
+    String orden;
+    String msgJugador;
+
     public Personaje(World world, float x, float y, float ppm, OrthographicCamera camaraHud) {
         this.world = world;
         this.inventario = new Inventario();
@@ -114,17 +117,25 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     public void draw(Batch batch) {
         float delta = Gdx.graphics.getDeltaTime();
 
-//        if (habilidad1 != null) {
-//            habilidad1.actualizar(delta);
-//            if (entradas.isHabilidad1()) habilidad1.usar();
-//        }
-//        if (habilidad2 != null) {
-//            habilidad2.actualizar(delta);
-//            if (entradas.isHabilidad2()) habilidad2.usar();
-//        }
+        if (habilidad1 != null) {
+            habilidad1.actualizar(delta);
+
+            if ("HAB1".equals(orden)) {
+                habilidad1.usar();
+                orden = null;
+            }
+        }
+
+        if (habilidad2 != null) {
+            habilidad2.actualizar(delta);
+
+            if ("HAB2".equals(orden)) {
+                habilidad2.usar();
+                orden = null;
+            }
+        }
 
         moverSegunCliente();
-//        procesarHabilidades();
 
         Vector2 pos = body.getPosition();
         setPosition(pos.x * ppm - getWidth()/2, pos.y * ppm - getHeight()/2);
@@ -139,9 +150,10 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
             float armaX = getX() + direccionMirando.x * desplazamiento;
             float armaY = getY() + direccionMirando.y * desplazamiento;
 
-//            if (entradas.isGolpeBasico()) {
-//                armaBasica.atacar(armaX, armaY, direccionMirando, this);
-//            }
+            if ("GOLPE".equals(orden)) {
+                armaBasica.atacar(armaX, armaY, direccionMirando, this);
+                orden = null;
+            }
 
             armaBasica.actualizar(delta, armaX, armaY);
             armaBasica.draw(batch, armaX, armaY, getWidth(), getHeight(), direccionMirando.angleDeg());
@@ -295,12 +307,10 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         return (int) ppm;
     }
 
-    String orden,msgJugador;
-
     public void moverSegunCliente() {
-        orden = getMensaje();
-        msgJugador = getMensajeJugador();
-//        System.out.println("Moviendo jugador" + msgJugador + "hacia: " + orden + "Posicion Actual:" + body.getPosition());
+
+        String actualOrden = this.orden;
+        String actualMsgJugador = this.msgJugador;
 
         if (!puedeMoverse) {
             body.setLinearVelocity(0,0);
@@ -310,26 +320,70 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         float delta = Gdx.graphics.getDeltaTime();
         dash.update(delta, body, direccionMirando);
 
-//        if (entradas.isDash() && dash.intentarActivar(direccionMirando)) return;
-//        if (dash.isActivo()) return;
+        if (actualOrden == null) actualOrden = "QUIETO";
+
+        if ("DASH".equals(actualOrden) && dash.intentarActivar(direccionMirando)) return;
+        if (dash.isActivo()) return;
 
         movimiento.set(0,0);
-//        speed = entradas.isCorrer() ? speedBase * multiplicadorCorrer : speedBase;
 
-        if (orden == null) return;
-        if (orden.equals("ARRIBA")) movimiento.y = 1;
-        else if (orden.equals("ABAJO")) movimiento.y = -1;
-        else if (orden.equals("IZQUIERDA")) movimiento.x = -1;
-        else if (orden.equals("DERECHA")) movimiento.x = 1;
-        else if (orden.equals("QUIETO")) {
-            movimiento.x = 0;
-            movimiento.y = 0;
+        switch (actualOrden) {
+            case "ARRIBA_IZQUIERDA":
+                movimiento.x = -1;
+                movimiento.y = 1;
+                break;
+
+            case "ARRIBA_DERECHA":
+                movimiento.x = 1;
+                movimiento.y = 1;
+                break;
+
+            case "ABAJO_IZQUIERDA":
+                movimiento.x = -1;
+                movimiento.y = -1;
+                break;
+
+            case "ABAJO_DERECHA":
+                movimiento.x = 1;
+                movimiento.y = -1;
+                break;
+
+            case "ARRIBA":
+                movimiento.y = 1;
+                break;
+            case "ABAJO":
+                movimiento.y = -1;
+                break;
+            case "IZQUIERDA":
+                movimiento.x = -1;
+                break;
+            case "DERECHA":
+                movimiento.x = 1;
+                break;
+
+            case "QUIETO":
+            default:
+                movimiento.x = 0;
+                movimiento.y = 0;
+                break;
         }
 
-
+        // actualizar dirección mirando
         if (movimiento.len() > 0) direccionMirando.set(movimiento).nor();
+
+        // normalizar y escalar
         movimiento.nor().scl(speed);
+
+        // aplicar velocidad
         body.setLinearVelocity(movimiento.x, movimiento.y);
+    }
+
+    public String enviarPosicion() {
+        float x = this.getBody().getPosition().x;
+        float y = this.getBody().getPosition().y;
+        String mensaje;
+        mensaje = "UPDATE_POSITION:" +x+ ":" +y+ ":" + getMensajeJugador();
+        return mensaje;
     }
 
     private String getMensaje() {
@@ -337,15 +391,16 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
     }
 
     public void setMensaje(String part) {
-        orden = part;
+        this.orden = part;
     }
 
-    private String getMensajeJugador() {
+    public String getMensajeJugador() {
         return msgJugador;
     }
     public void setMensajeJugador(String part) {
-        msgJugador = part;
+        this.msgJugador = part;
     }
+
 
     public Body getBody() {
         return this.body;

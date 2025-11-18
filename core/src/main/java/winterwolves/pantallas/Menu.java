@@ -20,7 +20,7 @@ public class Menu implements Screen, GameController {
 
     Texto titulo;
     Texto opciones[] = new Texto[5];
-    String textosOpc[] = {"Nueva Partida","Opciones","Creditos","¿Como Jugar?", "Salir"};
+    String textosOpc[] = {"Iniciar Servidor","Opciones","Creditos","¿Como Jugar?", "Salir"};
 
     Entradas entradas = new Entradas(this);
 

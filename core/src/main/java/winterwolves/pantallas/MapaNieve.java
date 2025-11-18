@@ -86,6 +86,14 @@ public class MapaNieve implements Screen, GameController {
         playerManager = new PlayerManager(world, personajesElegidosIdx, PPM, cameraManager.getHud());
 
         System.out.println("Servidor iniciado, esperando jugadores...");
+
+        partida = new Partida(
+            playerManager.getJugador(1).getNombre(),
+            playerManager.getJugador(1).getPersonaje(),
+            playerManager.getJugador(2).getNombre(),
+            playerManager.getJugador(2).getPersonaje(),
+            120f
+        );
     }
 
     @Override
@@ -126,7 +134,7 @@ public class MapaNieve implements Screen, GameController {
             }
         }
 
-//        partida.actualizar(delta);
+        partida.actualizar(delta);
         playerManager.actualizar(delta);
         cameraManager.seguir(playerManager.getPosicionJugador(0));
 
@@ -150,7 +158,7 @@ public class MapaNieve implements Screen, GameController {
 
         Render.batch.setProjectionMatrix(cameraManager.getHud().combined);
         Render.batch.begin();
-//        partida.dibujarHUD();
+        partida.dibujarHUD();
         Render.batch.end();
 
         debugRenderer.render(world, cameraManager.getBox2D().combined);
@@ -158,8 +166,17 @@ public class MapaNieve implements Screen, GameController {
     }
 
     private void update() {
-            playerManager.getJugador(1).getPersonaje().moverSegunCliente();
-            playerManager.getJugador(2).getPersonaje().moverSegunCliente();
+            Jugador p1 = playerManager.getJugador(1);
+            Jugador p2 = playerManager.getJugador(2);
+            p1.getPersonaje().moverSegunCliente();
+            p2.getPersonaje().moverSegunCliente();
+            if(p1.getPersonaje().getMensajeJugador() != null) {
+                serverThread.sendMessageToAll(p1.getPersonaje().enviarPosicion());
+
+            }
+            if(p2.getPersonaje().getMensajeJugador() != null) {
+            serverThread.sendMessageToAll(p2.getPersonaje().enviarPosicion());
+            }
     }
 
 

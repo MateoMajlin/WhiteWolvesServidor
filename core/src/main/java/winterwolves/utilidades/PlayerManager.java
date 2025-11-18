@@ -28,7 +28,7 @@ public class PlayerManager {
         }
 
         for(int i = 0; i < this.jugadores.length; i++) {
-            this.jugadores[i] = new Jugador("Jugador " + i, world, 450 / PPM, 450 / PPM, PPM, camaraHud, personajes[i], i + 1);
+            this.jugadores[i] = new Jugador("Jugador " + (i+1), world, 450 / PPM, 450 / PPM, PPM, camaraHud, personajes[i], i + 1);
         }
     }
 
