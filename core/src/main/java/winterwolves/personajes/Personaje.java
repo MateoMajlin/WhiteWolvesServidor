@@ -382,9 +382,10 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         float x = this.getBody().getPosition().x;
         float y = this.getBody().getPosition().y;
         String mensaje;
-        mensaje = "UPDATE_POSITION:" +x+ ":" +y+ ":" + getMensajeJugador();
+        mensaje = "UPDATE_POSITION:" +x+ ":" +y+ ":" + getDireccionMirando() + ":" + getMensajeJugador();
         return mensaje;
     }
+
 
     private String getMensaje() {
         return orden;
@@ -401,6 +402,26 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         this.msgJugador = part;
     }
 
+    private String getDireccionMirando() {
+        float x = direccionMirando.x;
+        float y = direccionMirando.y;
+
+        // Normalizamos por seguridad
+        Vector2 dir = new Vector2(x, y).nor();
+
+        if (dir.y > 0.5f && Math.abs(dir.x) < 0.5f) return "ARRIBA";
+        if (dir.y < -0.5f && Math.abs(dir.x) < 0.5f) return "ABAJO";
+
+        if (dir.x > 0.5f && Math.abs(dir.y) < 0.5f) return "DERECHA";
+        if (dir.x < -0.5f && Math.abs(dir.y) < 0.5f) return "IZQUIERDA";
+
+        if (dir.y > 0 && dir.x > 0) return "ARRIBA_DERECHA";
+        if (dir.y > 0 && dir.x < 0) return "ARRIBA_IZQUIERDA";
+        if (dir.y < 0 && dir.x > 0) return "ABAJO_DERECHA";
+        if (dir.y < 0 && dir.x < 0) return "ABAJO_IZQUIERDA";
+
+        return "QUIETO";
+    }
 
     public Body getBody() {
         return this.body;
