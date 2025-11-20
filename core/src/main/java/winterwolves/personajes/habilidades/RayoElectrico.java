@@ -121,7 +121,7 @@ public class RayoElectrico extends Habilidad {
     public void dibujar(Batch batch, float x, float y, float width, float height) {
         for (ProyectilRayo p : proyectiles) p.dibujar(batch);
     }
-
+//dsdadsa
     @Override
     public void dispose() { textura.dispose(); }
 }
