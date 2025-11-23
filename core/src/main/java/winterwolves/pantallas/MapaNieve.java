@@ -1,9 +1,6 @@
 package winterwolves.pantallas;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -14,9 +11,7 @@ import com.badlogic.gdx.utils.Array;
 
 import winterwolves.Jugador;
 import winterwolves.Partida;
-import winterwolves.elementos.Texto;
 import winterwolves.items.*;
-import winterwolves.network.Client;
 import winterwolves.network.GameController;
 import winterwolves.network.ServerThread;
 import winterwolves.personajes.Personaje;
@@ -99,9 +94,9 @@ public class MapaNieve implements Screen, GameController {
     @Override
     public void startGame() {
 
-        for (int i = 0; i < serverThread.getMaxClients(); i++) {
-            serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
-        }
+//        for (int i = 0; i < serverThread.getMaxClients(); i++) {
+//            serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
+//        }
 
         for (int i = 0; i < serverThread.getClients().size(); i++) {
             serverThread.getClients().get(i).setJugador(playerManager.getJugador(i + 1));
@@ -170,15 +165,38 @@ public class MapaNieve implements Screen, GameController {
             Jugador p2 = playerManager.getJugador(2);
             p1.getPersonaje().moverSegunCliente();
             p2.getPersonaje().moverSegunCliente();
-            if(p1.getPersonaje().getMensajeJugador() != null) {
-                serverThread.sendMessageToAll(p1.getPersonaje().enviarPosicion());
-
-            }
-            if(p2.getPersonaje().getMensajeJugador() != null) {
-            serverThread.sendMessageToAll(p2.getPersonaje().enviarPosicion());
-            }
+            actualizarPosicion();
+            actualizarEstado();
     }
 
+    private void actualizarPosicion() {
+        Jugador p1 = playerManager.getJugador(1);
+        Jugador p2 = playerManager.getJugador(2);
+        if(p1.getPersonaje().getMensajeJugador() != null) {
+            serverThread.sendMessageToAll(p1.getPersonaje().enviarPosicion());
+
+        }
+        if(p2.getPersonaje().getMensajeJugador() != null) {
+            serverThread.sendMessageToAll(p2.getPersonaje().enviarPosicion());
+        }
+    }
+
+    private void actualizarEstado() {
+        Jugador p1 = playerManager.getJugador(1);
+        Jugador p2 = playerManager.getJugador(2);
+        Personaje pj1 = p1.getPersonaje();
+        Personaje pj2 = p2.getPersonaje();
+
+        if(pj1.getVida() != pj1.getVidaAnterior() && pj1.getMensajeJugador() != null) {
+            serverThread.sendMessageToAll(pj1.enviarVida());
+            pj1.setVidaAnterior(pj1.getVida());
+        }
+
+        if(pj2.getVida() != pj2.getVidaAnterior() && pj2.getMensajeJugador() != null) {
+            serverThread.sendMessageToAll(pj2.enviarVida());
+            pj2.setVidaAnterior(pj2.getVida());
+        }
+    }
 
     @Override public void resize(int width, int height) { cameraManager.resize(width, height); }
     @Override public void pause() {}

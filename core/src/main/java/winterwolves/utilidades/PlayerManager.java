@@ -16,6 +16,7 @@ public class PlayerManager {
     public PlayerManager(World world, int[] personajesElegidosIdx, float PPM, OrthographicCamera camaraHud) {
 
         Personaje[] personajes = new Personaje[NUM_JUGADORES];
+
         float[] posicionesX = {4f, 21f};
         float[] posicionesY = {2.5f, 10f};
 

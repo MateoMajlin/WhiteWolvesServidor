@@ -27,6 +27,7 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
 
     protected int vida;
     protected int vidaMax;
+    protected int vidaAnterior;
     protected float ataque, ataqueMagico, defensa;
 
     protected AnimacionPersonaje animaciones;
@@ -86,6 +87,8 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         shape.dispose();
 
         body.setUserData(this);
+
+        vidaAnterior = vidaMax;
     }
 
     public void toggleInventario() {
@@ -216,6 +219,14 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
 
     public int getVidaMax() {
         return this.vidaMax;
+    }
+
+    public int getVidaAnterior() {
+        return this.vidaAnterior;
+    }
+
+    public void setVidaAnterior(int valor) {
+        this.vidaAnterior = valor;
     }
 
     public float getAtaque() { return ataque; }
@@ -383,6 +394,13 @@ public class Personaje extends Sprite implements Hudeable, Dañable {
         float y = this.getBody().getPosition().y;
         String mensaje;
         mensaje = "UPDATE_POSITION:" +x+ ":" +y+ ":" + getDireccionMirando() + ":" + getMensajeJugador();
+        return mensaje;
+    }
+
+    public String enviarVida() {
+        int vida = this.getVida();
+        String mensaje;
+        mensaje = "UPDATE_VIDA:" + vida + ":" + getMensajeJugador();
         return mensaje;
     }
 
