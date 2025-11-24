@@ -37,9 +37,6 @@ public class Menu implements Screen, GameController {
         cargarOpciones();
 
         Gdx.input.setInputProcessor(entradas);
-
-        serverThread = new ServerThread(this);
-        serverThread.start();
     }
 
     @Override
@@ -92,6 +89,8 @@ public class Menu implements Screen, GameController {
             case 1:
                 Recursos.musica.stop();
                 Recursos.musica.dispose();
+                serverThread = new ServerThread(this);
+                serverThread.start();
                 Render.app.setScreen(new PantallaSeleccion(serverThread));
                 break;
             case 4:
@@ -144,11 +143,13 @@ public class Menu implements Screen, GameController {
 
     @Override
     public void startGame() {
-
     }
 
     @Override
     public void connect(int numPlayer) {
+    }
 
+    @Override
+    public void actualizarJugadoresConectados() {
     }
 }

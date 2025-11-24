@@ -31,8 +31,15 @@ public class Principal extends Game {
 
     @Override
     public void dispose() {
+        super.dispose();
+
+        if (getScreen() != null) {
+            getScreen().dispose();
+        }
+
         Render.batch.dispose();
     }
+
 
     private void setearMusica() {
         Recursos.musica.play();

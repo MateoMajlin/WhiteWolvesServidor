@@ -98,13 +98,16 @@ public class ServerThread extends Thread {
             }
 
         }
-        else if (parts[0].equals("Disccnnect"))
-        {//Para cuando se cierra un Cliente y se debe liberar recursos
-
+        else if (parts[0].equals("Disconnect")) {
+            System.out.println("Cliente desconectado: " + packet.getAddress() + ":" + packet.getPort());
+            clients.remove(index);
+            connectedClients--;
+            gameController.actualizarJugadoresConectados();
+            return;
         }
 
         else if (index == -1)
-        {//Error de principio de mensaje
+        {
             System.out.println("Client not connected");
             this.sendMessage("NotConnected", packet.getAddress(), packet.getPort());
             return;

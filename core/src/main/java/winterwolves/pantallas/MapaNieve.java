@@ -87,16 +87,12 @@ public class MapaNieve implements Screen, GameController {
             playerManager.getJugador(1).getPersonaje(),
             playerManager.getJugador(2).getNombre(),
             playerManager.getJugador(2).getPersonaje(),
-            120f
+            60f, this
         );
     }
 
     @Override
     public void startGame() {
-
-//        for (int i = 0; i < serverThread.getMaxClients(); i++) {
-//            serverThread.getClientePorId(i).setJugador(playerManager.getJugador(i));
-//        }
 
         for (int i = 0; i < serverThread.getClients().size(); i++) {
             serverThread.getClients().get(i).setJugador(playerManager.getJugador(i + 1));
@@ -110,6 +106,12 @@ public class MapaNieve implements Screen, GameController {
     public void connect(int numPlayer) {
         this.numPlayersConectados = numPlayer;
         System.out.println("Jugador " + numPlayer + " conectado al servidor");
+    }
+
+    @Override
+    public void actualizarJugadoresConectados() {
+        numPlayersConectados = serverThread.getClients().size();
+        System.out.println("Numero de jugadores actuales: " + numPlayersConectados);
     }
 
     @Override
@@ -144,7 +146,6 @@ public class MapaNieve implements Screen, GameController {
             c.draw(Render.batch);
             c.drawVidaTexto(Render.batch);
         }
-//        if (contCajasDestruidas == totalCajas) ganaste.dibujar();
         cofre.draw(Render.batch);
         Render.batch.end();
 
@@ -158,6 +159,15 @@ public class MapaNieve implements Screen, GameController {
 
         debugRenderer.render(world, cameraManager.getBox2D().combined);
 
+        actualizarJugadoresConectados();
+
+        if(!partida.isPartidaFinalizada()) {
+            if (numPlayersConectados != 2){
+                System.out.println("Finalizando partida");
+                partida.setForzarFinal(true);
+                partida.finalizar();
+            }
+        }
     }
 
     private void update() {
@@ -205,17 +215,29 @@ public class MapaNieve implements Screen, GameController {
 
     @Override
     public void dispose() {
+        System.out.println("Entro al dispose");
         if (mapa != null) mapa.dispose();
         if (renderer != null) renderer.dispose();
         if (playerManager != null) playerManager.dispose();
         if (world != null) world.dispose();
         if (debugRenderer != null) debugRenderer.dispose();
-        if (serverThread != null) serverThread.terminate();
+        cerrarServidor();
         for (Caja c : cajas) c.dispose();
+    }
+
+    public void cerrarServidor() {
+        if (serverThread != null) {
+            System.out.println("Cerrando Servidor");
+            serverThread.disconnectClients();
+            serverThread.terminate();
+        }
     }
 
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
 
+    public ServerThread getServerThread() {
+        return serverThread;
+    }
 }

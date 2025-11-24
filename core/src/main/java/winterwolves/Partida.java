@@ -1,10 +1,14 @@
 package winterwolves;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Timer;
 import winterwolves.elementos.Texto;
+import winterwolves.pantallas.MapaNieve;
+import winterwolves.pantallas.Menu;
 import winterwolves.personajes.Personaje;
 import winterwolves.utilidades.Config;
 import winterwolves.utilidades.Recursos;
+import winterwolves.utilidades.Render;
 
 public class Partida {
 
@@ -18,9 +22,13 @@ public class Partida {
     private Texto textoGanador;
     private Texto textoJugador1, textoJugador2, textoTiempo;
 
+    private MapaNieve mapaNieve;
+
+    boolean forzarFinal = false;
+
     public Partida(String nombrePj1, Personaje pj1,
                    String nombrePj2, Personaje pj2,
-                   float duracionSegundos) {
+                   float duracionSegundos, MapaNieve mapaNieve) {
 
         this.nombrePj1 = nombrePj1;
         this.nombrePj2 = nombrePj2;
@@ -28,6 +36,7 @@ public class Partida {
         this.pj2 = pj2;
         this.tiempoRestante = duracionSegundos;
         this.partidaFinalizada = false;
+        this.mapaNieve = mapaNieve;
 
         textoJugador1 = new Texto(Recursos.FUENTEMENU, 20, Color.BLUE, true);
         textoJugador2 = new Texto(Recursos.FUENTEMENU, 20, Color.RED, true);
@@ -53,9 +62,22 @@ public class Partida {
         if (!pj1.estaMuerto()) pj1YaContado = false;
         if (!pj2.estaMuerto()) pj2YaContado = false;
 
-        if (tiempoRestante <= 0) {
+        finalizar();
+    }
+
+    public void finalizar() {
+        if (tiempoRestante <= 0 || forzarFinal == true) {
             finalizarPartida();
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    mapaNieve.dispose();
+                    Render.app.setScreen(new Menu());
+                }
+            }, 5);
         }
+        forzarFinal = false;
     }
 
     private void finalizarPartida() {
@@ -101,5 +123,9 @@ public class Partida {
 
     public float getTiempoRestante() {
         return tiempoRestante;
+    }
+
+    public void setForzarFinal(boolean valor) {
+        forzarFinal = valor;
     }
 }
