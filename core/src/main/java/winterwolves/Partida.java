@@ -69,6 +69,13 @@ public class Partida {
         if (tiempoRestante <= 0 || forzarFinal == true) {
             finalizarPartida();
 
+            if(forzarFinal) {
+                textoGanador = new Texto(Recursos.FUENTEMENU, 50, Color.RED, true);
+                textoGanador.setTexto("Partida Cancelada por desconexion");
+                textoGanador.centrar();
+                this.mapaNieve.getServerThread().sendMessageToAll("CancelarPartida");
+            }
+
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
