@@ -26,3 +26,8 @@ Se añadieron 3 clases para jugar con distintas estadisticas y habilidades, esta
 Se añadio un sistema de partiva 1v1 por tiempo donde gana quien mas kills tenga al finalizar el tiempo.
 
 Ademas, se coloco todo el juego en red para jugar por LAN, soporta hasta 2 jugadores y un servidor.
+
+## [0.1.3] 2025-11-24
+### Added
+
+Version final para mostrar.
