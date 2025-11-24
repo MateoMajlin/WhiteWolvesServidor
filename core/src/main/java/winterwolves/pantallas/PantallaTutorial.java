@@ -63,7 +63,7 @@ public class PantallaTutorial implements Screen {
 
         for (int i = 0; i < opciones.length; i++) {
             opciones[i] = new Texto(Recursos.FUENTEMENU,80,Color.WHITE,true);
-            opciones[i].setColor(Color.RED); //nota flashera: si inicializas su color en algo diferente a blanco despues al querer cambiarle de color se va a quedar negro.
+            opciones[i].setColor(Color.RED); //nota flashera: si inicializas color en algo diferente a blanco despues al querer cambiarle de color se va a quedar negro.
             opciones[i].setTexto(textosOpc[i]);
             opciones[i].setPosition((Config.WIDTH/2)-(opciones[i].getAncho()/2)+180,(Config.HEIGTH)-(opciones[i].getAlto())-(avance*i));
         }

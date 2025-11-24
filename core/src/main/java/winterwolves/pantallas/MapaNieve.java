@@ -50,21 +50,15 @@ public class MapaNieve implements Screen, GameController {
 
     @Override
     public void show() {
-        // Cargar mapa
         TmxMapLoader loader = new TmxMapLoader();
         mapa = loader.load("mapas/mapaNieve.tmx");
         renderer = new OrthogonalTiledMapRenderer(mapa, 1f);
-
-        // Cámara (solo si el servidor necesita vistas debug)
         cameraManager = new CameraManager(Config.WIDTH, Config.HEIGTH, PPM);
-
-        // Mundo Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         Box2DColisiones.crearCuerposColisiones(mapa, world, "Colisiones", PPM, 2f, 2f);
         debugRenderer = new Box2DDebugRenderer();
 
-        // Crear cajas
         cajas = new Array<>();
         cajas.add(new Caja(world, 500 / PPM, 700 / PPM, PPM, 100));
         cajas.add(new Caja(world, 800 / PPM, 600 / PPM, PPM, 100));
@@ -72,7 +66,6 @@ public class MapaNieve implements Screen, GameController {
         cajas.add(new Caja(world, 1200 / PPM, 400 / PPM, PPM, 60));
         totalCajas = cajas.size;
 
-        // Cofre con ítems
         cofre = new Cofre(world, 500 / PPM, 500 / PPM, PPM);
         cofre.getInventario().agregarItem(new EspadaItem());
         cofre.getInventario().agregarItem(new AmuletoCuracion());

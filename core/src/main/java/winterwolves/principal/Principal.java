@@ -9,15 +9,13 @@ import winterwolves.utilidades.Render;
 
 
 public class Principal extends Game {
-    private SpriteBatch batch; // Dibuja el entorno
-    private Texture image; //Crea contexto de imagenes
 
     @Override
-    public void create() { // Sobre escribe Metodo de inicio de clase padre
-        Render.app = this; // Apunta el renderizado a la propia app
-        Render.batch = new SpriteBatch(); // Instancia un nuevo Batch
-        // setearMusica(); // Esta hecho pero es molesto.
-        this.setScreen(new Menu()); // inicializa el juego con el metodo setScreen(), iniciando desde el Menu()
+    public void create() {
+        Render.app = this;
+        Render.batch = new SpriteBatch();
+        // setearMusica();
+        this.setScreen(new Menu());
     }
 
     @Override

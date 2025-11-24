@@ -66,11 +66,9 @@ public class BolaDeFuego extends Habilidad {
 
     @Override
     protected void iniciarEfecto() {
-        // Bloquear al personaje medio segundo
         personaje.setPuedeMoverse(false);
-        final float stunDuracion = 0.5f; // medio segundo
+        final float stunDuracion = 0.5f;
 
-        // Programar desbloqueo usando un Timer
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {

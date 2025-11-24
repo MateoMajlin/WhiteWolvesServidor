@@ -19,8 +19,8 @@ public class Menu implements Screen, GameController {
     SpriteBatch b;
 
     Texto titulo;
-    Texto opciones[] = new Texto[5];
-    String textosOpc[] = {"Iniciar Servidor","Opciones","Creditos","¿Como Jugar?", "Salir"};
+    Texto opciones[] = new Texto[2];
+    String textosOpc[] = {"Iniciar Servidor","Salir"};
 
     Entradas entradas = new Entradas(this);
 
@@ -93,10 +93,7 @@ public class Menu implements Screen, GameController {
                 serverThread.start();
                 Render.app.setScreen(new PantallaSeleccion(serverThread));
                 break;
-            case 4:
-                Render.app.setScreen(new PantallaTutorial());
-                break;
-            case 5:
+            case 2:
                 Gdx.app.exit();
                 break;
         }

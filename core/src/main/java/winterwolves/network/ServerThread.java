@@ -44,18 +44,18 @@ public class ServerThread extends Thread {
         } while (!end);
     }
 
-    private void processMessage(DatagramPacket packet) { //Procesamieno de mensajes recibidos de la App Cliente
+    private void processMessage(DatagramPacket packet) {
         String message = (new String(packet.getData())).trim();
-        String[] parts = message.split(":");//Separo partes del mensaje con identificador ":"
-        int index = findClientIndex(packet); // Identifico jugador
-        System.out.println("Mensaje recibido " + message); // Muestro mensaje en pantalla
+        String[] parts = message.split(":");
+        int index = findClientIndex(packet);
+        System.out.println("Mensaje recibido " + message);
 
         if (parts[0].equals("Connect"))
         {//Si el principio del mensaje es CONNECT
             int personajeIdx = 0;
             if (parts.length > 1) {
                 try {
-                    personajeIdx = Integer.parseInt(parts[1]); // el índice del personaje
+                    personajeIdx = Integer.parseInt(parts[1]);
                 } catch (NumberFormatException e) {
                     System.out.println("Índice de personaje inválido");
                 }
@@ -88,10 +88,6 @@ public class ServerThread extends Thread {
                     for (Client client : clients) {
                         sendMessage(mensajeStart, client.getIp(), client.getPort());
                     }
-
-//                    if (gameController != null) {
-//                        gameController.startGame();
-//                    }
                 }
             } else {
                 sendMessage("Full", packet.getAddress(), packet.getPort());
@@ -114,9 +110,9 @@ public class ServerThread extends Thread {
         }
 
 
-        else {//Procesamiento de mensajes que no son de conexion -
+        else {
             Client c = clients.get(index);
-            if (c.getJugador() == null) return; // <- IGNORA MENSAJES HASTA QUE SE ASIGNE EL JUGADOR
+            if (c.getJugador() == null) return;
             String jugador;
             Personaje personaje;
             switch (parts[0]) {

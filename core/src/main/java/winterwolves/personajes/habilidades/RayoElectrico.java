@@ -1,15 +1,12 @@
 package winterwolves.personajes.habilidades;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 import com.badlogic.gdx.utils.Timer;
-import winterwolves.personajes.Personaje;
 
 public class RayoElectrico extends Habilidad {
 
@@ -62,10 +59,8 @@ public class RayoElectrico extends Habilidad {
 
     @Override
     protected void iniciarEfecto() {
-        // Inmovilizar personaje
         personaje.setPuedeMoverse(false);
 
-        // Liberar movimiento después de 0.5 segundos
         Timer.schedule(new Timer.Task(){
             @Override
             public void run() {
@@ -121,7 +116,7 @@ public class RayoElectrico extends Habilidad {
     public void dibujar(Batch batch, float x, float y, float width, float height) {
         for (ProyectilRayo p : proyectiles) p.dibujar(batch);
     }
-//dsdadsa
+
     @Override
     public void dispose() { textura.dispose(); }
 }
